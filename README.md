@@ -15,6 +15,11 @@
 
 ## Licensed
 	The Phantom is licensed under the GPLv3 open source agreement, and the version rights belong to the shepherd the Phantom team.
+	
+## v0.1.2
+	1. glue module
+	2. ledger module
+	3. protocol module
 
 ## v0.1.1
 	1. phantom tools

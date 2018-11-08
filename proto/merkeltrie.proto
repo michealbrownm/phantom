@@ -1,0 +1,32 @@
+syntax = "proto3";
+package protocol;
+option java_package = "io.phantom.sdk.core.extend.protobuf";
+
+enum CHILDTYPE{
+	NONE = 0;
+	INNER = 1;
+	LEAF = 2;
+}
+
+message Child{
+	bytes sublocation = 1;	
+	bytes hash = 2;			
+	CHILDTYPE childtype = 3;
+	//int64 count = 4;
+}
+
+message Node{
+	repeated Child children = 1;
+}
+
+
+
+
+
+
+
+
+
+
+
+

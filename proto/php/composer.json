@@ -1,0 +1,11 @@
+{
+    "require": {
+        "google/protobuf": "v3.6.0.1"
+    },
+    "autoload": {
+    "psr-4": {
+      "Protocol\\": "Protocol",
+      "GPBMetadata\\": "GPBMetadata"
+    }
+  }
+}

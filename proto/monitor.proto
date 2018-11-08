@@ -1,0 +1,97 @@
+syntax = "proto3";
+package monitor;
+option java_package = "io.phantom.sdk.core.extend.protobuf";
+
+import "chain.proto";
+
+enum MONITOR_MESSAGE_TYPE{
+	MONITOR_MSGTYPE_NONE = 0;
+	MONITOR_MSGTYPE_HELLO = 30;
+	MONITOR_MSGTYPE_REGISTER = 31;
+	MONITOR_MSGTYPE_PHANTOM = 32;
+	MONITOR_MSGTYPE_LEDGER = 33;
+	MONITOR_MSGTYPE_SYSTEM = 34;
+	MONITOR_MSGTYPE_ALERT = 35;
+	MONITOR_MSGTYPE_NOTICE = 36;
+	MONITOR_MSGTYPE_ACCOUNT_EXCEPTION = 37;
+	MONITOR_MSGTYPE_ERROR = 39;
+}
+
+message Hello {
+	int64 service_version  = 1;
+	int64 connection_timeout = 2;
+	int64 timestamp = 3;
+}
+
+message Register {
+	string id = 1;
+	string blockchain_version = 2;
+	int64 data_version = 3;
+	int64 timestamp = 4;
+}
+
+message Peer {
+	string id = 1;
+	int64 delay = 2;
+	bool active = 3;
+	string ip_address = 4;
+}
+
+message GlueManager {
+	string system_current_time = 1;
+	string process_uptime = 2;
+	string system_uptime = 3;
+}
+
+message PeerManager {
+	string peer_id = 1;
+	repeated Peer peer = 2;
+}
+
+message PhantomStatus {
+	GlueManager glue_manager = 1;
+	PeerManager peer_manager = 2;
+}
+
+message LedgerStatus {
+	protocol.LedgerHeader ledger_header = 1;
+	int64 transaction_size = 2;
+	int64 account_count = 3;
+	int64 timestamp = 4;
+}
+
+message SystemProperty {
+	string host_name = 1;
+	string os_version = 2;
+	int64 startup_time = 3;
+	string os_bit = 4;
+}
+
+message SystemResource {
+	int64 available = 1;
+	int64 total = 2;
+	double used_percent = 3;
+	string description = 4;
+}
+
+message Partition {
+	int64 total_bytes = 1;
+	repeated SystemResource partition = 2;
+}
+
+message CPU {
+	double used_percent = 1;
+}
+
+message SystemStatus {
+	SystemProperty property = 1;
+	SystemResource memory = 2;
+	CPU cpu = 3;
+	Partition partitions = 4;
+}
+
+message AlertStatus {
+	int64 ledger_sequence = 1;
+	string node_id = 2;
+	SystemStatus system = 3;
+}

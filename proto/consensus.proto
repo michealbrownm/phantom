@@ -1,0 +1,117 @@
+syntax = "proto3";
+package protocol;
+option java_package = "io.phantom.sdk.core.extend.protobuf";
+
+import "common.proto";
+
+//PBFT protocol
+message PbftPrePrepare
+{
+	int64 view_number = 1;
+	int64 sequence = 2;
+	int64 replica_id = 3;
+	bytes value = 4;
+	bytes value_digest = 5;
+}
+
+message PbftPrepare
+{
+	int64 view_number = 1;
+	int64 sequence = 2;
+	int64 replica_id = 3;
+	bytes value_digest = 4;
+}
+
+message PbftCommit
+{
+	int64 view_number = 1;
+	int64 sequence = 2;
+	int64 replica_id = 3;
+	bytes value_digest = 4;
+}
+
+message PbftPreparedSet
+{
+	PbftEnv pre_prepare = 1;
+	repeated PbftEnv prepare = 2;
+}
+
+message PbftViewChange
+{
+	int64 view_number = 1; //v+1
+	int64 sequence = 2;     //last execution seq
+	bytes prepred_value_digest = 3; //prepared value hash
+	int64 replica_id = 4;
+}
+
+message PbftViewChangeWithRawValue
+{
+	PbftEnv view_change_env = 1; // view change env
+	PbftPreparedSet prepared_set = 2;  //prepared messages larger than n
+}
+
+message PbftNewView
+{
+	int64 view_number = 1; //v+1
+	int64 sequence = 2;     //sequence
+	int64 replica_id = 3;
+	repeated PbftEnv view_changes = 4;     //V
+	PbftEnv pre_prepare = 5;  //O
+}
+
+enum PbftMessageType {
+	  PBFT_TYPE_PREPREPARE = 0;
+	  PBFT_TYPE_PREPARE = 1;
+	  PBFT_TYPE_COMMIT = 2;
+	  PBFT_TYPE_VIEWCHANGE = 3;
+	  PBFT_TYPE_NEWVIEW = 4;
+	  PBFT_TYPE_VIEWCHANG_WITH_RAWVALUE = 5;
+}
+
+enum PbftValueType {
+	    PBFT_VALUE_TX = 0;
+	    PBFT_VALUE_TXSET = 1;
+}
+
+message Pbft
+{
+	int64 round_number = 1; //for sending again
+	PbftMessageType type = 2;
+	PbftPrePrepare pre_prepare = 3;
+	PbftPrepare prepare = 4;
+	PbftCommit commit = 5;
+	PbftViewChange view_change = 6;
+	PbftNewView new_view = 7;
+	PbftViewChangeWithRawValue view_change_with_rawvalue = 8;
+}
+
+message PbftEnv
+{
+ Pbft pbft = 1;
+ Signature signature = 2;
+}
+
+message Validator{
+	string address = 1;
+	int64 pledge_coin_amount = 2;
+}
+
+message ValidatorSet{
+	repeated Validator validators = 1;
+}
+
+message PbftProof
+{
+	repeated PbftEnv commits = 1;
+}
+
+message FeeConfig
+{
+	enum Type {
+			UNKNOWN = 0;
+			GAS_PRICE					= 1;
+			BASE_RESERVE				= 2;
+	};
+	int64 gas_price = 1;
+	int64 base_reserve = 2;
+}
