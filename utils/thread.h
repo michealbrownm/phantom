@@ -30,7 +30,7 @@ namespace utils {
 		virtual void Run(Thread *this_thread) = 0;
 	};
 
-	//Thread 
+	//thread 
 	class Thread {
 	public:
 		explicit Thread() :
@@ -50,15 +50,15 @@ namespace utils {
 		~Thread() {
 		}
 
-		//Stop thread, and return true if it succeeds.
+		//stop thread, return true if succeed
 		bool Stop();
 
-		//Force to terminate the thread
+		//force to terminate thread
 		bool Terminate();
 
 		bool Start(std::string name = "");
 
-		//Stop and wait for the thead to be stopped
+		//stop and waiting for thead stopping
 		bool JoinWithStop();
 
 		bool enabled() const { return enabled_; };
@@ -67,7 +67,7 @@ namespace utils {
 
 		bool IsRunning() const { return running_; };
 
-		//Get the current thread id
+		//get current thread id
 		static size_t current_thread_id();
 
 		bool IsObjectValid() const { return Thread::INVALID_HANDLE != handle_; }
@@ -103,7 +103,7 @@ namespace utils {
 		virtual void Run();
 	};
 
-	//Thread group
+	//thread group
 	class ThreadGroup {
 	public:
 		ThreadGroup() {}
@@ -217,7 +217,7 @@ namespace utils {
 	};
 
 
-	// Implement a spin lock using lock free.
+	// implement a spin lock using lock free.
 
 	class SpinLock {
 	public:
@@ -231,14 +231,14 @@ namespace utils {
 
 		}
 
-		// Lock
+		// lock
 		inline void Lock() {
 			while (SPINLOCK_BUSY == LOCK_CAS(&m_busy, SPINLOCK_BUSY, SPINLOCK_FREE)) {
 				LOCK_YIELD();
 			}
 		}
 
-		// Unlock
+		// unlock
 		inline void Unlock() {
 			LOCK_CAS(&m_busy, SPINLOCK_FREE, SPINLOCK_BUSY);
 		}
@@ -303,27 +303,27 @@ namespace utils {
 		bool Init(const std::string &name, int threadNum = kDefaultThreadNum);
 		bool Exit();
 
-		//Add a task
+		//add task
 		void AddTask(Runnable *task);
 
 		void JoinwWithStop();
 
-		/// Wait all tasks to join 
+		/// wait all tasks has been 
 		bool WaitAndJoin();
 
-		// Get the thread's size
+		// get thread's size
 		size_t Size() const { return threads_.size(); }
 
 		bool WaitTaskComplete();
 
-		//Terminate the thread
+		//terminate
 		void Terminate();
 
 	private:
 		UTILS_DISALLOW_EVIL_CONSTRUCTORS(ThreadPool);
 		typedef std::vector<Thread *> ThreadVector;
 
-		//Add a worker
+		//add worker
 		bool AddWorker(int threadNum);
 
 		void Run(Thread *this_thread);

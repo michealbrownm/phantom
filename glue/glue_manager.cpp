@@ -23,6 +23,7 @@
 namespace phantom {
 
 	int64_t const  MAX_LEDGER_TIMESPAN_SECONDS = 20 * utils::MICRO_UNITS_PER_SEC;
+	int64_t const QUEUE_TRANSACTION_TIMEOUT = 60 * utils::MICRO_UNITS_PER_SEC;
 	GlueManager::GlueManager() {
 		time_start_consenus_ = 0;
 		ledgerclose_check_timer_ = 0;
@@ -39,7 +40,7 @@ namespace phantom {
 		consensus_ = ConsensusManager::Instance().GetConsensus();
 		consensus_->SetNotify(this);
 
-		//Start consensus
+		//start consensus
 		start_consensus_timer_ = utils::Timer::Instance().AddTimer(3 * utils::MICRO_UNITS_PER_SEC, 0, [this](int64_t data) {
 			StartConsensus("");
 		});
@@ -64,11 +65,11 @@ namespace phantom {
 	}
 
 	void GlueManager::StartLedgerCloseTimer() {
-		//Kill the ledger check timer
+		//kill the ledger check timer
 		utils::Timer::Instance().DelTimer(ledgerclose_check_timer_);
 		ledgerclose_check_timer_ = utils::Timer::Instance().AddTimer(MAX_LEDGER_TIMESPAN_SECONDS + 10 * utils::MICRO_UNITS_PER_SEC, 0,
 			[this](int64_t data) {
-			LOG_INFO("Block closed timeout, triggering consensus view change.");
+			LOG_INFO("Ledger close timeout, call consensus view change");
 			consensus_->OnTxTimeout();
 		});
 	}
@@ -90,11 +91,11 @@ namespace phantom {
 
 		time_start_consenus_ = utils::Timestamp::HighResolution();
 		if (!consensus_->IsLeader()) {
-			LOG_INFO("The current node is not a leader node and does not do any processing.");
+			LOG_INFO("Start consensus process, but it is not leader, just waiting");
 			return true;
 		} 
 		else {
-			LOG_INFO("The current node is the leader node and starting consensus processing.");
+			LOG_INFO("Start consensus process, it is leader, just continue");
 		}
 
 		protocol::LedgerHeader lcl = LedgerManager::Instance().GetLastClosedLedger();
@@ -105,18 +106,18 @@ namespace phantom {
 			next_close_time = lcl.close_time() + Configure::Instance().ledger_configure_.close_interval_;
 		}
 
-		//Get previous block proof
+		//get previous block proof
 		std::string proof;
 		Storage::Instance().account_db()->Get(General::LAST_PROOF, proof);
 
 		if (!last_consavlue.empty()) {
-			LOG_INFO("The last PREPARED message value is not empty. Value digest(%s)", 
+			LOG_INFO("Last prepared consvalue not empty, value digest(%s)", 
 				utils::String::BinToHexString(HashWrapper::Crypto(last_consavlue)).c_str());
 			//protocol::TransactionEnvSet txset_raw = tx_pool_->top.GetRaw();
 			if (CheckValue(last_consavlue) == Consensus::CHECK_VALUE_VALID) {
 				protocol::ConsensusValue propose_value;
 				propose_value.ParseFromString(last_consavlue);
-				LOG_INFO("Take the last consensus value as the proposal. The number of transactions in consensus value is %d, and the last closed ledger's hash is %s.", propose_value.txset().txs_size(),
+				LOG_INFO("Proposed last consvalue %d tx(s), lcl hash(%s) tx(s)", propose_value.txset().txs_size(),
 					utils::String::Bin4ToHexString(lcl.hash()).c_str());
 
 				return consensus_->Request(last_consavlue);
@@ -132,16 +133,16 @@ namespace phantom {
 			propose_value.set_previous_ledger_hash(lcl.hash());
 			propose_value.set_previous_proof(proof);
 
-			//Check whether we need to upgrade the ledger.
+			//judge if we need upgrade the ledger
 			protocol::ValidatorSet validator_set;
 			size_t quorum_size = 0;
 			consensus_->GetValidation(validator_set, quorum_size);
 			protocol::LedgerUpgrade up;
 			if (ledger_upgrade_.GetValid(validator_set, quorum_size + 1, up)) {
-				LOG_INFO("Get the upgrade information of the validation node(%s) successfully.", Proto2Json(up).toFastString().c_str());
+				LOG_INFO("Get valid upgrade value(%s)", Proto2Json(up).toFastString().c_str());
 
 				if (lcl.version() < up.new_ledger_version() && up.new_ledger_version() <= General::LEDGER_VERSION) {
-					LOG_ERROR("Invalid upgrade information.");
+					LOG_ERROR("Not propose the invalid upgrade value");
 					*propose_value.mutable_ledger_upgrade() = up;
 				}
 			}
@@ -150,8 +151,7 @@ namespace phantom {
 			LedgerManager::Instance().context_manager_.SyncPreProcess(propose_value, true, propose_result);
 
 			if (propose_result.block_timeout_) {
-				LOG_ERROR("Block pre-execution timeout, the number of transactions in consensus value is: (" FMT_I64 "), and block number is : (" FMT_I64 ")", txset_raw.txs_size(), propose_value.ledger_seq());
-				//Remove the timeout tx
+				//remove the time out tx
 				//reduct to 1/2
 				protocol::TransactionEnvSet tmp_raw;
 				for (int32_t i = 0; i < txset_raw.txs_size() / 2; i ++) {
@@ -163,7 +163,7 @@ namespace phantom {
 				continue;
 			}
 
-			//Need drop some tx
+			//need drop some tx
 			if (propose_result.need_dropped_tx_.size()) {
 				protocol::TransactionEnvSet *txs = propose_value.mutable_txset();
 				txs->clear_txs();
@@ -171,7 +171,7 @@ namespace phantom {
 				protocol::TransactionEnvSet tmp_raw;
 				for (int32_t i = 0; i < txset_raw.txs_size(); i++) {
 					if (propose_result.need_dropped_tx_.find(i) != propose_result.need_dropped_tx_.end()) {
-						//Remove from the cache
+						//remove from the cache
 						*tmp_raw.add_txs() = txset_raw.txs(i);
 					} else{
 						*txs->add_txs() = txset_raw.txs(i);
@@ -185,33 +185,33 @@ namespace phantom {
 				*propose_value.mutable_validation() = propose_result.cons_validation_;
 			}
 
-			LOG_INFO("Transaction pre-execution results: Number of transactions with excessive resource consumption is %d, \
-				and the number of transactions that were pre-executed incorrectly is %d.) ",
+			LOG_INFO("Check validation, validation(%d,%d) ",
 				propose_result.cons_validation_.expire_tx_ids_size(), propose_result.cons_validation_.error_tx_ids_size());
 
 			break;
 		} while (true);
 
-		LOG_INFO("The number of transactions in the proposal is %d, and the last ledger's hash is %s.", propose_value.txset().txs_size(),
+		LOG_INFO("Proposed %d tx(s), lcl hash(%s) tx(s)", propose_value.txset().txs_size(),
 			utils::String::Bin4ToHexString(lcl.hash()).c_str());
 		consensus_->Request(propose_value.SerializeAsString());
 		return true;
 	}
 
 	bool GlueManager::OnTransaction(TransactionFrm::pointer tx, Result &err) {
+		TopicKey key(tx->GetSourceAddress(), tx->GetNonce());
 		std::string hash_value = tx->GetContentHash();
 		std::string address = tx->GetSourceAddress();
 
 		do {
 			if (tx_pool_->IsExist(tx->GetContentHash())){
-				//Break when a transaction is replayed;
-				err.set_code(protocol::ERRCODE_ALREADY_EXIST);
-				err.set_desc(utils::String::Format("Received duplicate transaction message. The transaction's source address is %s, and hash is %s", address.c_str(), utils::String::Bin4ToHexString(hash_value).c_str()));
-				LOG_TRACE("Received duplicate transation message. The transaction's source address is %s, and hash is %s.", address.c_str(), utils::String::Bin4ToHexString(hash_value).c_str());
+				//dont't reply the tx, then break;
+				//err.set_code(protocol::ERRCODE_ALREADY_EXIST);
+				//err.set_desc(utils::String::Format("Receive duplicate transaction, source address(%s) hash(%s)", address.c_str(), utils::String::Bin4ToHexString(hash_value).c_str()));
+				LOG_INFO("Receive duplicate transaction, source address(%s) hash(%s)", address.c_str(), utils::String::Bin4ToHexString(hash_value).c_str());
 				break;
 			}
 
-			//Validate a transaction upon received.
+			//验证交易有效性
 			int64_t nonce = 0;
 			if (!tx->CheckValid(/*high_sequence*/ -1, true, nonce)) {
 				err = tx->GetResult();
@@ -219,13 +219,13 @@ namespace phantom {
 				js["action"] = "apply";
 				js["error_code"] = err.code();
 				js["desc"] = err.desc();
-				LOG_ERROR("Transaction verification failed. The transaction's source address: %s, nonce: (" FMT_I64 "), hash: %s, return value: %s.",
-					address.c_str(), tx->GetNonce(), utils::String::Bin4ToHexString(hash_value).c_str(), js.toFastString().c_str());
+				LOG_ERROR("Check transaction failed, source address(%s) hash(%s), return(%s)",
+					address.c_str(), utils::String::Bin4ToHexString(hash_value).c_str(), js.toFastString().c_str());
 				break;
 			}
 
 			if (!tx_pool_->Import(tx, nonce, err)) {
-				LOG_ERROR("Failed to insert transaction into transaction queue. The transaction's source address: %s, hash: %s.",
+				LOG_ERROR("source address(%s) tx hash(%s) insert tx queue failed",
 					address.c_str(), utils::String::Bin4ToHexString(hash_value).c_str());
 			}
 
@@ -235,12 +235,12 @@ namespace phantom {
 		return err.code() == protocol::ERRCODE_SUCCESS;
 	}
 
-	bool GlueManager::OnConsensus(const ConsensusMsg &msg) {
-		return consensus_->OnRecv(msg);
+	void GlueManager::OnConsensus(const ConsensusMsg &msg) {
+		consensus_->OnRecv(msg);
 	}
 
 	void GlueManager::OnTimer(int64_t current_time) {
-		//Check the timeout transaction
+		//check the timeout transaction
 
 		std::vector<TransactionFrm::pointer> timeout_txs;
 		tx_pool_->CheckTimeoutAndDel(current_time, timeout_txs);
@@ -284,22 +284,25 @@ namespace phantom {
 		protocol::ConsensusValue request;
 		request.ParseFromString(value);
 
-		
-		//Write to db
+		//TransactionSetFrm txset_frm(request.txset());
+
+		//temp upgrade the validator, need done by ledger manager
+
+		//write to db
 		int64_t time_start = utils::Timestamp::HighResolution();
 		
 		protocol::ConsensusValue req;
 		req.ParseFromString(value);
-		//Call consensus
+		//call consensus
 		LedgerManager::Instance().OnConsent(req, proof);
 
 		int64_t time_use = utils::Timestamp::HighResolution() - time_start;
 
-		//Delete the cache 
+		//delete the cache 
 		//size_t ret1 = RemoveTxset(txset_frm);
 		tx_pool_->RemoveTxs(request.txset(),true);
 
-		//Start calculating the time to start the next block.
+		//start time
 		int64_t next_interval = GetIntervalTime(request.txset().txs_size() == 0);
 		int64_t next_timestamp = next_interval + req.close_time();
 		int64_t seq = req.ledger_seq();
@@ -312,11 +315,11 @@ namespace phantom {
 					StartConsensus("");
 				});
 
-				LOG_INFO("Ledger(" FMT_I64 ") closed successfully, time used (" FMT_I64 ")ms, next consensus in(" FMT_I64 ")ms",
+				LOG_INFO("Close ledger(" FMT_I64 ") successful, use time(" FMT_I64 "ms), waiting(" FMT_I64 "ms) to start next consensus",
 					seq, (int64_t)(time_use / utils::MILLI_UNITS_PER_SEC), (int64_t)(waiting_time / utils::MILLI_UNITS_PER_SEC));
 			}
 			else {
-				LOG_INFO("Ledger(" FMT_I64 ") closed successfully, time used (" FMT_I64 ")ms, next consensus checked in(" FMT_I64 ")ms",
+				LOG_INFO("Close ledger(" FMT_I64 ") successful, use time(" FMT_I64 "ms), waiting(" FMT_I64 "ms) to check next consensus",
 					seq, (int64_t)(time_use / utils::MILLI_UNITS_PER_SEC), (int64_t)(waiting_time / utils::MILLI_UNITS_PER_SEC));
 			}
 
@@ -328,7 +331,7 @@ namespace phantom {
 	}
 
 	void GlueManager::OnViewChanged(const std::string &last_consvalue) {
-		LOG_INFO("On view changed.");
+		LOG_INFO("Consenter on view changed");
 		StartConsensus(last_consvalue);
 		StartLedgerCloseTimer();
 	}
@@ -336,18 +339,18 @@ namespace phantom {
 	bool GlueManager::CheckValueAndProof(const std::string &consensus_value, const std::string &proof) {
 		protocol::ConsensusValue proto_value;
 		if (!proto_value.ParseFromString(consensus_value)) {
-			LOG_ERROR("Failed to parse consensus value.");
+			LOG_ERROR("Parse consensus value failed");
 			return false;
 		}
 
 		protocol::ValidatorSet set;
 		if (!LedgerManager::Instance().GetValidators(proto_value.ledger_seq() - 1, set)) {
-			LOG_ERROR("Failed to get validator of ledger(" FMT_I64 ")",
+			LOG_ERROR("Check valid failed, get validator failed of ledger seq(" FMT_I64 ")",
 				proto_value.ledger_seq() - 1);
 			return false;
 		}
 		
-		//If a hardfork point is found on a node, we ignore the proof of the block before the fork point.
+		//if it exist in hardfork point, we ignore the proof
 		std::string consensus_value_hash = HashWrapper::Crypto(consensus_value);
 		std::set<std::string>::const_iterator iter = hardfork_points_.find(consensus_value_hash);
 		return CheckValueHelper(proto_value, -1) == Consensus::CHECK_VALUE_VALID &&   //-1 not check time
@@ -358,7 +361,7 @@ namespace phantom {
 	int32_t GlueManager::CheckValue(const std::string &value) {
 		protocol::ConsensusValue consensus_value;
 		if (!consensus_value.ParseFromString(value)) {
-			LOG_ERROR("Failed to parse consensus value.");
+			LOG_ERROR("Parse consensus value failed");
 			return Consensus::CHECK_VALUE_MAYVALID;
 		}
 
@@ -371,7 +374,7 @@ namespace phantom {
 		if (!LedgerManager::Instance().context_manager_.SyncPreProcess(consensus_value,
 			false,
 			ignor_cons_validation)) {
-			LOG_ERROR("Failed to preprocess the consensus value.");
+			LOG_ERROR("Pre process consvalue failed");
 			return Consensus::CHECK_VALUE_MAYVALID;
 		}
 
@@ -380,7 +383,7 @@ namespace phantom {
 
 	int32_t GlueManager::CheckValueHelper(const protocol::ConsensusValue &consensus_value, int64_t now) {
 		if (consensus_value.ByteSize() >= General::TXSET_LIMIT_SIZE + (int32_t)(2 * utils::BYTES_PER_MEGA)) {
-			LOG_ERROR("The byte size(%d) of consensus value exceed the upper limit(%d).",
+			LOG_ERROR("Consensus value byte size(%d) will be exceed than limit(%d)",
 				consensus_value.ByteSize(),
 				General::TXSET_LIMIT_SIZE + 2 * utils::BYTES_PER_MEGA);
 			return Consensus::CHECK_VALUE_MAYVALID;
@@ -388,24 +391,24 @@ namespace phantom {
 
 		protocol::LedgerHeader lcl = LedgerManager::Instance().GetLastClosedLedger();
 
-		//Check the previous ledger sequence.
+		//check previous ledger sequence
 		if (consensus_value.ledger_seq() != lcl.seq() + 1) {
-			LOG_ERROR("Previous ledger's sequence(" FMT_I64 ") + 1 is not equal to ledger sequence( " FMT_I64 ") in consensus message.",
+			LOG_ERROR("Check value failed, previous ledger seq(" FMT_I64 ") + 1 not equal to consensus message ledger seq( " FMT_I64 ")",
 				lcl.seq(),
 				consensus_value.ledger_seq());
 			return Consensus::CHECK_VALUE_MAYVALID;
 		}
 
-		//Check the previous hash.
+		//check previous hash
 		if (consensus_value.previous_ledger_hash() != lcl.hash()) {
-			LOG_ERROR("Previous ledger(" FMT_I64 ") hash(%s) in current node is not equal to the previous ledger hash(%s) in consensus value.",
+			LOG_ERROR("Check value failed, previous ledger(seq:" FMT_I64 ") hash(%s) not equal to consensus message ledger hash(%s)",
 				lcl.seq(),
 				utils::String::Bin4ToHexString(lcl.hash()).c_str(),
 				utils::String::Bin4ToHexString(consensus_value.previous_ledger_hash()).c_str());
 			return Consensus::CHECK_VALUE_MAYVALID;
 		}
 
-		//not closed, can tolerate 1 second 
+		//not too closed, can tolerate 1 second 
 		if (now != -1 && 
 			!(
 			now > (consensus_value.close_time() - utils::MICRO_UNITS_PER_SEC)
@@ -413,7 +416,7 @@ namespace phantom {
 			consensus_value.close_time() >= lcl.close_time() + Configure::Instance().ledger_configure_.close_interval_
 			)
 			) {
-			LOG_WARN("Current time(" FMT_I64 ") > Close time(" FMT_I64 ") > (last ledger closed time(" FMT_I64 ") + interval(" FMT_I64")) is not tenable. Consensus network time error!", 
+			LOG_WARN("Now time(" FMT_I64 ") > Close time(" FMT_I64 ") > (lcl time(" FMT_I64 ") + interval(" FMT_I64")) Not valid. Consensus network time error!", 
 				now, consensus_value.close_time() ,
 				lcl.close_time(), Configure::Instance().ledger_configure_.close_interval_ );
 			return Consensus::CHECK_VALUE_MAYVALID;
@@ -423,20 +426,20 @@ namespace phantom {
 			const protocol::LedgerUpgrade &upgrade = consensus_value.ledger_upgrade();
 			if (upgrade.new_ledger_version() != 0) {
 				if (lcl.version() >= upgrade.new_ledger_version()) {
-					LOG_ERROR("New ledger's version(" FMT_I64 ") is less than or equal to last closed ledger's version(" FMT_I64 ")",
+					LOG_ERROR("Check value failed,  new version(" FMT_I64 ") less or equal than lcl ledger version(" FMT_I64 ")",
 						upgrade.new_ledger_version(), lcl.version());
 					return Consensus::CHECK_VALUE_MAYVALID;
 				}
 
 				if (upgrade.new_ledger_version() > General::LEDGER_VERSION) {
-					LOG_ERROR("New ledger's version (" FMT_I64 ") is larger than program's version(%u).",
+					LOG_ERROR("Check value failed, new ledger version (" FMT_I64 ") large than program version(%u)",
 						upgrade.new_ledger_version(),
 						General::LEDGER_VERSION);
 					return Consensus::CHECK_VALUE_MAYVALID;
 				}
 			}
 
-			//The 'upgrade' field should not exist in normal blocks.
+			//normal block should not exit the upgarde
 			bool new_validator_exist = !upgrade.new_validator().empty();
 			std::string consensus_value_hash = HashWrapper::Crypto(consensus_value.SerializeAsString());
 			if (hardfork_points_.end() == hardfork_points_.find(consensus_value_hash) && new_validator_exist) {
@@ -444,26 +447,26 @@ namespace phantom {
 			} 
 		}
 
-		//Check the second block
+		//check the second block
 		if (lcl.seq() == 1 && consensus_value.previous_proof() != "") {
-			LOG_ERROR("The second block's previous consensus proof must be empty.");
+			LOG_ERROR("Check value failed, the second consensus value's prevous proof filed must be empty");
 			return Consensus::CHECK_VALUE_MAYVALID;
 		}
 
-		//Check this proof 
+		//check this proof 
 		if (lcl.seq() > 1) {
-			//Get the validator set for the pre pre ledger.
+			//get pre pre ledger validator
 			protocol::ValidatorSet set;
 			if (!LedgerManager::Instance().GetValidators(consensus_value.ledger_seq() - 2, set)) {
-				LOG_ERROR("Failed to get validator of ledger (" FMT_I64 ").",
+				LOG_ERROR("Check value failed, get validator failed of ledger seq(" FMT_I64 ")",
 					consensus_value.ledger_seq() - 2);
 				return Consensus::CHECK_VALUE_MAYVALID;
 			}
 
-			//Check if the consensus value hash is forked
+			//check if the consensus value hash is forked
 			std::set<std::string>::const_iterator iter = hardfork_points_.find(lcl.consensus_value_hash());
 			if (iter == hardfork_points_.end() && !consensus_->CheckProof(set, lcl.consensus_value_hash(), consensus_value.previous_proof())) {
-					LOG_ERROR("Failed to check the value because the proof is not valid.");
+					LOG_ERROR("Check value failed, proof not valid");
 					return Consensus::CHECK_VALUE_MAYVALID;
 			}
 		}
@@ -478,7 +481,7 @@ namespace phantom {
 			protocol::PbftEnv env;
 			env.ParseFromString(message);
 			ConsensusMsg msg(env);
-			LOG_INFO("Received consensus message from self. Node address(%s), sequence(" FMT_I64 "), pbft type(%s)",
+			LOG_INFO("Receive consensus from self node address(%s) sequence(" FMT_I64 ") pbft type(%s)",
 				msg.GetNodeAddress(), msg.GetSeq(),PbftDesc::GetMessageTypeDesc(msg.GetPbft().pbft().type()));
 			consensus_->OnRecv(msg);
 		});

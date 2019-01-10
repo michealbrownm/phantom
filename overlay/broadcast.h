@@ -16,7 +16,6 @@
 #ifndef BROADCAST_H_
 #define BROADCAST_H_
 
-#include <unordered_map>
 namespace phantom{
 
 	class IBroadcastDriver{
@@ -24,7 +23,7 @@ namespace phantom{
 		IBroadcastDriver(){};
 		virtual ~IBroadcastDriver(){};
 
-		//Virtual bool SendMessage(int64_t peer_id, WsMessagePointer msg) = 0;
+		//virtual bool SendMessage(int64_t peer_id, WsMessagePointer msg) = 0;
 		virtual bool SendRequest(int64_t peer_id, int64_t type, const std::string &data) = 0;
 		virtual std::set<int64_t> GetActivePeerIds() = 0;
 	};
@@ -42,7 +41,7 @@ namespace phantom{
 	};
 
 	typedef std::map<int64_t, std::string> BroadcastRecordCoupleMap;
-	typedef std::unordered_map<std::string, BroadcastRecord::pointer> BroadcastRecordMap;
+	typedef std::map<std::string, BroadcastRecord::pointer> BroadcastRecordMap;
 
 	class Broadcast {
 	private:
@@ -57,7 +56,6 @@ namespace phantom{
 
 		bool Add(int64_t type, const std::string &data, int64_t peer_id);
 		void Send(int64_t type, const std::string &data);
-		bool IsQueued(int64_t type, const std::string &data);
 		void OnTimer();
 		size_t GetRecordSize() const { return records_.size(); };
 	};

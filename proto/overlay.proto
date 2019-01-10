@@ -1,6 +1,6 @@
 syntax = "proto3";
 package protocol;
-option java_package = "io.phantom.sdk.core.extend.protobuf";
+option java_package = "org.phantom.sdk.core.extend.protobuf";
 
 import "common.proto";
 import "chain.proto";
@@ -13,7 +13,7 @@ enum OVERLAY_MESSAGE_TYPE{
 	OVERLAY_MSGTYPE_TRANSACTION = 4;
 	OVERLAY_MSGTYPE_LEDGERS = 5;
 	OVERLAY_MSGTYPE_PBFT = 6;
-	OVERLAY_MSGTYPE_LEDGER_UPGRADE_NOTIFY = 7; //Broadcast the ledger upgrade status
+	OVERLAY_MSGTYPE_LEDGER_UPGRADE_NOTIFY = 7; //broadcast the ledger upgrade status
 }
 
 message Hello {
@@ -59,12 +59,12 @@ message GetLedgers
 message Ledgers
 {
 	enum SyncCode{
-		OK = 0;          //Success
-		OUT_OF_SYNC = 1;    //The node itself is not in sync status
-		OUT_OF_LEDGERS = 2; //Too many requested ledgers
-		BUSY = 3;           //This node is occupied
-		REFUSE = 4;         //The node itself is not allow sync
-		INTERNAL = 5;       //Inner error
+		OK = 0;          //成功
+		OUT_OF_SYNC = 1;    //节点本身处于非同步状态
+		OUT_OF_LEDGERS = 2; //请求的ledger数过多
+		BUSY = 3;           //本节点正忙
+		REFUSE = 4;         //节点本身不允许同步
+		INTERNAL = 5;       //内部错误
 	}
 	repeated ConsensusValue values = 1;
 	SyncCode sync_code = 2;
@@ -101,14 +101,14 @@ enum ChainMessageType {
 	CHAIN_PEER_OFFLINE = 13;
 	CHAIN_PEER_MESSAGE = 14;
 	CHAIN_SUBMITTRANSACTION = 15;
-	CHAIN_LEDGER_HEADER = 16; //phantom notifies the client ledger(protocol::LedgerHeader) when closed
+	CHAIN_LEDGER_HEADER = 16; //phantom notify the client ledger(protocol::LedgerHeader) when closed
 	CHAIN_SUBSCRIBE_TX = 17; //response with CHAIN_RESPONSE
 	CHAIN_TX_ENV_STORE = 18;
 }
 
-//Register notification events
+//register notification events
 message ChainHello {
-	repeated ChainMessageType api_list = 1;	//By default, enable all apis
+	repeated ChainMessageType api_list = 1;	//default enable all apis
 	int64	timestamp = 2;
 }
 
@@ -141,10 +141,10 @@ message ChainResponse{
 message ChainTxStatus {
 	enum TxStatus {
 		UNDEFINED	= 0;
-		CONFIRMED	= 1;	// web server will check tx parameters, signatures etc fist, noitfy CONFIRMED if pass
+		CONFIRMED	= 1;	// web server will check tx paramters, signatures etc fist, noitfy CONFIRMED if pass
 		PENDING		= 2;	// master will check futher before put it into pending queue
 		COMPLETE	= 3;	// notify if Tx write ledger successfully
-		FAILURE		= 4;	// notify once failed and set error_code
+		FAILURE		= 4;	// notify once failure and set error_code
 	};
 
 	TxStatus	status = 1;

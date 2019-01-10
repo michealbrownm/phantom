@@ -162,10 +162,10 @@ namespace utils {
 				}
 				int bits_in_current_byte = std::min<int>(output_current_bit + ConversionTraits::group_length(), 8) - output_current_bit;
 				if (bits_in_current_byte == ConversionTraits::group_length()) {
-					// The value fits within current byte, so we can extract it directly
+					// the value fits within current byte, so we can extract it directly
 					buffer |= (value << (8 - output_current_bit - ConversionTraits::group_length())) & 0xFF;
 					output_current_bit += ConversionTraits::group_length();
-					// Check if we filled up current byte completely; in such case we flush output and continue
+					// check if we filled up current byte completely; in such case we flush output and continue
 					if (output_current_bit == 8) {
 						*out++ = buffer;
 						buffer = 0;
@@ -173,13 +173,13 @@ namespace utils {
 					}
 				}
 				else {
-					// The value span across current and next byte
+					// the value span across current and next byte
 					int bits_in_next_byte = ConversionTraits::group_length() - bits_in_current_byte;
-					// Fill current byte and flush it to our output
+					// fill current byte and flush it to our output
 					buffer |= value >> bits_in_next_byte;
 					*out++ = buffer;
 					buffer = 0;
-					// Save the remainder of our value in the buffer; it will be flushed
+					// save the remainder of our value in the buffer; it will be flushed
 					// during next iterations
 					buffer |= (value << (8 - bits_in_next_byte)) & 0xFF;
 					output_current_bit = bits_in_next_byte;
@@ -187,7 +187,7 @@ namespace utils {
 				++iter;
 			}
 			if (output_current_bit != 0) {
-				// See if we have truncated data (if so, just include it)
+				// see if we have truncated data (if so, just include it)
 				int trailing_bits = trailing_equal*ConversionTraits::group_length() + output_current_bit;
 				if ((trailing_bits & 7) != 0) {
 					*out++ = buffer;
@@ -205,23 +205,23 @@ namespace utils {
 			while (has_backlog || iter != end) {
 				if (!has_backlog) {
 					if (start_bit + ConversionTraits::group_length() < 8) {
-						// The value fits within single byte, so we can extract it
+						// the value fits within single byte, so we can extract it
 						// directly
 						char v = extract_partial_bits(*iter, start_bit, ConversionTraits::group_length());
 						*out++ = ConversionTraits::encode(v);
-						// Since we know that start_bit + ConversionTraits::group_length() < 8 we don't need to go
+						// since we know that start_bit + ConversionTraits::group_length() < 8 we don't need to go
 						// to the next byte
 						start_bit += ConversionTraits::group_length();
 					}
 					else {
-						// Our bits are spanning across byte border; we need to keep the
+						// our bits are spanning across byte border; we need to keep the
 						// starting point and move over to next byte.
 						backlog = *iter++;
 						has_backlog = true;
 					}
 				}
 				else {
-					// Encode value which is made from bits spanning across byte
+					// encode value which is made from bits spanning across byte
 					// boundary
 					char v = extract_overlapping_bits(backlog, (iter != end) ? *iter : 0, start_bit, ConversionTraits::group_length());
 					*out++ = ConversionTraits::encode(v);

@@ -1,12 +1,12 @@
 syntax = "proto3";
 package protocol;
-option java_package = "io.phantom.sdk.core.extend.protobuf";
+option java_package = "org.phantom.sdk.core.extend.protobuf";
 
 import "common.proto";
 
 message Account{
 	string address = 1;
-	int64  nonce = 2; //Last transaction seq
+	int64  nonce = 2; //last transaction seq
 	AccountPrivilege priv = 3;
 	bytes metadatas_hash = 4;	//metadatas_hash = merklehash(metadatas);
 	bytes assets_hash = 5;    //assets_hash = merkelhash(assets)
@@ -20,7 +20,7 @@ message AssetKey{
 	 int32 type = 3;		//0:not limited ammount
 }
 
-//payAsset
+//payment
 message Asset{
 	 AssetKey	key = 1;
 	 int64		amount = 2;
@@ -35,7 +35,7 @@ message AssetProperty{
 }
 
 message AssetStore{
-	AssetKey key = 1; //Required
+	AssetKey key = 1; //required
 	int64 amount = 2;
 	AssetProperty property = 3;
 }
@@ -63,7 +63,7 @@ message Ledger{
 }
 
 
-message OperationPayAsset
+message OperationPayment
 {
 	string dest_address = 1;
 	Asset asset = 2;
@@ -79,11 +79,12 @@ message AccountPrivilege {
 	int64 master_weight = 1;
 	repeated Signer signers = 2;
 	AccountThreshold thresholds = 3;
+	
 }
 
 message AccountThreshold{
-		 int64 tx_threshold = 1; //required, [-1,MAX(INT64)] -1: indicates no setting
-		 repeated OperationTypeThreshold type_thresholds = 2;
+		 int64 tx_threshold = 1; //required, [-1,MAX(INT64)] -1: 表示不设置
+		 repeated OperationTypeThreshold type_thresholds = 2;  //如果这个设置，则操作门限以这个为准
 }
 
 message OperationIssueAsset{
@@ -98,8 +99,8 @@ message OperationPayCoin{
 }
 
 message OperationSetSignerWeight{
-	 int64 master_weight = 1; //required, [-1,MAX(UINT32)] -1: indicates no setting
-	 repeated Signer signers = 2; //address:weight, if weight is 0, it indicates deleting this signer
+	 int64 master_weight = 1; //required, [-1,MAX(UINT32)] -1: 表示不设置
+	 repeated Signer signers = 2; //address:weight, 如果weight 为0 表示删除这个signer
 }
 
 message OperationLog{
@@ -107,25 +108,18 @@ message OperationLog{
 	repeated string datas = 2;
 }
 
-message OperationSetPrivilege{
-	string master_weight = 1;
-	repeated Signer signers = 2;
-	string tx_threshold = 3;
-	repeated OperationTypeThreshold type_thresholds = 4;
-}
 
 message Operation {
 	enum Type {
 			UNKNOWN = 0;
 			CREATE_ACCOUNT 			= 1;
 			ISSUE_ASSET 			= 2;
-			PAY_ASSET               = 3;
+			PAYMENT                 = 3;
 			SET_METADATA			= 4;
 			SET_SIGNER_WEIGHT		= 5;
 			SET_THRESHOLD			= 6;
 			PAY_COIN                = 7;
 			LOG						= 8;
-			SET_PRIVILEGE			= 9;
 	};
 	Type type = 1;
 	string source_address = 2;
@@ -134,18 +128,17 @@ message Operation {
 	//
 	OperationCreateAccount		create_account 	   = 4;
 	OperationIssueAsset			issue_asset 	   = 5;
-	OperationPayAsset			pay_asset 		   = 6;
+	OperationPayment			payment 		   = 6;
 	OperationSetMetadata		set_metadata	   = 7;
 	OperationSetSignerWeight	set_signer_weight  = 8;
 	OperationSetThreshold		set_threshold 	   = 9;
 	OperationPayCoin			pay_coin           = 10;
 	OperationLog				log				   = 11;
-	OperationSetPrivilege		set_privilege	   = 12;
 }
 
 message OperationSetThreshold{
 	    int64 tx_threshold = 1;
-	    repeated OperationTypeThreshold type_thresholds = 2; //type:threshold, threshold:0 indicates deleting this type
+	    repeated OperationTypeThreshold type_thresholds = 4; //type:threshold ，threshold:0 表示删除这个类型的type
 }
 
 message Transaction {
@@ -190,8 +183,8 @@ message Trigger{
 		int64 index = 2;
 	}
 	TransactionType transaction_type = 1;
-	int64 ledger_seq = 2;  //If it is triggered by a specific block (temporarily not provided)
-	OperationTrigger transaction = 3;  //If it's a transaction triggered
+	int64 ledger_seq = 2;  //如果是特定区块触发的（暂时未提供）
+	OperationTrigger transaction = 3;  //如果是交易触发的
 	
 }
 
@@ -222,9 +215,9 @@ message TransactionEnvSet{
 }
 
 message ConsensusValueValidation {
-	repeated int32 expire_tx_ids = 1;  //Contract execution expired
+	repeated int32 expire_tx_ids = 1;  //contract execute expired
 	repeated int32 error_tx_ids = 2;
-	//May contain other checks
+	//may contain other check
 }
 
 message ConsensusValue{
@@ -241,10 +234,11 @@ message Contract{
     enum ContractType{
 		JAVASCRIPT = 0;
 	}
-	ContractType type = 1;
-	string payload = 2;
+	ContractType type = 1; //合约类型
+	string payload = 2;	   //合约内容,js 代码
 }
 
+//创建账户
 message OperationCreateAccount{
 	string dest_address = 1;
 	Contract contract = 2;
@@ -258,6 +252,6 @@ message OperationCreateAccount{
 message OperationSetMetadata{
 	string	key = 1;  
 	string  value = 2;
-	int64 	version = 3; //Optional. The version number of metadata. If set, it must be the same as the existing metadata_version of the account.
+	int64 	version = 3; //可选。metadata的版本号。如果设置了，必须和帐号现有的metadata_version相同。
 	bool    delete_flag = 4;
 }

@@ -18,6 +18,7 @@
 
 #include <unordered_map>
 #include <utils/headers.h>
+#include <utils/sqlparser.h>
 #include <json/json.h>
 #include "general.h"
 #include "configure_base.h"
@@ -122,12 +123,9 @@ namespace phantom {
 		bool Initialize(const DbConfigure &db_config, bool bdropdb);
 		bool Exit();
 
-		KeyValueDb *keyvalue_db();   //Store other data except account, legder and transaction.
-		KeyValueDb *account_db();   //Store account tree.
-		KeyValueDb *ledger_db();    //Store transactions and ledgers.
-
-		//Lock the account db and ledger db to make the databases in synchronization.
-		utils::ReadWriteLock account_ledger_lock_;
+		KeyValueDb *keyvalue_db();   //storage others
+		KeyValueDb *account_db();   //storage account tree
+		KeyValueDb *ledger_db();    //storage transaction and ledger
 
 		virtual void OnTimer(int64_t current_time) {};
 		virtual void OnSlowTimer(int64_t current_time);

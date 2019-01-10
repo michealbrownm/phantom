@@ -94,7 +94,7 @@ namespace phantom{
 		else if (stat == 0)
 			return false;
 		else{
-			PROCESS_EXIT("Failed to read database. %s", mdb_->error_desc().c_str());
+			PROCESS_EXIT("database read failed. %s", mdb_->error_desc().c_str());
 		}
 	}
 
@@ -121,7 +121,7 @@ namespace phantom{
 			return false;
 		}
 		else{
-			PROCESS_EXIT("Failed to read storage. %s", mdb_->error_desc().c_str());
+			PROCESS_EXIT("storage read failed. %s", mdb_->error_desc().c_str());
 		}
 	}
 

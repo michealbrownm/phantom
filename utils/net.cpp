@@ -705,7 +705,7 @@ bool utils::AsyncSocketTcp::AsyncConnect(const utils::InetAddress &server) {
 			OnConnect();
 		}
 		else {
-			LOG_ERROR("Failed to asynchronous connect, pointer address: " FMT_U64 ", network address: %s", (uint64_t)this, peer_address_.ToIpPort().c_str());
+			LOG_ERROR("On connect err pointer " FMT_U64 " %s", (uint64_t)this, peer_address_.ToIpPort().c_str());
 			utils::set_error_code(ec.value());
 			OnError();
 		}

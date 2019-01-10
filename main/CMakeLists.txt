@@ -17,10 +17,10 @@ set(APP_PHANTOM_SRC
 set(INNER_LIBS phantom_glue phantom_ledger phantom_consensus phantom_overlay phantom_common phantom_utils phantom_proto phantom_http phantom_ed25519 phantom_monitor)
 set(V8_LIBS v8_base v8_libbase v8_external_snapshot v8_libplatform v8_libsampler icui18n icuuc inspector)
 
-#Generate executable files
+#generate executable file
 add_executable(${APP_PHANTOM} ${APP_PHANTOM_SRC})
 
-#Specify dependent libraries for target objects
+#specify dependent libraries for target obj
 	
 IF (${OS_NAME} MATCHES "OS_LINUX")  
     MESSAGE(STATUS "current platform: Linux ")  
@@ -33,7 +33,7 @@ ELSE ()
 ENDIF () 
 
 
-#Specify compiling options for target objets
+#specify compile options for target obj
 target_compile_options(${APP_PHANTOM}
     PUBLIC -std=c++11 
     PUBLIC -DASIO_STANDALONE

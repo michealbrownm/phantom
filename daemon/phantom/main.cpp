@@ -38,7 +38,7 @@
 	} while (false)
 	
 	FILE* fp;
-	time_t   now;         //Instantiate the time_t structure
+	time_t   now;         //实例化time_t结构
 	char tmp[512]; 
 	bool g_enable_ = false;
 
@@ -127,16 +127,16 @@
 			pthread_mutexattr_setpshared(&mattr, PTHREAD_PROCESS_SHARED);
 			pthread_mutex_init(mptr, &mattr);
 
-			void *shm = NULL;//The original initial address for shared memory allocated
-			int64_t *shared;//Point to shm
-			int shmid;//Identifier for shared memory
-			//Create shared memory
+			void *shm = NULL;//分配的共享内存的原始首地址
+			int64_t *shared;//指向shm
+			int shmid;//共享内存标识符
+			//创建共享内存
 			shmid = shmget((key_t)1234, sizeof(int64_t), 0666 | IPC_CREAT);
 			if (shmid == -1) {
 				LOG("shmget failed");
 				break;
 			}
-			//Connect shared memory to the address space for the current progress
+			//将共享内存连接到当前进程的地址空间
 			shm = shmat(shmid, 0, 0);
 			if (shm == (void*)-1) {
 				break;
@@ -147,7 +147,7 @@
 
 			g_enable_ = true;
 			InstallSignal();
-			while (g_enable_)//Read data from shared memory
+			while (g_enable_)//读取共享内存中的数据
 			{
 				sleep(100);
 				pthread_mutex_lock(mptr);
@@ -159,12 +159,12 @@
 				last = *shared;
 				pthread_mutex_unlock(mptr);
 			}
-			//Separate shared memory from the current progress
+			//把共享内存从当前进程中分离
 			if (shmdt(shm) == -1) {
 				LOG("shmdt failed");
 				break;
 			}
-			//Delete shared memory
+			//删除共享内存
 			if (shmctl(shmid, IPC_RMID, 0) == -1) {
 				LOG("shmctl(IPC_RMID) failed");
 				break;

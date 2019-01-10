@@ -49,10 +49,10 @@ namespace phantom {
 		int64_t replica_id_;
 		std::map<std::string, int64_t> validators_;
 
-		//Lock the instance
+		//lock the instance
 		utils::Mutex lock_;
 
-		//Notify
+		//notify
 		IConsensusNotify *notify_;
 
 		int32_t CheckValue(const std::string &value);

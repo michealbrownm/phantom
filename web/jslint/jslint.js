@@ -300,9 +300,9 @@ const jslint = (function JSLint() {
         "Set", "String", "Symbol", "SyntaxError", "TypeError"
     ];
 	
-    const useable_standard = ["log", "getBalance", "getAccountAsset", "storageLoad", "getBlockHash", "contractQuery", "getValidators", "int64Add", "int64Sub", "int64Mul", "int64Mod", "int64Div", "int64Compare", "assert", "storageStore", "storageDel", "configFee", "setValidators", "payCoin", "sender", "thisAddress", "main", "query", "init", "callJslint", "trigger", "triggerIndex", "consensusValue", "thisPayCoinAmount", "thisPayAsset", "blockTimestamp", "blockNumber", "addressCheck", "tlog", "toBaseUnit", "stoI64Check", "issueAsset", "payAsset"];
+    const useable_standard = ["log", "getBalance", "getAccountAsset", "storageLoad", "getBlockHash", "contractQuery", "getValidators", "int64Plus", "int64Sub", "int64Mul", "int64Mod", "int64Div", "int64Compare", "assert", "storageStore", "storageDel", "configFee", "setValidators", "payCoin", "sender", "thisAddress", "main", "query", "init", "callJslint", "trigger", "triggerIndex", "consensusValue", "thisPayCoinAmount", "thisPayAsset", "blockTimestamp", "blockNumber", "addressCheck", "tlog", "toBaseUnit"];
 	
-    const do_not_use_internal_func = ["internal_check_time", "internal_hello_test", "localeCompare"];
+    const do_not_use_internal_func = ["internal_check_time", "internal_hello_test"];
 
     const bundle = {
 
@@ -2526,7 +2526,7 @@ const jslint = (function JSLint() {
     infix("*", 140);
     infix("/", 140);
     infix("%", 140);
-    //infixr("**", 150);
+    infixr("**", 150);
     infix("(", 160, function (left) {
         const the_paren = token;
         let the_argument;
@@ -3633,9 +3633,6 @@ const jslint = (function JSLint() {
         return the_throw;
     });
     stmt("try", function () {
-		//donot use try
-		warn("undeclared_a", token);
-		
         let the_catch;
         let the_disrupt;
         const the_try = token;
@@ -4906,7 +4903,6 @@ const jslint = (function JSLint() {
 // The jslint function itself.
 
     return function jslint(source, option_object, global_array) {
-        let exception_message = "";
         try {
             warnings = [];
             option = Object.assign(empty(), option_object);
@@ -5008,7 +5004,6 @@ const jslint = (function JSLint() {
         } catch (e) {
             if (e.name !== "JSLintError") {
                 warnings.push(e);
-                exception_message = e.message;
             }
         }
         return {
@@ -5028,7 +5023,6 @@ const jslint = (function JSLint() {
             stop: early_stop,
             tokens: tokens,
             tree: tree,
-            exception_message: exception_message,
             warnings: warnings.sort(function (a, b) {
                 return a.line - b.line || a.column - b.column;
             })
@@ -5046,11 +5040,6 @@ function callJslint(js_value, global_string) {
 	var rx_separator = /[\s,;'"]+/;
 	var pre_defined = (global_string === "") ? undefined : global_string.split(rx_separator);
 	var data = jslint(js_value, option_array, pre_defined); 
-	if( data.exception_message.length > 0 )
-	{
-	    let exception_json = {}
-	    exception_json["error"] = data.exception_message;
-	    return JSON.stringify(exception_json);
-	}
+
 	return JSON.stringify(data.warnings);
 }

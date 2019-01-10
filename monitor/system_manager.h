@@ -33,7 +33,7 @@ namespace phantom {
 
 	private:
 		utils::System system_;      // os
-		double cpu_used_percent_;   // cpu percentage
+		double cpu_used_percent_;   // cpu percent
 		int64_t check_interval_;    // timer interval
 		int64_t last_check_time_;   // last check time
 	};

@@ -27,7 +27,7 @@
 #endif
 
 namespace utils {
-	// Seconds
+	// seconds
 	static const int64_t  MILLI_UNITS_PER_SEC = 1000;
 	static const int64_t  MICRO_UNITS_PER_MILLI = 1000;
 	static const int64_t  NANO_UNITS_PER_MICRO = 1000;
@@ -51,7 +51,7 @@ namespace utils {
 	static const int32_t   MAX_INT32 = 0x7FFFFFFF;
 	static const int64_t   MAX_INT64 = 0x7FFFFFFFFFFFFFFF;
 
-	// Low-high
+	// low-high
 	static const uint64_t LOW32_BITS_MASK = 0xffffffffULL;
 	static const uint64_t HIGH32_BITS_MASK = 0xffffffff00000000ULL;
 

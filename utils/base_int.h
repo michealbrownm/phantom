@@ -506,43 +506,5 @@ namespace utils {
 	bool bigDivide(int64_t& result, int64_t A, int64_t B, int64_t C);
 	bool bigDivide(uint64_t& result, uint64_t A, uint64_t B, uint64_t C);
 	int64_t  bigDivide(int64_t A, int64_t B, int64_t C);
-
-	//CAUTION: not suitable for all kinds of unsigned integer
-	template<class T>
-	bool SafeIntMul(T x, T y, T& r){
-		T mul = x * y;
-
-		bool safe = x == 0 || mul / x == y;
-		if (safe) r = mul;
-
-		return safe;
-	}
-
-	//CAUTION: not suitable for all kinds of unsigned integer
-	template<class T>
-	bool SafeIntAdd(T x, T y, T& r){
-		T sum = x + y;
-
-		bool negOver = x < 0 && y < 0 && sum >= 0;
-		bool posOver = x >= 0 && y >= 0 && sum < 0;
-		bool safe = !negOver && !posOver;
-
-		if (safe) r = sum;
-
-		return safe;
-	}
-
-	//CAUTION: not suitable for all kinds of unsigned integer
-	template<class T>
-	bool SafeIntSub(T x, T y, T& r){
-		T dif = x - y;
-		bool negOver = x < 0 && y >= 0 && dif >= 0;
-		bool posOver = x >= 0 && y < 0 && dif <= 0;
-		bool safe = !negOver && !posOver;
-		
-		if (safe) r = dif;
-
-		return safe;
-	}
 }
 #endif

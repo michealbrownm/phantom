@@ -118,10 +118,10 @@ namespace phantom {
 		int64_t view_number_;
 		int64_t seq;
 		PbftViewChangeMap viewchanges_;
-		protocol::PbftPreparedSet pre_prepared_env_set; // Last prepared related pre-prepared env
+		protocol::PbftPreparedSet pre_prepared_env_set; // last prepared related pre-prepared env
 		uint32_t view_change_round_;
 
-		PbftPhaseVector msg_buf_; //View change message
+		PbftPhaseVector msg_buf_; //view change message
 
 		int64_t start_time_;
 		int64_t last_propose_time_;

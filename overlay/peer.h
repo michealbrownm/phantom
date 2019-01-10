@@ -22,7 +22,7 @@
 namespace phantom {
 	typedef std::shared_ptr<protocol::WsMessage> WsMessagePointer;
 
-	// Provide p2p network interface
+	// provide p2p network interface
 	class IPeerManagerNotify {
 	public:
 		IPeerManagerNotify();
@@ -53,7 +53,7 @@ namespace phantom {
 		bool IsActive() const;
 		std::string GetPeerNodeAddress() const;
 		int64_t GetActiveTime() const;
-		//int64_t GetDelay() const;   modified by lqh
+		int64_t GetDelay() const;
 
 		bool SendPeers(const protocol::Peers &db_peers, std::error_code &ec);
 		void SetPeerInfo(const protocol::Hello &hello);
@@ -61,7 +61,7 @@ namespace phantom {
 		bool SendHello(int32_t listen_port, const std::string &node_address, const int64_t &network_id, const std::string &node_rand, std::error_code &ec);
 
 		virtual void ToJson(Json::Value &status) const;
-		//virtual bool OnNetworkTimer(int64_t current_time);  modified by lqh
+		virtual bool OnNetworkTimer(int64_t current_time);
 	};
 }
 

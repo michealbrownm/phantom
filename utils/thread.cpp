@@ -72,30 +72,6 @@ bool utils::Thread::Start(std::string name) {
 	pthread_attr_init(&object_attr);
 	pthread_attr_setdetachstate(&object_attr, PTHREAD_CREATE_DETACHED);
 
-   	//Check and keep min stack 2 Mb on linux
-	size_t stacksize = 0;
-	ret = pthread_attr_getstacksize(&object_attr, &stacksize);
-	if(ret != 0) {
-		printf("get stacksize error!:%d\n", (int)stacksize);
-		pthread_attr_destroy(&object_attr);
-		return false;
-	}
-
-	if(stacksize <= 2 * 1024 * 1024)
-	{
-		printf("linux default pthread statck size:%d\n", (int)stacksize);
-		stacksize = 2 * 1024 * 1024;
-		printf("set pthread statck size:%d\n", (int)stacksize);
-
-		ret = pthread_attr_setstacksize(&object_attr, stacksize);
-		if (ret != 0) {
-			printf("set stacksize error!:%d\n", (int)stacksize);
-			pthread_attr_destroy(&object_attr);
-			return false;
-		}
-	}
-
-
 	ret = pthread_create(&handle_, &object_attr, threadProc, (void *)this);
 	result = (0 == ret);
 	thread_id_ = handle_;
@@ -104,29 +80,6 @@ bool utils::Thread::Start(std::string name) {
 	pthread_attr_t object_attr;
 	pthread_attr_init(&object_attr);
 	pthread_attr_setdetachstate(&object_attr, PTHREAD_CREATE_DETACHED);
-
-	//Warning, the default mac is set to 512Kb. It should be set larger
-	size_t stacksize = 0;
-	ret = pthread_attr_getstacksize(&object_attr, &stacksize);
-	if(ret != 0) {
-		printf("get stacksize error!:%d\n", (int)stacksize);
-		pthread_attr_destroy(&object_attr);
-		return false;
-	}
-
-	printf("mac default pthread statck size:%d\n", (int)stacksize);
-	if(stacksize <= 2 * 1024 * 1024)
-	{
-		stacksize = 2 * 1024 * 1024;
-		printf("set pthread statck size:%d\n", (int)stacksize);
-
-		ret = pthread_attr_setstacksize(&object_attr, stacksize);
-		if (ret != 0) {
-			printf("set stacksize error!:%d\n", (int)stacksize);
-			pthread_attr_destroy(&object_attr);
-			return false;
-		}
-	}
 
 	ret = pthread_create(&handle_, &object_attr, threadProc, (void *)this);
 	result = (0 == ret);
@@ -202,7 +155,7 @@ void utils::Thread::Run() {
 
 bool utils::Thread::SetCurrentThreadName(std::string name) {
 #ifdef WIN32
-	//Not supported
+	//not supported
 	return true;
 #elif defined OS_LINUX
 	return 0 == prctl(PR_SET_NAME, name.c_str(), 0, 0, 0);
@@ -348,7 +301,7 @@ bool utils::Semaphore::Wait(uint32_t millisecond) {
 		ret = sem_wait(&sem_);
 	}
 	else {
-		//Waring, mac 10.13 has no sem_timedwait?
+		//waring, mac 10.13 has no sem_timedwait?
 		usleep(1000 * millisecond);
 	}
 

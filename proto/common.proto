@@ -1,6 +1,6 @@
 syntax = "proto3";
 package protocol;
-option java_package = "io.phantom.sdk.core.extend.protobuf";
+option java_package = "org.phantom.sdk.core.extend.protobuf";
 
 message KeyPair{
 	string key = 1;
@@ -14,7 +14,7 @@ message Signature {
 }
 
 message LedgerUpgrade{
-	int64 new_ledger_version = 1; //will be processed as required at verion 2.1.0.0
+	int64 new_ledger_version = 1; //will be process as required at verion 2.1.0.0
 	string new_validator = 2; //for hardfork
 }
 
@@ -44,7 +44,6 @@ enum ERRORCODE
 	ERRCODE_NOT_EXIST						= 4;
 	ERRCODE_TX_TIMEOUT						= 5;
 	ERRCODE_ACCESS_DENIED				    = 6;
-	ERRCODE_MATH_OVERFLOW				    = 7;
 	
 	ERRCODE_EXPR_CONDITION_RESULT_FALSE    = 20;
 	ERRCODE_EXPR_CONDITION_SYNTAX_ERROR    = 21;
@@ -67,7 +66,6 @@ enum ERRORCODE
 	ERRCODE_ACCOUNT_INIT_LOW_RESERVE = 106;
 
 	ERRCODE_FEE_NOT_ENOUGH					= 111;
-	ERRCODE_FEE_INVALID    					= 112;
 	ERRCODE_OUT_OF_TXCACHE					= 114;
 
 	ERRCODE_WEIGHT_NOT_VALID				= 120;

@@ -34,7 +34,7 @@ namespace utils {
 #ifdef WIN32
 
 #else
-		//Initialize mutex
+		//��������ʼ��
 		int fd;
 		pthread_mutexattr_t mattr;
 		fd = open("/dev/zero", O_RDWR, 0);
@@ -44,20 +44,20 @@ namespace utils {
 		pthread_mutexattr_setpshared(&mattr, PTHREAD_PROCESS_SHARED);
 		pthread_mutex_init(mptr, &mattr);
 
-		//Allocate shared memory
+		//���������ڴ�
 		shmid = shmget((key_t)key, sizeof(int64_t), 0666 | IPC_CREAT);
 		if (shmid == -1) {
-			LOG_ERROR("Failed to initialize daemon, invalid shmget");
+			LOG_ERROR("shmget failed");
 			return true;
 		}
-		//Attach the shared memory at the the current thread 
+		//�������ڴ����ӵ���ǰ���̵ĵ�ַ�ռ�
 		shm = shmat(shmid, (void*)0, 0);
 		if (shm == (void*)-1) {
-			LOG_ERROR("Failed to initialize daemon, invalid shmget");
+			LOG_ERROR("shmat failed\n");
 			return false;
 		}
-		LOG_INFO("Attached to shared memory address at %lx\n", (unsigned long int)shm);
-		//Set the shared memory
+		LOG_INFO("Memory attached at %lx\n", (unsigned long int)shm);
+		//���ù����ڴ�
 		shared = (int64_t*)shm;
 
 #endif
@@ -67,9 +67,9 @@ namespace utils {
 	bool Daemon::Exit() {
 #ifdef WIN32
 #else
-		//Detach the shared memory from the current thread
+		//�ѹ����ڴ�ӵ�ǰ�����з���
 		if (shmdt(shm) == -1) {
-			LOG_ERROR("Failed to exit daemon,shmdt failed");
+			LOG_ERROR("shmdt failed");
 			return false;
 		}
 		return true;

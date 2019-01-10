@@ -1,6 +1,6 @@
 syntax = "proto3";
 package monitor;
-option java_package = "io.phantom.sdk.core.extend.protobuf";
+option java_package = "org.phantom.sdk.core.extend.protobuf";
 
 import "chain.proto";
 

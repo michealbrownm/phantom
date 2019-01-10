@@ -104,9 +104,22 @@ namespace phantom {
 		PrivateKeyPrefix prefix_tmp;
 		SignatureType sign_type_tmp = SIGNTYPE_NONE;
 		std::string buff = DecodeAddress(encode_key);
+		/***************************************
+        modified  by luquanhui   modify 20181109
+
 		if (buff.size() == 27 && (uint8_t)buff.at(0) == 0X01 && (uint8_t)buff.at(1) == 0X56){// Address
 			prefix_tmp = ADDRESS_PREFIX;
 		}
+		***************************************/
+	    
+       /***************************************
+        modified  by luquanhui   begin 20181109
+		//
+		***************************************/
+
+		if (buff.size() == 29 && (uint8_t)buff.at(0) == 0X12 && (uint8_t)buff.at(1) == 0X1E  && (uint8_t)buff.at(2) == 0X0D && (uint8_t)buff.at(3) == 0XA4){// Address
+			prefix_tmp = ADDRESS_PREFIX;
+		}/****  modified  by luquanhui   end 20181109   *****/
 		else if (buff.size() == 41 && (uint8_t)buff.at(0) == 0XDA && (uint8_t)buff.at(1) == 0X37 && (uint8_t)buff.at(2) == 0X9F){//private key
 			prefix_tmp = PRIVATEKEY_PREFIX;
 		}
@@ -118,9 +131,27 @@ namespace phantom {
 
 		bool ret = true;
 		if (prefix_tmp == ADDRESS_PREFIX) {
+        /***************************************
+        modified  by luquanhui   modify 20181109
+		//
+		
 			uint8_t a = (uint8_t)buff.at(2); 
 			sign_type_tmp = (SignatureType)a;   
 			size_t datalen = buff.size() - 7;
+        ***************************************/
+
+		/***************************************
+        modified  by luquanhui   begin 20181109
+		//
+		***************************************/
+			uint8_t a = (uint8_t)buff.at(4); 
+			sign_type_tmp = (SignatureType)a;   
+			size_t datalen = buff.size() - 9;
+        /***************************************
+        modified  by luquanhui   end 20181109
+		//
+		***************************************/
+
 			switch (sign_type_tmp) {
 			case SIGNTYPE_ED25519:{
 				ret = (ED25519_ADDRESS_LENGTH == datalen);
@@ -166,7 +197,28 @@ namespace phantom {
 			prefix = prefix_tmp;
 			sign_type = sign_type_tmp;
 			if (prefix_tmp == ADDRESS_PREFIX) {
-				raw_data = buff.substr(3, buff.size() - 7);
+
+				
+		/***************************************
+        modified  by luquanhui    20181109
+		//
+
+        raw_data = buff.substr(3, buff.size() - 7);
+
+		***************************************/
+
+
+		/***************************************
+        modified  by luquanhui   begin 20181109
+		//
+		***************************************/
+				raw_data = buff.substr(5, buff.size() - 9);
+
+		/***************************************
+        modified  by luquanhui   end 20181109
+		//
+		***************************************/
+
 			}
 			else if (prefix_tmp == PRIVATEKEY_PREFIX) {
 				raw_data = buff.substr(4, buff.size() - 9);
@@ -230,12 +282,35 @@ namespace phantom {
 		
 		std::string str_result = "";
 		//Append prefix (phantom 0XE6 0X9A 0X73 0XFF)
+
+		/**************************************
+	    modified  by luquanhui 20181109
 		//Append prefix (bu)
+		
 		str_result.push_back((char)0X01);
 		str_result.push_back((char)0X56);
 
 		//Append version 1byte
 		str_result.push_back((char)type_);
+        
+        ***************************************/
+
+
+        /***************************************
+        modified  by luquanhui   begin 20181109
+		//Append prefix (phos)
+		***************************************/
+        str_result.push_back((char)0X12);
+		str_result.push_back((char)0X1E);
+		str_result.push_back((char)0X0D);
+		str_result.push_back((char)0XA4);
+
+        //Append version 1byte
+		str_result.push_back((char)type_);
+
+	    /**************************************
+        modified  by luquanhui   end  20181109
+		***************************************/
 
 		//Append public key 20byte
 		std::string hash = CalcHash(raw_pub_key_,type_);

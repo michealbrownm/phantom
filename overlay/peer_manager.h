@@ -59,7 +59,7 @@ namespace phantom {
 		virtual void GetModuleStatus(Json::Value &data);
 
 	private:
-		
+		//high way to deliver urgent message asap
 		PeerNetwork *consensus_network_;
 
 		utils::Thread *thread_ptr_;

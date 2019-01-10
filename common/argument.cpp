@@ -37,55 +37,64 @@ namespace phantom {
 	bool Argument::Parse(int argc, char *argv[]) {
 		if (argc > 1) {
 			std::string s(argv[1]);
-            if (s == "--console-with-cmd") {
-                static std::set<std::string> support_cmd = {
-                    "--sign-data",
-                    "--sign-data-with-keystore",
-                    "--check-address",
-                    "--check-keystore",
-                    "--check-signed-data",
-                    "--get-address",
-                    "--get-address-from-pubkey",
-                    "--get-privatekey-from-keystore",
-                    "--create-account",
-                    "--create-keystore",
-                    "--create-keystore-from-privatekey"
-                };
+			if (s == "--console-with-cmd") {
+				std::deque<std::vector<char>> params;
+				std::string str_input;
+                std::stringstream ss_input;
+				static std::set<std::string> support_cmd = {
+					"--sign-data",
+					"--sign-data-with-keystore",
+					"--check-address",
+					"--check-keystore",
+					"--check-signed-data",
+					"--get-address",
+					"--get-address-from-pubkey",
+					"--get-privatekey-from-keystore",
+					"--create-account",
+					"--create-keystore",
+					"--create-keystore-from-privatekey"
+				};
 
-                std::cout << "enter console command mode" << std::endl;
+				std::cout << "enter console command mode" << std::endl;
+				
+				do {
+					params.clear();
+					try
+					{
+						std::string input2str;
+                        std::getline(std::cin, str_input);
+                        ss_input.clear();
+                        ss_input.str(str_input);
+                        while (ss_input >> str_input) {
+							utils::String::HexStringToBin(str_input, input2str);
+							params.emplace_back(input2str.begin(), input2str.end());
+							params.back().push_back('\0');
+						}
 
-                do {
-                    std::string input;
-                    std::getline(std::cin, input);
-                    utils::StringVector args_vec = utils::String::Strtok(input, ' ');
-                    args_vec.insert(args_vec.begin(), utils::String::BinToHexString(argv[0]));
-                    if (args_vec.size() < 1 || args_vec.size() > 9) {
-                        std::cout << "error" << std::endl;
-                        break;
-                    }
+						if (params.size() > 0 && support_cmd.find(std::string(params.front().data())) != support_cmd.end()) {
+							// construct argc and argv
+							std::vector<char*> new_argv;
+							new_argv.emplace_back(argv[0]);
+							for (auto& i : params)
+								new_argv.push_back(i.data());
 
-                    char* tmp_argv[10];
-                    for (size_t i = 0; i < args_vec.size(); i++) {
-                        args_vec[i] = utils::String::HexStringToBin(args_vec[i]);
-                        tmp_argv[i] = (char *)args_vec[i].c_str();
-                    }
-
-                    if (strcmp(tmp_argv[0], "exit") == 0) {
-                        std::cout << "exit" << std::endl;
-                        break;
-                    }
-
-                    //Search for the user input command in the command set.
-                    if (support_cmd.find(tmp_argv[1]) == support_cmd.end()) {
-                        std::cout << "error, command not found" << std::endl;
-                        break;
-                    }
-
-                    Parse(args_vec.size(), tmp_argv);
-
-                } while (true);
-                return true;
-            }
+							Parse(new_argv.size(), new_argv.data());
+						}
+						else if (std::string(params.front().data()) == "exit") {
+							break;
+						}
+						else {
+							std::cout << "error" << std::endl;
+						}
+					}
+					catch (std::exception e)
+					{
+						std::cout << "error" << std::endl;
+					}
+					
+				} while (true);
+				return true;
+			}
 			else if (s == "--dropdb") {
 				drop_db_ = true;
 			}
@@ -109,7 +118,7 @@ namespace phantom {
 				return true;
 			}
 			//else if (s == "--aes-decrypt"  && argc > 2) {
-			//	printf("%s\n", utils::Aes::HexDecrypto(argv[2], phantom::GetDataSecuretKey()).c_str());
+			//	printf("%s\n", utils::Aes::HexDecrypto(argv[2], bubi::GetDataSecuretKey()).c_str());
 			//	return true;
 			//}
 			else if (s == "--sm3" ) {
@@ -142,9 +151,9 @@ namespace phantom {
 			}
 			else if (s == "--version") {
 #ifdef SVNVERSION
-				printf("%s,%u; " SVNVERSION "\n", General::phantom_VERSION, General::LEDGER_VERSION);
+				printf("%s,%u; " SVNVERSION "\n", General::PHANTOM_VERSION, General::LEDGER_VERSION);
 #else
-				printf("%s,%u\n", General::phantom_VERSION, General::LEDGER_VERSION);
+				printf("%s,%u\n", General::PHANTOM_VERSION, General::LEDGER_VERSION);
 #endif 
 				return true;
 			}
@@ -266,95 +275,6 @@ namespace phantom {
 				return true;
 			}
 
-			else if (s == "--create-keystore-list") {
-				std::string path = argc > 3 ? argv[2] : "";
-				int nums = argc > 3 ? utils::String::Stoi(argv[3]) : 0;
-				std::string password;
-
-				if (4 == argc) {
-					password = utils::GetCinPassword("input the password:");
-					std::cout << std::endl;
-					if (password.empty()) {
-						std::cout << "error, empty" << std::endl;
-						return true;
-					}
-					std::string password1 = utils::GetCinPassword("input the password again:");
-					std::cout << std::endl;
-					if (password != password1) {
-						std::cout << "error, not match" << std::endl;
-						return true;
-					}
-				}
-				else if(5 == argc){
-					password = argv[4];
-				}
-
-				if (path.empty() || nums <= 0 || password.empty()){
-					Usage();
-					return true;
-				}
-
-				if (!utils::File::IsExist(path) && !utils::File::CreateDir(path)){
-					printf("create dir false, path:%s, make sure the path exists\n", path.c_str());
-					return true;
-				}
-
-				utils::File file;
-				std::string address_path = utils::File::RegularPath(utils::String::Format("%s/address_list", path.c_str()));
-				if (!file.Open(address_path, utils::File::FILE_M_APPEND | utils::File::FILE_M_TEXT)){
-					printf("open file failure, path:%s\n", address_path.c_str());
-					return true;
-				}
-				long long a = nums;
-				int count = 0;
-				while (a != 0) {
-					a /= 10;
-					count++;
-				}
-				//std::string str_count = utils::String::Format("%d", count);
-
-				for (int i = 0; i < nums; i++){
-					KeyStore key_store;
-					std::string new_priv_key;
-					Json::Value key_store_json;
-					bool ret = key_store.Generate(password, key_store_json, new_priv_key);
-					if (ret) {
-						std::string format_key = utils::String::Format("%%s/%%0%dd-%%s.wallet", count);
-						std::string format_address = utils::String::Format("%%0%dd-%%s%%s", count);
-						std::string key_path = utils::File::RegularPath(utils::String::Format(format_key.c_str(), path.c_str(), i + 1, key_store_json["address"].asString().c_str()));
-						std::string key_store_result = key_store_json.toFastString();
-
-						std::string address = utils::String::Format(format_address.c_str(), i + 1, key_store_json["address"].asString().c_str(),
-#ifdef WIN32
-							"\n"
-#else
-							"\r\n"
-#endif // DEBUG 
-							);
-
-						if (address.size() != file.Write(address.c_str(), 1, address.size())){
-							printf("write file failure, path:%s\n", path.c_str());
-						}
-
-						utils::File file_list;
-						if (!file_list.Open(key_path, utils::File::FILE_M_WRITE | utils::File::FILE_M_TEXT)){
-							printf("open file failure, path:%s\n", key_path.c_str());
-							return true;
-						}
-
-						if (key_store_result.size() != file_list.Write(key_store_result.c_str(), 1, key_store_result.size())){
-							printf("write file failure, path:%s\n", path.c_str());
-						}
-
-						file_list.Close();
-					}
-					else {
-						printf("error");
-					}
-				}
-				file.Close();
-				return true;
-			}
 			else if (s == "--create-keystore-from-privatekey") {
 				std::string password;
 				if (argc <= 3) {
@@ -534,7 +454,6 @@ namespace phantom {
 			"  --create-hardfork                                             create hard fork ledger\n"
 			"  --clear-peer-addresses                                        clear peer list\n"
 			"  --create-keystore <password>                                  create key store\n"
-			"  --create-keystore-list <path> <nums> <password>               create a number of keystores into path with same password\n"
 			"  --create-keystore-from-privatekey <private key> <password>    create key store from private key\n"
 			"  --sign-data-with-keystore <keystore> <password> <blob data>   sign blob data with keystore\n"
 			"  --check-keystore <keystore> <password>                        check password match the keystore\n"

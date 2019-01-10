@@ -44,14 +44,14 @@ namespace phantom {
 	}
 
 	std::string Monitor::GetPeerNodeAddress() const {
-		return phantom_node_address_;
+		return bubi_node_address_;
 	}
 
-	void Monitor::SetPhantomInfo(const protocol::ChainStatus &hello) {
+	void Monitor::SetBubiInfo(const protocol::ChainStatus &hello) {
 		monitor_version_ = hello.monitor_version();
-		phantom_ledger_version_ = hello.ledger_version();
+		bubi_ledger_version_ = hello.ledger_version();
 		phantom_version_ = hello.phantom_version();
-		phantom_node_address_ = hello.self_addr();
+		bubi_node_address_ = hello.self_addr();
 	}
 
 	bool Monitor::SendHello(int32_t listen_port, const std::string &node_address, std::error_code &ec) {

@@ -42,9 +42,9 @@ const ::google::protobuf::internal::GeneratedMessageReflection*
 const ::google::protobuf::Descriptor* Ledger_descriptor_ = NULL;
 const ::google::protobuf::internal::GeneratedMessageReflection*
   Ledger_reflection_ = NULL;
-const ::google::protobuf::Descriptor* OperationPayAsset_descriptor_ = NULL;
+const ::google::protobuf::Descriptor* OperationPayment_descriptor_ = NULL;
 const ::google::protobuf::internal::GeneratedMessageReflection*
-  OperationPayAsset_reflection_ = NULL;
+  OperationPayment_reflection_ = NULL;
 const ::google::protobuf::Descriptor* OperationTypeThreshold_descriptor_ = NULL;
 const ::google::protobuf::internal::GeneratedMessageReflection*
   OperationTypeThreshold_reflection_ = NULL;
@@ -66,9 +66,6 @@ const ::google::protobuf::internal::GeneratedMessageReflection*
 const ::google::protobuf::Descriptor* OperationLog_descriptor_ = NULL;
 const ::google::protobuf::internal::GeneratedMessageReflection*
   OperationLog_reflection_ = NULL;
-const ::google::protobuf::Descriptor* OperationSetPrivilege_descriptor_ = NULL;
-const ::google::protobuf::internal::GeneratedMessageReflection*
-  OperationSetPrivilege_reflection_ = NULL;
 const ::google::protobuf::Descriptor* Operation_descriptor_ = NULL;
 const ::google::protobuf::internal::GeneratedMessageReflection*
   Operation_reflection_ = NULL;
@@ -259,23 +256,23 @@ void protobuf_AssignDesc_chain_2eproto() {
       sizeof(Ledger),
       GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(Ledger, _internal_metadata_),
       GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(Ledger, _is_default_instance_));
-  OperationPayAsset_descriptor_ = file->message_type(7);
-  static const int OperationPayAsset_offsets_[3] = {
-    GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(OperationPayAsset, dest_address_),
-    GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(OperationPayAsset, asset_),
-    GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(OperationPayAsset, input_),
+  OperationPayment_descriptor_ = file->message_type(7);
+  static const int OperationPayment_offsets_[3] = {
+    GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(OperationPayment, dest_address_),
+    GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(OperationPayment, asset_),
+    GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(OperationPayment, input_),
   };
-  OperationPayAsset_reflection_ =
+  OperationPayment_reflection_ =
     ::google::protobuf::internal::GeneratedMessageReflection::NewGeneratedMessageReflection(
-      OperationPayAsset_descriptor_,
-      OperationPayAsset::default_instance_,
-      OperationPayAsset_offsets_,
+      OperationPayment_descriptor_,
+      OperationPayment::default_instance_,
+      OperationPayment_offsets_,
       -1,
       -1,
       -1,
-      sizeof(OperationPayAsset),
-      GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(OperationPayAsset, _internal_metadata_),
-      GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(OperationPayAsset, _is_default_instance_));
+      sizeof(OperationPayment),
+      GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(OperationPayment, _internal_metadata_),
+      GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(OperationPayment, _is_default_instance_));
   OperationTypeThreshold_descriptor_ = file->message_type(8);
   static const int OperationTypeThreshold_offsets_[2] = {
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(OperationTypeThreshold, type_),
@@ -390,38 +387,19 @@ void protobuf_AssignDesc_chain_2eproto() {
       sizeof(OperationLog),
       GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(OperationLog, _internal_metadata_),
       GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(OperationLog, _is_default_instance_));
-  OperationSetPrivilege_descriptor_ = file->message_type(15);
-  static const int OperationSetPrivilege_offsets_[4] = {
-    GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(OperationSetPrivilege, master_weight_),
-    GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(OperationSetPrivilege, signers_),
-    GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(OperationSetPrivilege, tx_threshold_),
-    GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(OperationSetPrivilege, type_thresholds_),
-  };
-  OperationSetPrivilege_reflection_ =
-    ::google::protobuf::internal::GeneratedMessageReflection::NewGeneratedMessageReflection(
-      OperationSetPrivilege_descriptor_,
-      OperationSetPrivilege::default_instance_,
-      OperationSetPrivilege_offsets_,
-      -1,
-      -1,
-      -1,
-      sizeof(OperationSetPrivilege),
-      GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(OperationSetPrivilege, _internal_metadata_),
-      GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(OperationSetPrivilege, _is_default_instance_));
-  Operation_descriptor_ = file->message_type(16);
-  static const int Operation_offsets_[12] = {
+  Operation_descriptor_ = file->message_type(15);
+  static const int Operation_offsets_[11] = {
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(Operation, type_),
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(Operation, source_address_),
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(Operation, metadata_),
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(Operation, create_account_),
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(Operation, issue_asset_),
-    GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(Operation, pay_asset_),
+    GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(Operation, payment_),
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(Operation, set_metadata_),
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(Operation, set_signer_weight_),
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(Operation, set_threshold_),
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(Operation, pay_coin_),
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(Operation, log_),
-    GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(Operation, set_privilege_),
   };
   Operation_reflection_ =
     ::google::protobuf::internal::GeneratedMessageReflection::NewGeneratedMessageReflection(
@@ -435,7 +413,7 @@ void protobuf_AssignDesc_chain_2eproto() {
       GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(Operation, _internal_metadata_),
       GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(Operation, _is_default_instance_));
   Operation_Type_descriptor_ = Operation_descriptor_->enum_type(0);
-  OperationSetThreshold_descriptor_ = file->message_type(17);
+  OperationSetThreshold_descriptor_ = file->message_type(16);
   static const int OperationSetThreshold_offsets_[2] = {
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(OperationSetThreshold, tx_threshold_),
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(OperationSetThreshold, type_thresholds_),
@@ -451,7 +429,7 @@ void protobuf_AssignDesc_chain_2eproto() {
       sizeof(OperationSetThreshold),
       GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(OperationSetThreshold, _internal_metadata_),
       GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(OperationSetThreshold, _is_default_instance_));
-  Transaction_descriptor_ = file->message_type(18);
+  Transaction_descriptor_ = file->message_type(17);
   static const int Transaction_offsets_[7] = {
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(Transaction, source_address_),
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(Transaction, nonce_),
@@ -473,7 +451,7 @@ void protobuf_AssignDesc_chain_2eproto() {
       GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(Transaction, _internal_metadata_),
       GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(Transaction, _is_default_instance_));
   Transaction_Limit_descriptor_ = Transaction_descriptor_->enum_type(0);
-  Signer_descriptor_ = file->message_type(19);
+  Signer_descriptor_ = file->message_type(18);
   static const int Signer_offsets_[2] = {
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(Signer, address_),
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(Signer, weight_),
@@ -490,7 +468,7 @@ void protobuf_AssignDesc_chain_2eproto() {
       GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(Signer, _internal_metadata_),
       GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(Signer, _is_default_instance_));
   Signer_Limit_descriptor_ = Signer_descriptor_->enum_type(0);
-  Trigger_descriptor_ = file->message_type(20);
+  Trigger_descriptor_ = file->message_type(19);
   static const int Trigger_offsets_[3] = {
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(Trigger, transaction_type_),
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(Trigger, ledger_seq_),
@@ -524,7 +502,7 @@ void protobuf_AssignDesc_chain_2eproto() {
       GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(Trigger_OperationTrigger, _internal_metadata_),
       GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(Trigger_OperationTrigger, _is_default_instance_));
   Trigger_TransactionType_descriptor_ = Trigger_descriptor_->enum_type(0);
-  TransactionEnv_descriptor_ = file->message_type(21);
+  TransactionEnv_descriptor_ = file->message_type(20);
   static const int TransactionEnv_offsets_[3] = {
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(TransactionEnv, transaction_),
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(TransactionEnv, signatures_),
@@ -541,7 +519,7 @@ void protobuf_AssignDesc_chain_2eproto() {
       sizeof(TransactionEnv),
       GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(TransactionEnv, _internal_metadata_),
       GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(TransactionEnv, _is_default_instance_));
-  TransactionEnvStore_descriptor_ = file->message_type(22);
+  TransactionEnvStore_descriptor_ = file->message_type(21);
   static const int TransactionEnvStore_offsets_[7] = {
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(TransactionEnvStore, transaction_env_),
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(TransactionEnvStore, error_code_),
@@ -562,7 +540,7 @@ void protobuf_AssignDesc_chain_2eproto() {
       sizeof(TransactionEnvStore),
       GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(TransactionEnvStore, _internal_metadata_),
       GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(TransactionEnvStore, _is_default_instance_));
-  TransactionEnvSet_descriptor_ = file->message_type(23);
+  TransactionEnvSet_descriptor_ = file->message_type(22);
   static const int TransactionEnvSet_offsets_[1] = {
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(TransactionEnvSet, txs_),
   };
@@ -577,7 +555,7 @@ void protobuf_AssignDesc_chain_2eproto() {
       sizeof(TransactionEnvSet),
       GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(TransactionEnvSet, _internal_metadata_),
       GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(TransactionEnvSet, _is_default_instance_));
-  ConsensusValueValidation_descriptor_ = file->message_type(24);
+  ConsensusValueValidation_descriptor_ = file->message_type(23);
   static const int ConsensusValueValidation_offsets_[2] = {
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(ConsensusValueValidation, expire_tx_ids_),
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(ConsensusValueValidation, error_tx_ids_),
@@ -593,7 +571,7 @@ void protobuf_AssignDesc_chain_2eproto() {
       sizeof(ConsensusValueValidation),
       GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(ConsensusValueValidation, _internal_metadata_),
       GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(ConsensusValueValidation, _is_default_instance_));
-  ConsensusValue_descriptor_ = file->message_type(25);
+  ConsensusValue_descriptor_ = file->message_type(24);
   static const int ConsensusValue_offsets_[7] = {
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(ConsensusValue, txset_),
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(ConsensusValue, close_time_),
@@ -614,7 +592,7 @@ void protobuf_AssignDesc_chain_2eproto() {
       sizeof(ConsensusValue),
       GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(ConsensusValue, _internal_metadata_),
       GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(ConsensusValue, _is_default_instance_));
-  Contract_descriptor_ = file->message_type(26);
+  Contract_descriptor_ = file->message_type(25);
   static const int Contract_offsets_[2] = {
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(Contract, type_),
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(Contract, payload_),
@@ -631,7 +609,7 @@ void protobuf_AssignDesc_chain_2eproto() {
       GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(Contract, _internal_metadata_),
       GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(Contract, _is_default_instance_));
   Contract_ContractType_descriptor_ = Contract_descriptor_->enum_type(0);
-  OperationCreateAccount_descriptor_ = file->message_type(27);
+  OperationCreateAccount_descriptor_ = file->message_type(26);
   static const int OperationCreateAccount_offsets_[6] = {
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(OperationCreateAccount, dest_address_),
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(OperationCreateAccount, contract_),
@@ -651,7 +629,7 @@ void protobuf_AssignDesc_chain_2eproto() {
       sizeof(OperationCreateAccount),
       GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(OperationCreateAccount, _internal_metadata_),
       GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(OperationCreateAccount, _is_default_instance_));
-  OperationSetMetadata_descriptor_ = file->message_type(28);
+  OperationSetMetadata_descriptor_ = file->message_type(27);
   static const int OperationSetMetadata_offsets_[4] = {
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(OperationSetMetadata, key_),
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(OperationSetMetadata, value_),
@@ -698,7 +676,7 @@ void protobuf_RegisterTypes(const ::std::string&) {
   ::google::protobuf::MessageFactory::InternalRegisterGeneratedMessage(
       Ledger_descriptor_, &Ledger::default_instance());
   ::google::protobuf::MessageFactory::InternalRegisterGeneratedMessage(
-      OperationPayAsset_descriptor_, &OperationPayAsset::default_instance());
+      OperationPayment_descriptor_, &OperationPayment::default_instance());
   ::google::protobuf::MessageFactory::InternalRegisterGeneratedMessage(
       OperationTypeThreshold_descriptor_, &OperationTypeThreshold::default_instance());
   ::google::protobuf::MessageFactory::InternalRegisterGeneratedMessage(
@@ -713,8 +691,6 @@ void protobuf_RegisterTypes(const ::std::string&) {
       OperationSetSignerWeight_descriptor_, &OperationSetSignerWeight::default_instance());
   ::google::protobuf::MessageFactory::InternalRegisterGeneratedMessage(
       OperationLog_descriptor_, &OperationLog::default_instance());
-  ::google::protobuf::MessageFactory::InternalRegisterGeneratedMessage(
-      OperationSetPrivilege_descriptor_, &OperationSetPrivilege::default_instance());
   ::google::protobuf::MessageFactory::InternalRegisterGeneratedMessage(
       Operation_descriptor_, &Operation::default_instance());
   ::google::protobuf::MessageFactory::InternalRegisterGeneratedMessage(
@@ -762,8 +738,8 @@ void protobuf_ShutdownFile_chain_2eproto() {
   delete LedgerHeader_reflection_;
   delete Ledger::default_instance_;
   delete Ledger_reflection_;
-  delete OperationPayAsset::default_instance_;
-  delete OperationPayAsset_reflection_;
+  delete OperationPayment::default_instance_;
+  delete OperationPayment_reflection_;
   delete OperationTypeThreshold::default_instance_;
   delete OperationTypeThreshold_reflection_;
   delete AccountPrivilege::default_instance_;
@@ -778,8 +754,6 @@ void protobuf_ShutdownFile_chain_2eproto() {
   delete OperationSetSignerWeight_reflection_;
   delete OperationLog::default_instance_;
   delete OperationLog_reflection_;
-  delete OperationSetPrivilege::default_instance_;
-  delete OperationSetPrivilege_reflection_;
   delete Operation::default_instance_;
   delete Operation_reflection_;
   delete OperationSetThreshold::default_instance_;
@@ -841,93 +815,87 @@ void protobuf_AddDesc_chain_2eproto() {
     "\030\t \001(\014\022\021\n\tfees_hash\030\n \001(\014\022\017\n\007reserve\030\013 \001"
     "(\t\"d\n\006Ledger\022&\n\006header\030\001 \001(\0132\026.protocol."
     "LedgerHeader\0222\n\020transaction_envs\030\002 \003(\0132\030"
-    ".protocol.TransactionEnv\"X\n\021OperationPay"
-    "Asset\022\024\n\014dest_address\030\001 \001(\t\022\036\n\005asset\030\002 \001"
-    "(\0132\017.protocol.Asset\022\r\n\005input\030\003 \001(\t\"S\n\026Op"
-    "erationTypeThreshold\022&\n\004type\030\001 \001(\0162\030.pro"
-    "tocol.Operation.Type\022\021\n\tthreshold\030\002 \001(\003\""
-    "|\n\020AccountPrivilege\022\025\n\rmaster_weight\030\001 \001"
-    "(\003\022!\n\007signers\030\002 \003(\0132\020.protocol.Signer\022.\n"
-    "\nthresholds\030\003 \001(\0132\032.protocol.AccountThre"
-    "shold\"c\n\020AccountThreshold\022\024\n\014tx_threshol"
-    "d\030\001 \001(\003\0229\n\017type_thresholds\030\002 \003(\0132 .proto"
-    "col.OperationTypeThreshold\"3\n\023OperationI"
-    "ssueAsset\022\014\n\004code\030\001 \001(\t\022\016\n\006amount\030\002 \001(\003\""
-    "G\n\020OperationPayCoin\022\024\n\014dest_address\030\001 \001("
-    "\t\022\016\n\006amount\030\002 \001(\003\022\r\n\005input\030\003 \001(\t\"T\n\030Oper"
-    "ationSetSignerWeight\022\025\n\rmaster_weight\030\001 "
-    "\001(\003\022!\n\007signers\030\002 \003(\0132\020.protocol.Signer\","
-    "\n\014OperationLog\022\r\n\005topic\030\001 \001(\t\022\r\n\005datas\030\002"
-    " \003(\t\"\242\001\n\025OperationSetPrivilege\022\025\n\rmaster"
-    "_weight\030\001 \001(\t\022!\n\007signers\030\002 \003(\0132\020.protoco"
-    "l.Signer\022\024\n\014tx_threshold\030\003 \001(\t\0229\n\017type_t"
-    "hresholds\030\004 \003(\0132 .protocol.OperationType"
-    "Threshold\"\343\005\n\tOperation\022&\n\004type\030\001 \001(\0162\030."
-    "protocol.Operation.Type\022\026\n\016source_addres"
-    "s\030\002 \001(\t\022\020\n\010metadata\030\003 \001(\014\0228\n\016create_acco"
-    "unt\030\004 \001(\0132 .protocol.OperationCreateAcco"
-    "unt\0222\n\013issue_asset\030\005 \001(\0132\035.protocol.Oper"
-    "ationIssueAsset\022.\n\tpay_asset\030\006 \001(\0132\033.pro"
-    "tocol.OperationPayAsset\0224\n\014set_metadata\030"
-    "\007 \001(\0132\036.protocol.OperationSetMetadata\022=\n"
-    "\021set_signer_weight\030\010 \001(\0132\".protocol.Oper"
-    "ationSetSignerWeight\0226\n\rset_threshold\030\t "
-    "\001(\0132\037.protocol.OperationSetThreshold\022,\n\010"
-    "pay_coin\030\n \001(\0132\032.protocol.OperationPayCo"
-    "in\022#\n\003log\030\013 \001(\0132\026.protocol.OperationLog\022"
-    "6\n\rset_privilege\030\014 \001(\0132\037.protocol.Operat"
-    "ionSetPrivilege\"\255\001\n\004Type\022\013\n\007UNKNOWN\020\000\022\022\n"
-    "\016CREATE_ACCOUNT\020\001\022\017\n\013ISSUE_ASSET\020\002\022\r\n\tPA"
-    "Y_ASSET\020\003\022\020\n\014SET_METADATA\020\004\022\025\n\021SET_SIGNE"
-    "R_WEIGHT\020\005\022\021\n\rSET_THRESHOLD\020\006\022\014\n\010PAY_COI"
-    "N\020\007\022\007\n\003LOG\020\010\022\021\n\rSET_PRIVILEGE\020\t\"h\n\025Opera"
-    "tionSetThreshold\022\024\n\014tx_threshold\030\001 \001(\003\0229"
-    "\n\017type_thresholds\030\002 \003(\0132 .protocol.Opera"
-    "tionTypeThreshold\"\325\001\n\013Transaction\022\026\n\016sou"
-    "rce_address\030\001 \001(\t\022\r\n\005nonce\030\002 \001(\003\022\021\n\tfee_"
-    "limit\030\003 \001(\003\022\021\n\tgas_price\030\004 \001(\003\022\027\n\017ceil_l"
-    "edger_seq\030\005 \001(\003\022\020\n\010metadata\030\006 \001(\014\022\'\n\nope"
-    "rations\030\007 \003(\0132\023.protocol.Operation\"%\n\005Li"
-    "mit\022\013\n\007UNKNOWN\020\000\022\017\n\nOPERATIONS\020\350\007\"O\n\006Sig"
-    "ner\022\017\n\007address\030\001 \001(\t\022\016\n\006weight\030\002 \001(\003\"$\n\005"
-    "Limit\022\017\n\013SIGNER_NONE\020\000\022\n\n\006SIGNER\020d\"\211\002\n\007T"
-    "rigger\022;\n\020transaction_type\030\001 \001(\0162!.proto"
-    "col.Trigger.TransactionType\022\022\n\nledger_se"
-    "q\030\002 \001(\003\0227\n\013transaction\030\003 \001(\0132\".protocol."
-    "Trigger.OperationTrigger\032/\n\020OperationTri"
-    "gger\022\014\n\004hash\030\001 \001(\014\022\r\n\005index\030\002 \001(\003\"C\n\017Tra"
-    "nsactionType\022\026\n\022NORMAL_TRANSACTION\020\000\022\030\n\024"
-    "CONTRACT_TRANSACTION\020\001\"\211\001\n\016TransactionEn"
-    "v\022*\n\013transaction\030\001 \001(\0132\025.protocol.Transa"
-    "ction\022\'\n\nsignatures\030\002 \003(\0132\023.protocol.Sig"
-    "nature\022\"\n\007trigger\030\003 \001(\0132\021.protocol.Trigg"
-    "er\"\272\001\n\023TransactionEnvStore\0221\n\017transactio"
-    "n_env\030\001 \001(\0132\030.protocol.TransactionEnv\022\022\n"
-    "\nerror_code\030\002 \001(\005\022\022\n\nerror_desc\030\003 \001(\t\022\022\n"
-    "\nledger_seq\030\004 \001(\003\022\022\n\nclose_time\030\005 \001(\003\022\014\n"
-    "\004hash\030\006 \001(\014\022\022\n\nactual_fee\030\007 \001(\003\":\n\021Trans"
-    "actionEnvSet\022%\n\003txs\030\002 \003(\0132\030.protocol.Tra"
-    "nsactionEnv\"G\n\030ConsensusValueValidation\022"
-    "\025\n\rexpire_tx_ids\030\001 \003(\005\022\024\n\014error_tx_ids\030\002"
-    " \003(\005\"\203\002\n\016ConsensusValue\022*\n\005txset\030\001 \001(\0132\033"
-    ".protocol.TransactionEnvSet\022\022\n\nclose_tim"
-    "e\030\002 \001(\003\022\026\n\016previous_proof\030\003 \001(\014\022\022\n\nledge"
-    "r_seq\030\004 \001(\003\022\034\n\024previous_ledger_hash\030\005 \001("
-    "\014\022/\n\016ledger_upgrade\030\006 \001(\0132\027.protocol.Led"
-    "gerUpgrade\0226\n\nvalidation\030\007 \001(\0132\".protoco"
-    "l.ConsensusValueValidation\"j\n\010Contract\022-"
-    "\n\004type\030\001 \001(\0162\037.protocol.Contract.Contrac"
-    "tType\022\017\n\007payload\030\002 \001(\t\"\036\n\014ContractType\022\016"
-    "\n\nJAVASCRIPT\020\000\"\316\001\n\026OperationCreateAccoun"
-    "t\022\024\n\014dest_address\030\001 \001(\t\022$\n\010contract\030\002 \001("
-    "\0132\022.protocol.Contract\022(\n\004priv\030\003 \001(\0132\032.pr"
-    "otocol.AccountPrivilege\022$\n\tmetadatas\030\004 \003"
-    "(\0132\021.protocol.KeyPair\022\024\n\014init_balance\030\005 "
-    "\001(\003\022\022\n\ninit_input\030\006 \001(\t\"X\n\024OperationSetM"
-    "etadata\022\013\n\003key\030\001 \001(\t\022\r\n\005value\030\002 \001(\t\022\017\n\007v"
-    "ersion\030\003 \001(\003\022\023\n\013delete_flag\030\004 \001(\010*#\n\005Lim"
-    "it\022\013\n\007UNKNOWN\020\000\022\r\n\tSIGNATURE\020dB\"\n io.bum"
-    "o.sdk.core.extend.protobufb\006proto3", 4354);
+    ".protocol.TransactionEnv\"W\n\020OperationPay"
+    "ment\022\024\n\014dest_address\030\001 \001(\t\022\036\n\005asset\030\002 \001("
+    "\0132\017.protocol.Asset\022\r\n\005input\030\003 \001(\t\"S\n\026Ope"
+    "rationTypeThreshold\022&\n\004type\030\001 \001(\0162\030.prot"
+    "ocol.Operation.Type\022\021\n\tthreshold\030\002 \001(\003\"|"
+    "\n\020AccountPrivilege\022\025\n\rmaster_weight\030\001 \001("
+    "\003\022!\n\007signers\030\002 \003(\0132\020.protocol.Signer\022.\n\n"
+    "thresholds\030\003 \001(\0132\032.protocol.AccountThres"
+    "hold\"c\n\020AccountThreshold\022\024\n\014tx_threshold"
+    "\030\001 \001(\003\0229\n\017type_thresholds\030\002 \003(\0132 .protoc"
+    "ol.OperationTypeThreshold\"3\n\023OperationIs"
+    "sueAsset\022\014\n\004code\030\001 \001(\t\022\016\n\006amount\030\002 \001(\003\"G"
+    "\n\020OperationPayCoin\022\024\n\014dest_address\030\001 \001(\t"
+    "\022\016\n\006amount\030\002 \001(\003\022\r\n\005input\030\003 \001(\t\"T\n\030Opera"
+    "tionSetSignerWeight\022\025\n\rmaster_weight\030\001 \001"
+    "(\003\022!\n\007signers\030\002 \003(\0132\020.protocol.Signer\",\n"
+    "\014OperationLog\022\r\n\005topic\030\001 \001(\t\022\r\n\005datas\030\002 "
+    "\003(\t\"\223\005\n\tOperation\022&\n\004type\030\001 \001(\0162\030.protoc"
+    "ol.Operation.Type\022\026\n\016source_address\030\002 \001("
+    "\t\022\020\n\010metadata\030\003 \001(\014\0228\n\016create_account\030\004 "
+    "\001(\0132 .protocol.OperationCreateAccount\0222\n"
+    "\013issue_asset\030\005 \001(\0132\035.protocol.OperationI"
+    "ssueAsset\022+\n\007payment\030\006 \001(\0132\032.protocol.Op"
+    "erationPayment\0224\n\014set_metadata\030\007 \001(\0132\036.p"
+    "rotocol.OperationSetMetadata\022=\n\021set_sign"
+    "er_weight\030\010 \001(\0132\".protocol.OperationSetS"
+    "ignerWeight\0226\n\rset_threshold\030\t \001(\0132\037.pro"
+    "tocol.OperationSetThreshold\022,\n\010pay_coin\030"
+    "\n \001(\0132\032.protocol.OperationPayCoin\022#\n\003log"
+    "\030\013 \001(\0132\026.protocol.OperationLog\"\230\001\n\004Type\022"
+    "\013\n\007UNKNOWN\020\000\022\022\n\016CREATE_ACCOUNT\020\001\022\017\n\013ISSU"
+    "E_ASSET\020\002\022\013\n\007PAYMENT\020\003\022\020\n\014SET_METADATA\020\004"
+    "\022\025\n\021SET_SIGNER_WEIGHT\020\005\022\021\n\rSET_THRESHOLD"
+    "\020\006\022\014\n\010PAY_COIN\020\007\022\007\n\003LOG\020\010\"h\n\025OperationSe"
+    "tThreshold\022\024\n\014tx_threshold\030\001 \001(\003\0229\n\017type"
+    "_thresholds\030\004 \003(\0132 .protocol.OperationTy"
+    "peThreshold\"\325\001\n\013Transaction\022\026\n\016source_ad"
+    "dress\030\001 \001(\t\022\r\n\005nonce\030\002 \001(\003\022\021\n\tfee_limit\030"
+    "\003 \001(\003\022\021\n\tgas_price\030\004 \001(\003\022\027\n\017ceil_ledger_"
+    "seq\030\005 \001(\003\022\020\n\010metadata\030\006 \001(\014\022\'\n\noperation"
+    "s\030\007 \003(\0132\023.protocol.Operation\"%\n\005Limit\022\013\n"
+    "\007UNKNOWN\020\000\022\017\n\nOPERATIONS\020\350\007\"O\n\006Signer\022\017\n"
+    "\007address\030\001 \001(\t\022\016\n\006weight\030\002 \001(\003\"$\n\005Limit\022"
+    "\017\n\013SIGNER_NONE\020\000\022\n\n\006SIGNER\020d\"\211\002\n\007Trigger"
+    "\022;\n\020transaction_type\030\001 \001(\0162!.protocol.Tr"
+    "igger.TransactionType\022\022\n\nledger_seq\030\002 \001("
+    "\003\0227\n\013transaction\030\003 \001(\0132\".protocol.Trigge"
+    "r.OperationTrigger\032/\n\020OperationTrigger\022\014"
+    "\n\004hash\030\001 \001(\014\022\r\n\005index\030\002 \001(\003\"C\n\017Transacti"
+    "onType\022\026\n\022NORMAL_TRANSACTION\020\000\022\030\n\024CONTRA"
+    "CT_TRANSACTION\020\001\"\211\001\n\016TransactionEnv\022*\n\013t"
+    "ransaction\030\001 \001(\0132\025.protocol.Transaction\022"
+    "\'\n\nsignatures\030\002 \003(\0132\023.protocol.Signature"
+    "\022\"\n\007trigger\030\003 \001(\0132\021.protocol.Trigger\"\272\001\n"
+    "\023TransactionEnvStore\0221\n\017transaction_env\030"
+    "\001 \001(\0132\030.protocol.TransactionEnv\022\022\n\nerror"
+    "_code\030\002 \001(\005\022\022\n\nerror_desc\030\003 \001(\t\022\022\n\nledge"
+    "r_seq\030\004 \001(\003\022\022\n\nclose_time\030\005 \001(\003\022\014\n\004hash\030"
+    "\006 \001(\014\022\022\n\nactual_fee\030\007 \001(\003\":\n\021Transaction"
+    "EnvSet\022%\n\003txs\030\002 \003(\0132\030.protocol.Transacti"
+    "onEnv\"G\n\030ConsensusValueValidation\022\025\n\rexp"
+    "ire_tx_ids\030\001 \003(\005\022\024\n\014error_tx_ids\030\002 \003(\005\"\203"
+    "\002\n\016ConsensusValue\022*\n\005txset\030\001 \001(\0132\033.proto"
+    "col.TransactionEnvSet\022\022\n\nclose_time\030\002 \001("
+    "\003\022\026\n\016previous_proof\030\003 \001(\014\022\022\n\nledger_seq\030"
+    "\004 \001(\003\022\034\n\024previous_ledger_hash\030\005 \001(\014\022/\n\016l"
+    "edger_upgrade\030\006 \001(\0132\027.protocol.LedgerUpg"
+    "rade\0226\n\nvalidation\030\007 \001(\0132\".protocol.Cons"
+    "ensusValueValidation\"j\n\010Contract\022-\n\004type"
+    "\030\001 \001(\0162\037.protocol.Contract.ContractType\022"
+    "\017\n\007payload\030\002 \001(\t\"\036\n\014ContractType\022\016\n\nJAVA"
+    "SCRIPT\020\000\"\316\001\n\026OperationCreateAccount\022\024\n\014d"
+    "est_address\030\001 \001(\t\022$\n\010contract\030\002 \001(\0132\022.pr"
+    "otocol.Contract\022(\n\004priv\030\003 \001(\0132\032.protocol"
+    ".AccountPrivilege\022$\n\tmetadatas\030\004 \003(\0132\021.p"
+    "rotocol.KeyPair\022\024\n\014init_balance\030\005 \001(\003\022\022\n"
+    "\ninit_input\030\006 \001(\t\"X\n\024OperationSetMetadat"
+    "a\022\013\n\003key\030\001 \001(\t\022\r\n\005value\030\002 \001(\t\022\017\n\007version"
+    "\030\003 \001(\003\022\023\n\013delete_flag\030\004 \001(\010*#\n\005Limit\022\013\n\007"
+    "UNKNOWN\020\000\022\r\n\tSIGNATURE\020dB&\n$org.phantom."
+    "sdk.core.extend.protobufb\006proto3", 4112);
   ::google::protobuf::MessageFactory::InternalRegisterGeneratedFile(
     "chain.proto", &protobuf_RegisterTypes);
   Account::default_instance_ = new Account();
@@ -937,7 +905,7 @@ void protobuf_AddDesc_chain_2eproto() {
   AssetStore::default_instance_ = new AssetStore();
   LedgerHeader::default_instance_ = new LedgerHeader();
   Ledger::default_instance_ = new Ledger();
-  OperationPayAsset::default_instance_ = new OperationPayAsset();
+  OperationPayment::default_instance_ = new OperationPayment();
   OperationTypeThreshold::default_instance_ = new OperationTypeThreshold();
   AccountPrivilege::default_instance_ = new AccountPrivilege();
   AccountThreshold::default_instance_ = new AccountThreshold();
@@ -945,7 +913,6 @@ void protobuf_AddDesc_chain_2eproto() {
   OperationPayCoin::default_instance_ = new OperationPayCoin();
   OperationSetSignerWeight::default_instance_ = new OperationSetSignerWeight();
   OperationLog::default_instance_ = new OperationLog();
-  OperationSetPrivilege::default_instance_ = new OperationSetPrivilege();
   Operation::default_instance_ = new Operation();
   OperationSetThreshold::default_instance_ = new OperationSetThreshold();
   Transaction::default_instance_ = new Transaction();
@@ -967,7 +934,7 @@ void protobuf_AddDesc_chain_2eproto() {
   AssetStore::default_instance_->InitAsDefaultInstance();
   LedgerHeader::default_instance_->InitAsDefaultInstance();
   Ledger::default_instance_->InitAsDefaultInstance();
-  OperationPayAsset::default_instance_->InitAsDefaultInstance();
+  OperationPayment::default_instance_->InitAsDefaultInstance();
   OperationTypeThreshold::default_instance_->InitAsDefaultInstance();
   AccountPrivilege::default_instance_->InitAsDefaultInstance();
   AccountThreshold::default_instance_->InitAsDefaultInstance();
@@ -975,7 +942,6 @@ void protobuf_AddDesc_chain_2eproto() {
   OperationPayCoin::default_instance_->InitAsDefaultInstance();
   OperationSetSignerWeight::default_instance_->InitAsDefaultInstance();
   OperationLog::default_instance_->InitAsDefaultInstance();
-  OperationSetPrivilege::default_instance_->InitAsDefaultInstance();
   Operation::default_instance_->InitAsDefaultInstance();
   OperationSetThreshold::default_instance_->InitAsDefaultInstance();
   Transaction::default_instance_->InitAsDefaultInstance();
@@ -4777,31 +4743,31 @@ Ledger::transaction_envs() const {
 // ===================================================================
 
 #if !defined(_MSC_VER) || _MSC_VER >= 1900
-const int OperationPayAsset::kDestAddressFieldNumber;
-const int OperationPayAsset::kAssetFieldNumber;
-const int OperationPayAsset::kInputFieldNumber;
+const int OperationPayment::kDestAddressFieldNumber;
+const int OperationPayment::kAssetFieldNumber;
+const int OperationPayment::kInputFieldNumber;
 #endif  // !defined(_MSC_VER) || _MSC_VER >= 1900
 
-OperationPayAsset::OperationPayAsset()
+OperationPayment::OperationPayment()
   : ::google::protobuf::Message(), _internal_metadata_(NULL) {
   SharedCtor();
-  // @@protoc_insertion_point(constructor:protocol.OperationPayAsset)
+  // @@protoc_insertion_point(constructor:protocol.OperationPayment)
 }
 
-void OperationPayAsset::InitAsDefaultInstance() {
+void OperationPayment::InitAsDefaultInstance() {
   _is_default_instance_ = true;
   asset_ = const_cast< ::protocol::Asset*>(&::protocol::Asset::default_instance());
 }
 
-OperationPayAsset::OperationPayAsset(const OperationPayAsset& from)
+OperationPayment::OperationPayment(const OperationPayment& from)
   : ::google::protobuf::Message(),
     _internal_metadata_(NULL) {
   SharedCtor();
   MergeFrom(from);
-  // @@protoc_insertion_point(copy_constructor:protocol.OperationPayAsset)
+  // @@protoc_insertion_point(copy_constructor:protocol.OperationPayment)
 }
 
-void OperationPayAsset::SharedCtor() {
+void OperationPayment::SharedCtor() {
     _is_default_instance_ = false;
   ::google::protobuf::internal::GetEmptyString();
   _cached_size_ = 0;
@@ -4810,12 +4776,12 @@ void OperationPayAsset::SharedCtor() {
   input_.UnsafeSetDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
 }
 
-OperationPayAsset::~OperationPayAsset() {
-  // @@protoc_insertion_point(destructor:protocol.OperationPayAsset)
+OperationPayment::~OperationPayment() {
+  // @@protoc_insertion_point(destructor:protocol.OperationPayment)
   SharedDtor();
 }
 
-void OperationPayAsset::SharedDtor() {
+void OperationPayment::SharedDtor() {
   dest_address_.DestroyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
   input_.DestroyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
   if (this != default_instance_) {
@@ -4823,44 +4789,44 @@ void OperationPayAsset::SharedDtor() {
   }
 }
 
-void OperationPayAsset::SetCachedSize(int size) const {
+void OperationPayment::SetCachedSize(int size) const {
   GOOGLE_SAFE_CONCURRENT_WRITES_BEGIN();
   _cached_size_ = size;
   GOOGLE_SAFE_CONCURRENT_WRITES_END();
 }
-const ::google::protobuf::Descriptor* OperationPayAsset::descriptor() {
+const ::google::protobuf::Descriptor* OperationPayment::descriptor() {
   protobuf_AssignDescriptorsOnce();
-  return OperationPayAsset_descriptor_;
+  return OperationPayment_descriptor_;
 }
 
-const OperationPayAsset& OperationPayAsset::default_instance() {
+const OperationPayment& OperationPayment::default_instance() {
   if (default_instance_ == NULL) protobuf_AddDesc_chain_2eproto();
   return *default_instance_;
 }
 
-OperationPayAsset* OperationPayAsset::default_instance_ = NULL;
+OperationPayment* OperationPayment::default_instance_ = NULL;
 
-OperationPayAsset* OperationPayAsset::New(::google::protobuf::Arena* arena) const {
-  OperationPayAsset* n = new OperationPayAsset;
+OperationPayment* OperationPayment::New(::google::protobuf::Arena* arena) const {
+  OperationPayment* n = new OperationPayment;
   if (arena != NULL) {
     arena->Own(n);
   }
   return n;
 }
 
-void OperationPayAsset::Clear() {
-// @@protoc_insertion_point(message_clear_start:protocol.OperationPayAsset)
+void OperationPayment::Clear() {
+// @@protoc_insertion_point(message_clear_start:protocol.OperationPayment)
   dest_address_.ClearToEmptyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
   if (GetArenaNoVirtual() == NULL && asset_ != NULL) delete asset_;
   asset_ = NULL;
   input_.ClearToEmptyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
 }
 
-bool OperationPayAsset::MergePartialFromCodedStream(
+bool OperationPayment::MergePartialFromCodedStream(
     ::google::protobuf::io::CodedInputStream* input) {
 #define DO_(EXPRESSION) if (!GOOGLE_PREDICT_TRUE(EXPRESSION)) goto failure
   ::google::protobuf::uint32 tag;
-  // @@protoc_insertion_point(parse_start:protocol.OperationPayAsset)
+  // @@protoc_insertion_point(parse_start:protocol.OperationPayment)
   for (;;) {
     ::std::pair< ::google::protobuf::uint32, bool> p = input->ReadTagWithCutoff(127);
     tag = p.first;
@@ -4874,7 +4840,7 @@ bool OperationPayAsset::MergePartialFromCodedStream(
           DO_(::google::protobuf::internal::WireFormatLite::VerifyUtf8String(
             this->dest_address().data(), this->dest_address().length(),
             ::google::protobuf::internal::WireFormatLite::PARSE,
-            "protocol.OperationPayAsset.dest_address"));
+            "protocol.OperationPayment.dest_address"));
         } else {
           goto handle_unusual;
         }
@@ -4904,7 +4870,7 @@ bool OperationPayAsset::MergePartialFromCodedStream(
           DO_(::google::protobuf::internal::WireFormatLite::VerifyUtf8String(
             this->input().data(), this->input().length(),
             ::google::protobuf::internal::WireFormatLite::PARSE,
-            "protocol.OperationPayAsset.input"));
+            "protocol.OperationPayment.input"));
         } else {
           goto handle_unusual;
         }
@@ -4925,23 +4891,23 @@ bool OperationPayAsset::MergePartialFromCodedStream(
     }
   }
 success:
-  // @@protoc_insertion_point(parse_success:protocol.OperationPayAsset)
+  // @@protoc_insertion_point(parse_success:protocol.OperationPayment)
   return true;
 failure:
-  // @@protoc_insertion_point(parse_failure:protocol.OperationPayAsset)
+  // @@protoc_insertion_point(parse_failure:protocol.OperationPayment)
   return false;
 #undef DO_
 }
 
-void OperationPayAsset::SerializeWithCachedSizes(
+void OperationPayment::SerializeWithCachedSizes(
     ::google::protobuf::io::CodedOutputStream* output) const {
-  // @@protoc_insertion_point(serialize_start:protocol.OperationPayAsset)
+  // @@protoc_insertion_point(serialize_start:protocol.OperationPayment)
   // optional string dest_address = 1;
   if (this->dest_address().size() > 0) {
     ::google::protobuf::internal::WireFormatLite::VerifyUtf8String(
       this->dest_address().data(), this->dest_address().length(),
       ::google::protobuf::internal::WireFormatLite::SERIALIZE,
-      "protocol.OperationPayAsset.dest_address");
+      "protocol.OperationPayment.dest_address");
     ::google::protobuf::internal::WireFormatLite::WriteStringMaybeAliased(
       1, this->dest_address(), output);
   }
@@ -4957,23 +4923,23 @@ void OperationPayAsset::SerializeWithCachedSizes(
     ::google::protobuf::internal::WireFormatLite::VerifyUtf8String(
       this->input().data(), this->input().length(),
       ::google::protobuf::internal::WireFormatLite::SERIALIZE,
-      "protocol.OperationPayAsset.input");
+      "protocol.OperationPayment.input");
     ::google::protobuf::internal::WireFormatLite::WriteStringMaybeAliased(
       3, this->input(), output);
   }
 
-  // @@protoc_insertion_point(serialize_end:protocol.OperationPayAsset)
+  // @@protoc_insertion_point(serialize_end:protocol.OperationPayment)
 }
 
-::google::protobuf::uint8* OperationPayAsset::InternalSerializeWithCachedSizesToArray(
+::google::protobuf::uint8* OperationPayment::InternalSerializeWithCachedSizesToArray(
     bool deterministic, ::google::protobuf::uint8* target) const {
-  // @@protoc_insertion_point(serialize_to_array_start:protocol.OperationPayAsset)
+  // @@protoc_insertion_point(serialize_to_array_start:protocol.OperationPayment)
   // optional string dest_address = 1;
   if (this->dest_address().size() > 0) {
     ::google::protobuf::internal::WireFormatLite::VerifyUtf8String(
       this->dest_address().data(), this->dest_address().length(),
       ::google::protobuf::internal::WireFormatLite::SERIALIZE,
-      "protocol.OperationPayAsset.dest_address");
+      "protocol.OperationPayment.dest_address");
     target =
       ::google::protobuf::internal::WireFormatLite::WriteStringToArray(
         1, this->dest_address(), target);
@@ -4991,18 +4957,18 @@ void OperationPayAsset::SerializeWithCachedSizes(
     ::google::protobuf::internal::WireFormatLite::VerifyUtf8String(
       this->input().data(), this->input().length(),
       ::google::protobuf::internal::WireFormatLite::SERIALIZE,
-      "protocol.OperationPayAsset.input");
+      "protocol.OperationPayment.input");
     target =
       ::google::protobuf::internal::WireFormatLite::WriteStringToArray(
         3, this->input(), target);
   }
 
-  // @@protoc_insertion_point(serialize_to_array_end:protocol.OperationPayAsset)
+  // @@protoc_insertion_point(serialize_to_array_end:protocol.OperationPayment)
   return target;
 }
 
-int OperationPayAsset::ByteSize() const {
-// @@protoc_insertion_point(message_byte_size_start:protocol.OperationPayAsset)
+int OperationPayment::ByteSize() const {
+// @@protoc_insertion_point(message_byte_size_start:protocol.OperationPayment)
   int total_size = 0;
 
   // optional string dest_address = 1;
@@ -5032,25 +4998,25 @@ int OperationPayAsset::ByteSize() const {
   return total_size;
 }
 
-void OperationPayAsset::MergeFrom(const ::google::protobuf::Message& from) {
-// @@protoc_insertion_point(generalized_merge_from_start:protocol.OperationPayAsset)
+void OperationPayment::MergeFrom(const ::google::protobuf::Message& from) {
+// @@protoc_insertion_point(generalized_merge_from_start:protocol.OperationPayment)
   if (GOOGLE_PREDICT_FALSE(&from == this)) {
     ::google::protobuf::internal::MergeFromFail(__FILE__, __LINE__);
   }
-  const OperationPayAsset* source = 
-      ::google::protobuf::internal::DynamicCastToGenerated<const OperationPayAsset>(
+  const OperationPayment* source = 
+      ::google::protobuf::internal::DynamicCastToGenerated<const OperationPayment>(
           &from);
   if (source == NULL) {
-  // @@protoc_insertion_point(generalized_merge_from_cast_fail:protocol.OperationPayAsset)
+  // @@protoc_insertion_point(generalized_merge_from_cast_fail:protocol.OperationPayment)
     ::google::protobuf::internal::ReflectionOps::Merge(from, this);
   } else {
-  // @@protoc_insertion_point(generalized_merge_from_cast_success:protocol.OperationPayAsset)
+  // @@protoc_insertion_point(generalized_merge_from_cast_success:protocol.OperationPayment)
     MergeFrom(*source);
   }
 }
 
-void OperationPayAsset::MergeFrom(const OperationPayAsset& from) {
-// @@protoc_insertion_point(class_specific_merge_from_start:protocol.OperationPayAsset)
+void OperationPayment::MergeFrom(const OperationPayment& from) {
+// @@protoc_insertion_point(class_specific_merge_from_start:protocol.OperationPayment)
   if (GOOGLE_PREDICT_FALSE(&from == this)) {
     ::google::protobuf::internal::MergeFromFail(__FILE__, __LINE__);
   }
@@ -5067,30 +5033,30 @@ void OperationPayAsset::MergeFrom(const OperationPayAsset& from) {
   }
 }
 
-void OperationPayAsset::CopyFrom(const ::google::protobuf::Message& from) {
-// @@protoc_insertion_point(generalized_copy_from_start:protocol.OperationPayAsset)
+void OperationPayment::CopyFrom(const ::google::protobuf::Message& from) {
+// @@protoc_insertion_point(generalized_copy_from_start:protocol.OperationPayment)
   if (&from == this) return;
   Clear();
   MergeFrom(from);
 }
 
-void OperationPayAsset::CopyFrom(const OperationPayAsset& from) {
-// @@protoc_insertion_point(class_specific_copy_from_start:protocol.OperationPayAsset)
+void OperationPayment::CopyFrom(const OperationPayment& from) {
+// @@protoc_insertion_point(class_specific_copy_from_start:protocol.OperationPayment)
   if (&from == this) return;
   Clear();
   MergeFrom(from);
 }
 
-bool OperationPayAsset::IsInitialized() const {
+bool OperationPayment::IsInitialized() const {
 
   return true;
 }
 
-void OperationPayAsset::Swap(OperationPayAsset* other) {
+void OperationPayment::Swap(OperationPayment* other) {
   if (other == this) return;
   InternalSwap(other);
 }
-void OperationPayAsset::InternalSwap(OperationPayAsset* other) {
+void OperationPayment::InternalSwap(OperationPayment* other) {
   dest_address_.Swap(&other->dest_address_);
   std::swap(asset_, other->asset_);
   input_.Swap(&other->input_);
@@ -5098,89 +5064,89 @@ void OperationPayAsset::InternalSwap(OperationPayAsset* other) {
   std::swap(_cached_size_, other->_cached_size_);
 }
 
-::google::protobuf::Metadata OperationPayAsset::GetMetadata() const {
+::google::protobuf::Metadata OperationPayment::GetMetadata() const {
   protobuf_AssignDescriptorsOnce();
   ::google::protobuf::Metadata metadata;
-  metadata.descriptor = OperationPayAsset_descriptor_;
-  metadata.reflection = OperationPayAsset_reflection_;
+  metadata.descriptor = OperationPayment_descriptor_;
+  metadata.reflection = OperationPayment_reflection_;
   return metadata;
 }
 
 #if PROTOBUF_INLINE_NOT_IN_HEADERS
-// OperationPayAsset
+// OperationPayment
 
 // optional string dest_address = 1;
-void OperationPayAsset::clear_dest_address() {
+void OperationPayment::clear_dest_address() {
   dest_address_.ClearToEmptyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
 }
- const ::std::string& OperationPayAsset::dest_address() const {
-  // @@protoc_insertion_point(field_get:protocol.OperationPayAsset.dest_address)
+ const ::std::string& OperationPayment::dest_address() const {
+  // @@protoc_insertion_point(field_get:protocol.OperationPayment.dest_address)
   return dest_address_.GetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
 }
- void OperationPayAsset::set_dest_address(const ::std::string& value) {
+ void OperationPayment::set_dest_address(const ::std::string& value) {
   
   dest_address_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), value);
-  // @@protoc_insertion_point(field_set:protocol.OperationPayAsset.dest_address)
+  // @@protoc_insertion_point(field_set:protocol.OperationPayment.dest_address)
 }
- void OperationPayAsset::set_dest_address(const char* value) {
+ void OperationPayment::set_dest_address(const char* value) {
   
   dest_address_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), ::std::string(value));
-  // @@protoc_insertion_point(field_set_char:protocol.OperationPayAsset.dest_address)
+  // @@protoc_insertion_point(field_set_char:protocol.OperationPayment.dest_address)
 }
- void OperationPayAsset::set_dest_address(const char* value, size_t size) {
+ void OperationPayment::set_dest_address(const char* value, size_t size) {
   
   dest_address_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(),
       ::std::string(reinterpret_cast<const char*>(value), size));
-  // @@protoc_insertion_point(field_set_pointer:protocol.OperationPayAsset.dest_address)
+  // @@protoc_insertion_point(field_set_pointer:protocol.OperationPayment.dest_address)
 }
- ::std::string* OperationPayAsset::mutable_dest_address() {
+ ::std::string* OperationPayment::mutable_dest_address() {
   
-  // @@protoc_insertion_point(field_mutable:protocol.OperationPayAsset.dest_address)
+  // @@protoc_insertion_point(field_mutable:protocol.OperationPayment.dest_address)
   return dest_address_.MutableNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
 }
- ::std::string* OperationPayAsset::release_dest_address() {
-  // @@protoc_insertion_point(field_release:protocol.OperationPayAsset.dest_address)
+ ::std::string* OperationPayment::release_dest_address() {
+  // @@protoc_insertion_point(field_release:protocol.OperationPayment.dest_address)
   
   return dest_address_.ReleaseNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
 }
- void OperationPayAsset::set_allocated_dest_address(::std::string* dest_address) {
+ void OperationPayment::set_allocated_dest_address(::std::string* dest_address) {
   if (dest_address != NULL) {
     
   } else {
     
   }
   dest_address_.SetAllocatedNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), dest_address);
-  // @@protoc_insertion_point(field_set_allocated:protocol.OperationPayAsset.dest_address)
+  // @@protoc_insertion_point(field_set_allocated:protocol.OperationPayment.dest_address)
 }
 
 // optional .protocol.Asset asset = 2;
-bool OperationPayAsset::has_asset() const {
+bool OperationPayment::has_asset() const {
   return !_is_default_instance_ && asset_ != NULL;
 }
-void OperationPayAsset::clear_asset() {
+void OperationPayment::clear_asset() {
   if (GetArenaNoVirtual() == NULL && asset_ != NULL) delete asset_;
   asset_ = NULL;
 }
-const ::protocol::Asset& OperationPayAsset::asset() const {
-  // @@protoc_insertion_point(field_get:protocol.OperationPayAsset.asset)
+const ::protocol::Asset& OperationPayment::asset() const {
+  // @@protoc_insertion_point(field_get:protocol.OperationPayment.asset)
   return asset_ != NULL ? *asset_ : *default_instance_->asset_;
 }
-::protocol::Asset* OperationPayAsset::mutable_asset() {
+::protocol::Asset* OperationPayment::mutable_asset() {
   
   if (asset_ == NULL) {
     asset_ = new ::protocol::Asset;
   }
-  // @@protoc_insertion_point(field_mutable:protocol.OperationPayAsset.asset)
+  // @@protoc_insertion_point(field_mutable:protocol.OperationPayment.asset)
   return asset_;
 }
-::protocol::Asset* OperationPayAsset::release_asset() {
-  // @@protoc_insertion_point(field_release:protocol.OperationPayAsset.asset)
+::protocol::Asset* OperationPayment::release_asset() {
+  // @@protoc_insertion_point(field_release:protocol.OperationPayment.asset)
   
   ::protocol::Asset* temp = asset_;
   asset_ = NULL;
   return temp;
 }
-void OperationPayAsset::set_allocated_asset(::protocol::Asset* asset) {
+void OperationPayment::set_allocated_asset(::protocol::Asset* asset) {
   delete asset_;
   asset_ = asset;
   if (asset) {
@@ -5188,51 +5154,51 @@ void OperationPayAsset::set_allocated_asset(::protocol::Asset* asset) {
   } else {
     
   }
-  // @@protoc_insertion_point(field_set_allocated:protocol.OperationPayAsset.asset)
+  // @@protoc_insertion_point(field_set_allocated:protocol.OperationPayment.asset)
 }
 
 // optional string input = 3;
-void OperationPayAsset::clear_input() {
+void OperationPayment::clear_input() {
   input_.ClearToEmptyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
 }
- const ::std::string& OperationPayAsset::input() const {
-  // @@protoc_insertion_point(field_get:protocol.OperationPayAsset.input)
+ const ::std::string& OperationPayment::input() const {
+  // @@protoc_insertion_point(field_get:protocol.OperationPayment.input)
   return input_.GetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
 }
- void OperationPayAsset::set_input(const ::std::string& value) {
+ void OperationPayment::set_input(const ::std::string& value) {
   
   input_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), value);
-  // @@protoc_insertion_point(field_set:protocol.OperationPayAsset.input)
+  // @@protoc_insertion_point(field_set:protocol.OperationPayment.input)
 }
- void OperationPayAsset::set_input(const char* value) {
+ void OperationPayment::set_input(const char* value) {
   
   input_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), ::std::string(value));
-  // @@protoc_insertion_point(field_set_char:protocol.OperationPayAsset.input)
+  // @@protoc_insertion_point(field_set_char:protocol.OperationPayment.input)
 }
- void OperationPayAsset::set_input(const char* value, size_t size) {
+ void OperationPayment::set_input(const char* value, size_t size) {
   
   input_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(),
       ::std::string(reinterpret_cast<const char*>(value), size));
-  // @@protoc_insertion_point(field_set_pointer:protocol.OperationPayAsset.input)
+  // @@protoc_insertion_point(field_set_pointer:protocol.OperationPayment.input)
 }
- ::std::string* OperationPayAsset::mutable_input() {
+ ::std::string* OperationPayment::mutable_input() {
   
-  // @@protoc_insertion_point(field_mutable:protocol.OperationPayAsset.input)
+  // @@protoc_insertion_point(field_mutable:protocol.OperationPayment.input)
   return input_.MutableNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
 }
- ::std::string* OperationPayAsset::release_input() {
-  // @@protoc_insertion_point(field_release:protocol.OperationPayAsset.input)
+ ::std::string* OperationPayment::release_input() {
+  // @@protoc_insertion_point(field_release:protocol.OperationPayment.input)
   
   return input_.ReleaseNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
 }
- void OperationPayAsset::set_allocated_input(::std::string* input) {
+ void OperationPayment::set_allocated_input(::std::string* input) {
   if (input != NULL) {
     
   } else {
     
   }
   input_.SetAllocatedNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), input);
-  // @@protoc_insertion_point(field_set_allocated:protocol.OperationPayAsset.input)
+  // @@protoc_insertion_point(field_set_allocated:protocol.OperationPayment.input)
 }
 
 #endif  // PROTOBUF_INLINE_NOT_IN_HEADERS
@@ -7723,532 +7689,6 @@ OperationLog::mutable_datas() {
 
 // ===================================================================
 
-#if !defined(_MSC_VER) || _MSC_VER >= 1900
-const int OperationSetPrivilege::kMasterWeightFieldNumber;
-const int OperationSetPrivilege::kSignersFieldNumber;
-const int OperationSetPrivilege::kTxThresholdFieldNumber;
-const int OperationSetPrivilege::kTypeThresholdsFieldNumber;
-#endif  // !defined(_MSC_VER) || _MSC_VER >= 1900
-
-OperationSetPrivilege::OperationSetPrivilege()
-  : ::google::protobuf::Message(), _internal_metadata_(NULL) {
-  SharedCtor();
-  // @@protoc_insertion_point(constructor:protocol.OperationSetPrivilege)
-}
-
-void OperationSetPrivilege::InitAsDefaultInstance() {
-  _is_default_instance_ = true;
-}
-
-OperationSetPrivilege::OperationSetPrivilege(const OperationSetPrivilege& from)
-  : ::google::protobuf::Message(),
-    _internal_metadata_(NULL) {
-  SharedCtor();
-  MergeFrom(from);
-  // @@protoc_insertion_point(copy_constructor:protocol.OperationSetPrivilege)
-}
-
-void OperationSetPrivilege::SharedCtor() {
-    _is_default_instance_ = false;
-  ::google::protobuf::internal::GetEmptyString();
-  _cached_size_ = 0;
-  master_weight_.UnsafeSetDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
-  tx_threshold_.UnsafeSetDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
-}
-
-OperationSetPrivilege::~OperationSetPrivilege() {
-  // @@protoc_insertion_point(destructor:protocol.OperationSetPrivilege)
-  SharedDtor();
-}
-
-void OperationSetPrivilege::SharedDtor() {
-  master_weight_.DestroyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
-  tx_threshold_.DestroyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
-  if (this != default_instance_) {
-  }
-}
-
-void OperationSetPrivilege::SetCachedSize(int size) const {
-  GOOGLE_SAFE_CONCURRENT_WRITES_BEGIN();
-  _cached_size_ = size;
-  GOOGLE_SAFE_CONCURRENT_WRITES_END();
-}
-const ::google::protobuf::Descriptor* OperationSetPrivilege::descriptor() {
-  protobuf_AssignDescriptorsOnce();
-  return OperationSetPrivilege_descriptor_;
-}
-
-const OperationSetPrivilege& OperationSetPrivilege::default_instance() {
-  if (default_instance_ == NULL) protobuf_AddDesc_chain_2eproto();
-  return *default_instance_;
-}
-
-OperationSetPrivilege* OperationSetPrivilege::default_instance_ = NULL;
-
-OperationSetPrivilege* OperationSetPrivilege::New(::google::protobuf::Arena* arena) const {
-  OperationSetPrivilege* n = new OperationSetPrivilege;
-  if (arena != NULL) {
-    arena->Own(n);
-  }
-  return n;
-}
-
-void OperationSetPrivilege::Clear() {
-// @@protoc_insertion_point(message_clear_start:protocol.OperationSetPrivilege)
-  master_weight_.ClearToEmptyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
-  tx_threshold_.ClearToEmptyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
-  signers_.Clear();
-  type_thresholds_.Clear();
-}
-
-bool OperationSetPrivilege::MergePartialFromCodedStream(
-    ::google::protobuf::io::CodedInputStream* input) {
-#define DO_(EXPRESSION) if (!GOOGLE_PREDICT_TRUE(EXPRESSION)) goto failure
-  ::google::protobuf::uint32 tag;
-  // @@protoc_insertion_point(parse_start:protocol.OperationSetPrivilege)
-  for (;;) {
-    ::std::pair< ::google::protobuf::uint32, bool> p = input->ReadTagWithCutoff(127);
-    tag = p.first;
-    if (!p.second) goto handle_unusual;
-    switch (::google::protobuf::internal::WireFormatLite::GetTagFieldNumber(tag)) {
-      // optional string master_weight = 1;
-      case 1: {
-        if (tag == 10) {
-          DO_(::google::protobuf::internal::WireFormatLite::ReadString(
-                input, this->mutable_master_weight()));
-          DO_(::google::protobuf::internal::WireFormatLite::VerifyUtf8String(
-            this->master_weight().data(), this->master_weight().length(),
-            ::google::protobuf::internal::WireFormatLite::PARSE,
-            "protocol.OperationSetPrivilege.master_weight"));
-        } else {
-          goto handle_unusual;
-        }
-        if (input->ExpectTag(18)) goto parse_signers;
-        break;
-      }
-
-      // repeated .protocol.Signer signers = 2;
-      case 2: {
-        if (tag == 18) {
-         parse_signers:
-          DO_(input->IncrementRecursionDepth());
-         parse_loop_signers:
-          DO_(::google::protobuf::internal::WireFormatLite::ReadMessageNoVirtualNoRecursionDepth(
-                input, add_signers()));
-        } else {
-          goto handle_unusual;
-        }
-        if (input->ExpectTag(18)) goto parse_loop_signers;
-        input->UnsafeDecrementRecursionDepth();
-        if (input->ExpectTag(26)) goto parse_tx_threshold;
-        break;
-      }
-
-      // optional string tx_threshold = 3;
-      case 3: {
-        if (tag == 26) {
-         parse_tx_threshold:
-          DO_(::google::protobuf::internal::WireFormatLite::ReadString(
-                input, this->mutable_tx_threshold()));
-          DO_(::google::protobuf::internal::WireFormatLite::VerifyUtf8String(
-            this->tx_threshold().data(), this->tx_threshold().length(),
-            ::google::protobuf::internal::WireFormatLite::PARSE,
-            "protocol.OperationSetPrivilege.tx_threshold"));
-        } else {
-          goto handle_unusual;
-        }
-        if (input->ExpectTag(34)) goto parse_type_thresholds;
-        break;
-      }
-
-      // repeated .protocol.OperationTypeThreshold type_thresholds = 4;
-      case 4: {
-        if (tag == 34) {
-         parse_type_thresholds:
-          DO_(input->IncrementRecursionDepth());
-         parse_loop_type_thresholds:
-          DO_(::google::protobuf::internal::WireFormatLite::ReadMessageNoVirtualNoRecursionDepth(
-                input, add_type_thresholds()));
-        } else {
-          goto handle_unusual;
-        }
-        if (input->ExpectTag(34)) goto parse_loop_type_thresholds;
-        input->UnsafeDecrementRecursionDepth();
-        if (input->ExpectAtEnd()) goto success;
-        break;
-      }
-
-      default: {
-      handle_unusual:
-        if (tag == 0 ||
-            ::google::protobuf::internal::WireFormatLite::GetTagWireType(tag) ==
-            ::google::protobuf::internal::WireFormatLite::WIRETYPE_END_GROUP) {
-          goto success;
-        }
-        DO_(::google::protobuf::internal::WireFormatLite::SkipField(input, tag));
-        break;
-      }
-    }
-  }
-success:
-  // @@protoc_insertion_point(parse_success:protocol.OperationSetPrivilege)
-  return true;
-failure:
-  // @@protoc_insertion_point(parse_failure:protocol.OperationSetPrivilege)
-  return false;
-#undef DO_
-}
-
-void OperationSetPrivilege::SerializeWithCachedSizes(
-    ::google::protobuf::io::CodedOutputStream* output) const {
-  // @@protoc_insertion_point(serialize_start:protocol.OperationSetPrivilege)
-  // optional string master_weight = 1;
-  if (this->master_weight().size() > 0) {
-    ::google::protobuf::internal::WireFormatLite::VerifyUtf8String(
-      this->master_weight().data(), this->master_weight().length(),
-      ::google::protobuf::internal::WireFormatLite::SERIALIZE,
-      "protocol.OperationSetPrivilege.master_weight");
-    ::google::protobuf::internal::WireFormatLite::WriteStringMaybeAliased(
-      1, this->master_weight(), output);
-  }
-
-  // repeated .protocol.Signer signers = 2;
-  for (unsigned int i = 0, n = this->signers_size(); i < n; i++) {
-    ::google::protobuf::internal::WireFormatLite::WriteMessageMaybeToArray(
-      2, this->signers(i), output);
-  }
-
-  // optional string tx_threshold = 3;
-  if (this->tx_threshold().size() > 0) {
-    ::google::protobuf::internal::WireFormatLite::VerifyUtf8String(
-      this->tx_threshold().data(), this->tx_threshold().length(),
-      ::google::protobuf::internal::WireFormatLite::SERIALIZE,
-      "protocol.OperationSetPrivilege.tx_threshold");
-    ::google::protobuf::internal::WireFormatLite::WriteStringMaybeAliased(
-      3, this->tx_threshold(), output);
-  }
-
-  // repeated .protocol.OperationTypeThreshold type_thresholds = 4;
-  for (unsigned int i = 0, n = this->type_thresholds_size(); i < n; i++) {
-    ::google::protobuf::internal::WireFormatLite::WriteMessageMaybeToArray(
-      4, this->type_thresholds(i), output);
-  }
-
-  // @@protoc_insertion_point(serialize_end:protocol.OperationSetPrivilege)
-}
-
-::google::protobuf::uint8* OperationSetPrivilege::InternalSerializeWithCachedSizesToArray(
-    bool deterministic, ::google::protobuf::uint8* target) const {
-  // @@protoc_insertion_point(serialize_to_array_start:protocol.OperationSetPrivilege)
-  // optional string master_weight = 1;
-  if (this->master_weight().size() > 0) {
-    ::google::protobuf::internal::WireFormatLite::VerifyUtf8String(
-      this->master_weight().data(), this->master_weight().length(),
-      ::google::protobuf::internal::WireFormatLite::SERIALIZE,
-      "protocol.OperationSetPrivilege.master_weight");
-    target =
-      ::google::protobuf::internal::WireFormatLite::WriteStringToArray(
-        1, this->master_weight(), target);
-  }
-
-  // repeated .protocol.Signer signers = 2;
-  for (unsigned int i = 0, n = this->signers_size(); i < n; i++) {
-    target = ::google::protobuf::internal::WireFormatLite::
-      InternalWriteMessageNoVirtualToArray(
-        2, this->signers(i), false, target);
-  }
-
-  // optional string tx_threshold = 3;
-  if (this->tx_threshold().size() > 0) {
-    ::google::protobuf::internal::WireFormatLite::VerifyUtf8String(
-      this->tx_threshold().data(), this->tx_threshold().length(),
-      ::google::protobuf::internal::WireFormatLite::SERIALIZE,
-      "protocol.OperationSetPrivilege.tx_threshold");
-    target =
-      ::google::protobuf::internal::WireFormatLite::WriteStringToArray(
-        3, this->tx_threshold(), target);
-  }
-
-  // repeated .protocol.OperationTypeThreshold type_thresholds = 4;
-  for (unsigned int i = 0, n = this->type_thresholds_size(); i < n; i++) {
-    target = ::google::protobuf::internal::WireFormatLite::
-      InternalWriteMessageNoVirtualToArray(
-        4, this->type_thresholds(i), false, target);
-  }
-
-  // @@protoc_insertion_point(serialize_to_array_end:protocol.OperationSetPrivilege)
-  return target;
-}
-
-int OperationSetPrivilege::ByteSize() const {
-// @@protoc_insertion_point(message_byte_size_start:protocol.OperationSetPrivilege)
-  int total_size = 0;
-
-  // optional string master_weight = 1;
-  if (this->master_weight().size() > 0) {
-    total_size += 1 +
-      ::google::protobuf::internal::WireFormatLite::StringSize(
-        this->master_weight());
-  }
-
-  // optional string tx_threshold = 3;
-  if (this->tx_threshold().size() > 0) {
-    total_size += 1 +
-      ::google::protobuf::internal::WireFormatLite::StringSize(
-        this->tx_threshold());
-  }
-
-  // repeated .protocol.Signer signers = 2;
-  total_size += 1 * this->signers_size();
-  for (int i = 0; i < this->signers_size(); i++) {
-    total_size +=
-      ::google::protobuf::internal::WireFormatLite::MessageSizeNoVirtual(
-        this->signers(i));
-  }
-
-  // repeated .protocol.OperationTypeThreshold type_thresholds = 4;
-  total_size += 1 * this->type_thresholds_size();
-  for (int i = 0; i < this->type_thresholds_size(); i++) {
-    total_size +=
-      ::google::protobuf::internal::WireFormatLite::MessageSizeNoVirtual(
-        this->type_thresholds(i));
-  }
-
-  GOOGLE_SAFE_CONCURRENT_WRITES_BEGIN();
-  _cached_size_ = total_size;
-  GOOGLE_SAFE_CONCURRENT_WRITES_END();
-  return total_size;
-}
-
-void OperationSetPrivilege::MergeFrom(const ::google::protobuf::Message& from) {
-// @@protoc_insertion_point(generalized_merge_from_start:protocol.OperationSetPrivilege)
-  if (GOOGLE_PREDICT_FALSE(&from == this)) {
-    ::google::protobuf::internal::MergeFromFail(__FILE__, __LINE__);
-  }
-  const OperationSetPrivilege* source = 
-      ::google::protobuf::internal::DynamicCastToGenerated<const OperationSetPrivilege>(
-          &from);
-  if (source == NULL) {
-  // @@protoc_insertion_point(generalized_merge_from_cast_fail:protocol.OperationSetPrivilege)
-    ::google::protobuf::internal::ReflectionOps::Merge(from, this);
-  } else {
-  // @@protoc_insertion_point(generalized_merge_from_cast_success:protocol.OperationSetPrivilege)
-    MergeFrom(*source);
-  }
-}
-
-void OperationSetPrivilege::MergeFrom(const OperationSetPrivilege& from) {
-// @@protoc_insertion_point(class_specific_merge_from_start:protocol.OperationSetPrivilege)
-  if (GOOGLE_PREDICT_FALSE(&from == this)) {
-    ::google::protobuf::internal::MergeFromFail(__FILE__, __LINE__);
-  }
-  signers_.MergeFrom(from.signers_);
-  type_thresholds_.MergeFrom(from.type_thresholds_);
-  if (from.master_weight().size() > 0) {
-
-    master_weight_.AssignWithDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), from.master_weight_);
-  }
-  if (from.tx_threshold().size() > 0) {
-
-    tx_threshold_.AssignWithDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), from.tx_threshold_);
-  }
-}
-
-void OperationSetPrivilege::CopyFrom(const ::google::protobuf::Message& from) {
-// @@protoc_insertion_point(generalized_copy_from_start:protocol.OperationSetPrivilege)
-  if (&from == this) return;
-  Clear();
-  MergeFrom(from);
-}
-
-void OperationSetPrivilege::CopyFrom(const OperationSetPrivilege& from) {
-// @@protoc_insertion_point(class_specific_copy_from_start:protocol.OperationSetPrivilege)
-  if (&from == this) return;
-  Clear();
-  MergeFrom(from);
-}
-
-bool OperationSetPrivilege::IsInitialized() const {
-
-  return true;
-}
-
-void OperationSetPrivilege::Swap(OperationSetPrivilege* other) {
-  if (other == this) return;
-  InternalSwap(other);
-}
-void OperationSetPrivilege::InternalSwap(OperationSetPrivilege* other) {
-  master_weight_.Swap(&other->master_weight_);
-  signers_.UnsafeArenaSwap(&other->signers_);
-  tx_threshold_.Swap(&other->tx_threshold_);
-  type_thresholds_.UnsafeArenaSwap(&other->type_thresholds_);
-  _internal_metadata_.Swap(&other->_internal_metadata_);
-  std::swap(_cached_size_, other->_cached_size_);
-}
-
-::google::protobuf::Metadata OperationSetPrivilege::GetMetadata() const {
-  protobuf_AssignDescriptorsOnce();
-  ::google::protobuf::Metadata metadata;
-  metadata.descriptor = OperationSetPrivilege_descriptor_;
-  metadata.reflection = OperationSetPrivilege_reflection_;
-  return metadata;
-}
-
-#if PROTOBUF_INLINE_NOT_IN_HEADERS
-// OperationSetPrivilege
-
-// optional string master_weight = 1;
-void OperationSetPrivilege::clear_master_weight() {
-  master_weight_.ClearToEmptyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
-}
- const ::std::string& OperationSetPrivilege::master_weight() const {
-  // @@protoc_insertion_point(field_get:protocol.OperationSetPrivilege.master_weight)
-  return master_weight_.GetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
-}
- void OperationSetPrivilege::set_master_weight(const ::std::string& value) {
-  
-  master_weight_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), value);
-  // @@protoc_insertion_point(field_set:protocol.OperationSetPrivilege.master_weight)
-}
- void OperationSetPrivilege::set_master_weight(const char* value) {
-  
-  master_weight_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), ::std::string(value));
-  // @@protoc_insertion_point(field_set_char:protocol.OperationSetPrivilege.master_weight)
-}
- void OperationSetPrivilege::set_master_weight(const char* value, size_t size) {
-  
-  master_weight_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(),
-      ::std::string(reinterpret_cast<const char*>(value), size));
-  // @@protoc_insertion_point(field_set_pointer:protocol.OperationSetPrivilege.master_weight)
-}
- ::std::string* OperationSetPrivilege::mutable_master_weight() {
-  
-  // @@protoc_insertion_point(field_mutable:protocol.OperationSetPrivilege.master_weight)
-  return master_weight_.MutableNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
-}
- ::std::string* OperationSetPrivilege::release_master_weight() {
-  // @@protoc_insertion_point(field_release:protocol.OperationSetPrivilege.master_weight)
-  
-  return master_weight_.ReleaseNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
-}
- void OperationSetPrivilege::set_allocated_master_weight(::std::string* master_weight) {
-  if (master_weight != NULL) {
-    
-  } else {
-    
-  }
-  master_weight_.SetAllocatedNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), master_weight);
-  // @@protoc_insertion_point(field_set_allocated:protocol.OperationSetPrivilege.master_weight)
-}
-
-// repeated .protocol.Signer signers = 2;
-int OperationSetPrivilege::signers_size() const {
-  return signers_.size();
-}
-void OperationSetPrivilege::clear_signers() {
-  signers_.Clear();
-}
-const ::protocol::Signer& OperationSetPrivilege::signers(int index) const {
-  // @@protoc_insertion_point(field_get:protocol.OperationSetPrivilege.signers)
-  return signers_.Get(index);
-}
-::protocol::Signer* OperationSetPrivilege::mutable_signers(int index) {
-  // @@protoc_insertion_point(field_mutable:protocol.OperationSetPrivilege.signers)
-  return signers_.Mutable(index);
-}
-::protocol::Signer* OperationSetPrivilege::add_signers() {
-  // @@protoc_insertion_point(field_add:protocol.OperationSetPrivilege.signers)
-  return signers_.Add();
-}
-::google::protobuf::RepeatedPtrField< ::protocol::Signer >*
-OperationSetPrivilege::mutable_signers() {
-  // @@protoc_insertion_point(field_mutable_list:protocol.OperationSetPrivilege.signers)
-  return &signers_;
-}
-const ::google::protobuf::RepeatedPtrField< ::protocol::Signer >&
-OperationSetPrivilege::signers() const {
-  // @@protoc_insertion_point(field_list:protocol.OperationSetPrivilege.signers)
-  return signers_;
-}
-
-// optional string tx_threshold = 3;
-void OperationSetPrivilege::clear_tx_threshold() {
-  tx_threshold_.ClearToEmptyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
-}
- const ::std::string& OperationSetPrivilege::tx_threshold() const {
-  // @@protoc_insertion_point(field_get:protocol.OperationSetPrivilege.tx_threshold)
-  return tx_threshold_.GetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
-}
- void OperationSetPrivilege::set_tx_threshold(const ::std::string& value) {
-  
-  tx_threshold_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), value);
-  // @@protoc_insertion_point(field_set:protocol.OperationSetPrivilege.tx_threshold)
-}
- void OperationSetPrivilege::set_tx_threshold(const char* value) {
-  
-  tx_threshold_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), ::std::string(value));
-  // @@protoc_insertion_point(field_set_char:protocol.OperationSetPrivilege.tx_threshold)
-}
- void OperationSetPrivilege::set_tx_threshold(const char* value, size_t size) {
-  
-  tx_threshold_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(),
-      ::std::string(reinterpret_cast<const char*>(value), size));
-  // @@protoc_insertion_point(field_set_pointer:protocol.OperationSetPrivilege.tx_threshold)
-}
- ::std::string* OperationSetPrivilege::mutable_tx_threshold() {
-  
-  // @@protoc_insertion_point(field_mutable:protocol.OperationSetPrivilege.tx_threshold)
-  return tx_threshold_.MutableNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
-}
- ::std::string* OperationSetPrivilege::release_tx_threshold() {
-  // @@protoc_insertion_point(field_release:protocol.OperationSetPrivilege.tx_threshold)
-  
-  return tx_threshold_.ReleaseNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
-}
- void OperationSetPrivilege::set_allocated_tx_threshold(::std::string* tx_threshold) {
-  if (tx_threshold != NULL) {
-    
-  } else {
-    
-  }
-  tx_threshold_.SetAllocatedNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), tx_threshold);
-  // @@protoc_insertion_point(field_set_allocated:protocol.OperationSetPrivilege.tx_threshold)
-}
-
-// repeated .protocol.OperationTypeThreshold type_thresholds = 4;
-int OperationSetPrivilege::type_thresholds_size() const {
-  return type_thresholds_.size();
-}
-void OperationSetPrivilege::clear_type_thresholds() {
-  type_thresholds_.Clear();
-}
-const ::protocol::OperationTypeThreshold& OperationSetPrivilege::type_thresholds(int index) const {
-  // @@protoc_insertion_point(field_get:protocol.OperationSetPrivilege.type_thresholds)
-  return type_thresholds_.Get(index);
-}
-::protocol::OperationTypeThreshold* OperationSetPrivilege::mutable_type_thresholds(int index) {
-  // @@protoc_insertion_point(field_mutable:protocol.OperationSetPrivilege.type_thresholds)
-  return type_thresholds_.Mutable(index);
-}
-::protocol::OperationTypeThreshold* OperationSetPrivilege::add_type_thresholds() {
-  // @@protoc_insertion_point(field_add:protocol.OperationSetPrivilege.type_thresholds)
-  return type_thresholds_.Add();
-}
-::google::protobuf::RepeatedPtrField< ::protocol::OperationTypeThreshold >*
-OperationSetPrivilege::mutable_type_thresholds() {
-  // @@protoc_insertion_point(field_mutable_list:protocol.OperationSetPrivilege.type_thresholds)
-  return &type_thresholds_;
-}
-const ::google::protobuf::RepeatedPtrField< ::protocol::OperationTypeThreshold >&
-OperationSetPrivilege::type_thresholds() const {
-  // @@protoc_insertion_point(field_list:protocol.OperationSetPrivilege.type_thresholds)
-  return type_thresholds_;
-}
-
-#endif  // PROTOBUF_INLINE_NOT_IN_HEADERS
-
-// ===================================================================
-
 const ::google::protobuf::EnumDescriptor* Operation_Type_descriptor() {
   protobuf_AssignDescriptorsOnce();
   return Operation_Type_descriptor_;
@@ -8264,7 +7704,6 @@ bool Operation_Type_IsValid(int value) {
     case 6:
     case 7:
     case 8:
-    case 9:
       return true;
     default:
       return false;
@@ -8275,13 +7714,12 @@ bool Operation_Type_IsValid(int value) {
 const Operation_Type Operation::UNKNOWN;
 const Operation_Type Operation::CREATE_ACCOUNT;
 const Operation_Type Operation::ISSUE_ASSET;
-const Operation_Type Operation::PAY_ASSET;
+const Operation_Type Operation::PAYMENT;
 const Operation_Type Operation::SET_METADATA;
 const Operation_Type Operation::SET_SIGNER_WEIGHT;
 const Operation_Type Operation::SET_THRESHOLD;
 const Operation_Type Operation::PAY_COIN;
 const Operation_Type Operation::LOG;
-const Operation_Type Operation::SET_PRIVILEGE;
 const Operation_Type Operation::Type_MIN;
 const Operation_Type Operation::Type_MAX;
 const int Operation::Type_ARRAYSIZE;
@@ -8292,13 +7730,12 @@ const int Operation::kSourceAddressFieldNumber;
 const int Operation::kMetadataFieldNumber;
 const int Operation::kCreateAccountFieldNumber;
 const int Operation::kIssueAssetFieldNumber;
-const int Operation::kPayAssetFieldNumber;
+const int Operation::kPaymentFieldNumber;
 const int Operation::kSetMetadataFieldNumber;
 const int Operation::kSetSignerWeightFieldNumber;
 const int Operation::kSetThresholdFieldNumber;
 const int Operation::kPayCoinFieldNumber;
 const int Operation::kLogFieldNumber;
-const int Operation::kSetPrivilegeFieldNumber;
 #endif  // !defined(_MSC_VER) || _MSC_VER >= 1900
 
 Operation::Operation()
@@ -8311,13 +7748,12 @@ void Operation::InitAsDefaultInstance() {
   _is_default_instance_ = true;
   create_account_ = const_cast< ::protocol::OperationCreateAccount*>(&::protocol::OperationCreateAccount::default_instance());
   issue_asset_ = const_cast< ::protocol::OperationIssueAsset*>(&::protocol::OperationIssueAsset::default_instance());
-  pay_asset_ = const_cast< ::protocol::OperationPayAsset*>(&::protocol::OperationPayAsset::default_instance());
+  payment_ = const_cast< ::protocol::OperationPayment*>(&::protocol::OperationPayment::default_instance());
   set_metadata_ = const_cast< ::protocol::OperationSetMetadata*>(&::protocol::OperationSetMetadata::default_instance());
   set_signer_weight_ = const_cast< ::protocol::OperationSetSignerWeight*>(&::protocol::OperationSetSignerWeight::default_instance());
   set_threshold_ = const_cast< ::protocol::OperationSetThreshold*>(&::protocol::OperationSetThreshold::default_instance());
   pay_coin_ = const_cast< ::protocol::OperationPayCoin*>(&::protocol::OperationPayCoin::default_instance());
   log_ = const_cast< ::protocol::OperationLog*>(&::protocol::OperationLog::default_instance());
-  set_privilege_ = const_cast< ::protocol::OperationSetPrivilege*>(&::protocol::OperationSetPrivilege::default_instance());
 }
 
 Operation::Operation(const Operation& from)
@@ -8337,13 +7773,12 @@ void Operation::SharedCtor() {
   metadata_.UnsafeSetDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
   create_account_ = NULL;
   issue_asset_ = NULL;
-  pay_asset_ = NULL;
+  payment_ = NULL;
   set_metadata_ = NULL;
   set_signer_weight_ = NULL;
   set_threshold_ = NULL;
   pay_coin_ = NULL;
   log_ = NULL;
-  set_privilege_ = NULL;
 }
 
 Operation::~Operation() {
@@ -8357,13 +7792,12 @@ void Operation::SharedDtor() {
   if (this != default_instance_) {
     delete create_account_;
     delete issue_asset_;
-    delete pay_asset_;
+    delete payment_;
     delete set_metadata_;
     delete set_signer_weight_;
     delete set_threshold_;
     delete pay_coin_;
     delete log_;
-    delete set_privilege_;
   }
 }
 
@@ -8401,8 +7835,8 @@ void Operation::Clear() {
   create_account_ = NULL;
   if (GetArenaNoVirtual() == NULL && issue_asset_ != NULL) delete issue_asset_;
   issue_asset_ = NULL;
-  if (GetArenaNoVirtual() == NULL && pay_asset_ != NULL) delete pay_asset_;
-  pay_asset_ = NULL;
+  if (GetArenaNoVirtual() == NULL && payment_ != NULL) delete payment_;
+  payment_ = NULL;
   if (GetArenaNoVirtual() == NULL && set_metadata_ != NULL) delete set_metadata_;
   set_metadata_ = NULL;
   if (GetArenaNoVirtual() == NULL && set_signer_weight_ != NULL) delete set_signer_weight_;
@@ -8413,8 +7847,6 @@ void Operation::Clear() {
   pay_coin_ = NULL;
   if (GetArenaNoVirtual() == NULL && log_ != NULL) delete log_;
   log_ = NULL;
-  if (GetArenaNoVirtual() == NULL && set_privilege_ != NULL) delete set_privilege_;
-  set_privilege_ = NULL;
 }
 
 bool Operation::MergePartialFromCodedStream(
@@ -8494,16 +7926,16 @@ bool Operation::MergePartialFromCodedStream(
         } else {
           goto handle_unusual;
         }
-        if (input->ExpectTag(50)) goto parse_pay_asset;
+        if (input->ExpectTag(50)) goto parse_payment;
         break;
       }
 
-      // optional .protocol.OperationPayAsset pay_asset = 6;
+      // optional .protocol.OperationPayment payment = 6;
       case 6: {
         if (tag == 50) {
-         parse_pay_asset:
+         parse_payment:
           DO_(::google::protobuf::internal::WireFormatLite::ReadMessageNoVirtual(
-               input, mutable_pay_asset()));
+               input, mutable_payment()));
         } else {
           goto handle_unusual;
         }
@@ -8572,19 +8004,6 @@ bool Operation::MergePartialFromCodedStream(
         } else {
           goto handle_unusual;
         }
-        if (input->ExpectTag(98)) goto parse_set_privilege;
-        break;
-      }
-
-      // optional .protocol.OperationSetPrivilege set_privilege = 12;
-      case 12: {
-        if (tag == 98) {
-         parse_set_privilege:
-          DO_(::google::protobuf::internal::WireFormatLite::ReadMessageNoVirtual(
-               input, mutable_set_privilege()));
-        } else {
-          goto handle_unusual;
-        }
         if (input->ExpectAtEnd()) goto success;
         break;
       }
@@ -8647,10 +8066,10 @@ void Operation::SerializeWithCachedSizes(
       5, *this->issue_asset_, output);
   }
 
-  // optional .protocol.OperationPayAsset pay_asset = 6;
-  if (this->has_pay_asset()) {
+  // optional .protocol.OperationPayment payment = 6;
+  if (this->has_payment()) {
     ::google::protobuf::internal::WireFormatLite::WriteMessageMaybeToArray(
-      6, *this->pay_asset_, output);
+      6, *this->payment_, output);
   }
 
   // optional .protocol.OperationSetMetadata set_metadata = 7;
@@ -8681,12 +8100,6 @@ void Operation::SerializeWithCachedSizes(
   if (this->has_log()) {
     ::google::protobuf::internal::WireFormatLite::WriteMessageMaybeToArray(
       11, *this->log_, output);
-  }
-
-  // optional .protocol.OperationSetPrivilege set_privilege = 12;
-  if (this->has_set_privilege()) {
-    ::google::protobuf::internal::WireFormatLite::WriteMessageMaybeToArray(
-      12, *this->set_privilege_, output);
   }
 
   // @@protoc_insertion_point(serialize_end:protocol.Operation)
@@ -8733,11 +8146,11 @@ void Operation::SerializeWithCachedSizes(
         5, *this->issue_asset_, false, target);
   }
 
-  // optional .protocol.OperationPayAsset pay_asset = 6;
-  if (this->has_pay_asset()) {
+  // optional .protocol.OperationPayment payment = 6;
+  if (this->has_payment()) {
     target = ::google::protobuf::internal::WireFormatLite::
       InternalWriteMessageNoVirtualToArray(
-        6, *this->pay_asset_, false, target);
+        6, *this->payment_, false, target);
   }
 
   // optional .protocol.OperationSetMetadata set_metadata = 7;
@@ -8773,13 +8186,6 @@ void Operation::SerializeWithCachedSizes(
     target = ::google::protobuf::internal::WireFormatLite::
       InternalWriteMessageNoVirtualToArray(
         11, *this->log_, false, target);
-  }
-
-  // optional .protocol.OperationSetPrivilege set_privilege = 12;
-  if (this->has_set_privilege()) {
-    target = ::google::protobuf::internal::WireFormatLite::
-      InternalWriteMessageNoVirtualToArray(
-        12, *this->set_privilege_, false, target);
   }
 
   // @@protoc_insertion_point(serialize_to_array_end:protocol.Operation)
@@ -8824,11 +8230,11 @@ int Operation::ByteSize() const {
         *this->issue_asset_);
   }
 
-  // optional .protocol.OperationPayAsset pay_asset = 6;
-  if (this->has_pay_asset()) {
+  // optional .protocol.OperationPayment payment = 6;
+  if (this->has_payment()) {
     total_size += 1 +
       ::google::protobuf::internal::WireFormatLite::MessageSizeNoVirtual(
-        *this->pay_asset_);
+        *this->payment_);
   }
 
   // optional .protocol.OperationSetMetadata set_metadata = 7;
@@ -8864,13 +8270,6 @@ int Operation::ByteSize() const {
     total_size += 1 +
       ::google::protobuf::internal::WireFormatLite::MessageSizeNoVirtual(
         *this->log_);
-  }
-
-  // optional .protocol.OperationSetPrivilege set_privilege = 12;
-  if (this->has_set_privilege()) {
-    total_size += 1 +
-      ::google::protobuf::internal::WireFormatLite::MessageSizeNoVirtual(
-        *this->set_privilege_);
   }
 
   GOOGLE_SAFE_CONCURRENT_WRITES_BEGIN();
@@ -8918,8 +8317,8 @@ void Operation::MergeFrom(const Operation& from) {
   if (from.has_issue_asset()) {
     mutable_issue_asset()->::protocol::OperationIssueAsset::MergeFrom(from.issue_asset());
   }
-  if (from.has_pay_asset()) {
-    mutable_pay_asset()->::protocol::OperationPayAsset::MergeFrom(from.pay_asset());
+  if (from.has_payment()) {
+    mutable_payment()->::protocol::OperationPayment::MergeFrom(from.payment());
   }
   if (from.has_set_metadata()) {
     mutable_set_metadata()->::protocol::OperationSetMetadata::MergeFrom(from.set_metadata());
@@ -8935,9 +8334,6 @@ void Operation::MergeFrom(const Operation& from) {
   }
   if (from.has_log()) {
     mutable_log()->::protocol::OperationLog::MergeFrom(from.log());
-  }
-  if (from.has_set_privilege()) {
-    mutable_set_privilege()->::protocol::OperationSetPrivilege::MergeFrom(from.set_privilege());
   }
 }
 
@@ -8970,13 +8366,12 @@ void Operation::InternalSwap(Operation* other) {
   metadata_.Swap(&other->metadata_);
   std::swap(create_account_, other->create_account_);
   std::swap(issue_asset_, other->issue_asset_);
-  std::swap(pay_asset_, other->pay_asset_);
+  std::swap(payment_, other->payment_);
   std::swap(set_metadata_, other->set_metadata_);
   std::swap(set_signer_weight_, other->set_signer_weight_);
   std::swap(set_threshold_, other->set_threshold_);
   std::swap(pay_coin_, other->pay_coin_);
   std::swap(log_, other->log_);
-  std::swap(set_privilege_, other->set_privilege_);
   _internal_metadata_.Swap(&other->_internal_metadata_);
   std::swap(_cached_size_, other->_cached_size_);
 }
@@ -9170,42 +8565,42 @@ void Operation::set_allocated_issue_asset(::protocol::OperationIssueAsset* issue
   // @@protoc_insertion_point(field_set_allocated:protocol.Operation.issue_asset)
 }
 
-// optional .protocol.OperationPayAsset pay_asset = 6;
-bool Operation::has_pay_asset() const {
-  return !_is_default_instance_ && pay_asset_ != NULL;
+// optional .protocol.OperationPayment payment = 6;
+bool Operation::has_payment() const {
+  return !_is_default_instance_ && payment_ != NULL;
 }
-void Operation::clear_pay_asset() {
-  if (GetArenaNoVirtual() == NULL && pay_asset_ != NULL) delete pay_asset_;
-  pay_asset_ = NULL;
+void Operation::clear_payment() {
+  if (GetArenaNoVirtual() == NULL && payment_ != NULL) delete payment_;
+  payment_ = NULL;
 }
-const ::protocol::OperationPayAsset& Operation::pay_asset() const {
-  // @@protoc_insertion_point(field_get:protocol.Operation.pay_asset)
-  return pay_asset_ != NULL ? *pay_asset_ : *default_instance_->pay_asset_;
+const ::protocol::OperationPayment& Operation::payment() const {
+  // @@protoc_insertion_point(field_get:protocol.Operation.payment)
+  return payment_ != NULL ? *payment_ : *default_instance_->payment_;
 }
-::protocol::OperationPayAsset* Operation::mutable_pay_asset() {
+::protocol::OperationPayment* Operation::mutable_payment() {
   
-  if (pay_asset_ == NULL) {
-    pay_asset_ = new ::protocol::OperationPayAsset;
+  if (payment_ == NULL) {
+    payment_ = new ::protocol::OperationPayment;
   }
-  // @@protoc_insertion_point(field_mutable:protocol.Operation.pay_asset)
-  return pay_asset_;
+  // @@protoc_insertion_point(field_mutable:protocol.Operation.payment)
+  return payment_;
 }
-::protocol::OperationPayAsset* Operation::release_pay_asset() {
-  // @@protoc_insertion_point(field_release:protocol.Operation.pay_asset)
+::protocol::OperationPayment* Operation::release_payment() {
+  // @@protoc_insertion_point(field_release:protocol.Operation.payment)
   
-  ::protocol::OperationPayAsset* temp = pay_asset_;
-  pay_asset_ = NULL;
+  ::protocol::OperationPayment* temp = payment_;
+  payment_ = NULL;
   return temp;
 }
-void Operation::set_allocated_pay_asset(::protocol::OperationPayAsset* pay_asset) {
-  delete pay_asset_;
-  pay_asset_ = pay_asset;
-  if (pay_asset) {
+void Operation::set_allocated_payment(::protocol::OperationPayment* payment) {
+  delete payment_;
+  payment_ = payment;
+  if (payment) {
     
   } else {
     
   }
-  // @@protoc_insertion_point(field_set_allocated:protocol.Operation.pay_asset)
+  // @@protoc_insertion_point(field_set_allocated:protocol.Operation.payment)
 }
 
 // optional .protocol.OperationSetMetadata set_metadata = 7;
@@ -9398,44 +8793,6 @@ void Operation::set_allocated_log(::protocol::OperationLog* log) {
   // @@protoc_insertion_point(field_set_allocated:protocol.Operation.log)
 }
 
-// optional .protocol.OperationSetPrivilege set_privilege = 12;
-bool Operation::has_set_privilege() const {
-  return !_is_default_instance_ && set_privilege_ != NULL;
-}
-void Operation::clear_set_privilege() {
-  if (GetArenaNoVirtual() == NULL && set_privilege_ != NULL) delete set_privilege_;
-  set_privilege_ = NULL;
-}
-const ::protocol::OperationSetPrivilege& Operation::set_privilege() const {
-  // @@protoc_insertion_point(field_get:protocol.Operation.set_privilege)
-  return set_privilege_ != NULL ? *set_privilege_ : *default_instance_->set_privilege_;
-}
-::protocol::OperationSetPrivilege* Operation::mutable_set_privilege() {
-  
-  if (set_privilege_ == NULL) {
-    set_privilege_ = new ::protocol::OperationSetPrivilege;
-  }
-  // @@protoc_insertion_point(field_mutable:protocol.Operation.set_privilege)
-  return set_privilege_;
-}
-::protocol::OperationSetPrivilege* Operation::release_set_privilege() {
-  // @@protoc_insertion_point(field_release:protocol.Operation.set_privilege)
-  
-  ::protocol::OperationSetPrivilege* temp = set_privilege_;
-  set_privilege_ = NULL;
-  return temp;
-}
-void Operation::set_allocated_set_privilege(::protocol::OperationSetPrivilege* set_privilege) {
-  delete set_privilege_;
-  set_privilege_ = set_privilege;
-  if (set_privilege) {
-    
-  } else {
-    
-  }
-  // @@protoc_insertion_point(field_set_allocated:protocol.Operation.set_privilege)
-}
-
 #endif  // PROTOBUF_INLINE_NOT_IN_HEADERS
 
 // ===================================================================
@@ -9530,13 +8887,13 @@ bool OperationSetThreshold::MergePartialFromCodedStream(
         } else {
           goto handle_unusual;
         }
-        if (input->ExpectTag(18)) goto parse_type_thresholds;
+        if (input->ExpectTag(34)) goto parse_type_thresholds;
         break;
       }
 
-      // repeated .protocol.OperationTypeThreshold type_thresholds = 2;
-      case 2: {
-        if (tag == 18) {
+      // repeated .protocol.OperationTypeThreshold type_thresholds = 4;
+      case 4: {
+        if (tag == 34) {
          parse_type_thresholds:
           DO_(input->IncrementRecursionDepth());
          parse_loop_type_thresholds:
@@ -9545,7 +8902,7 @@ bool OperationSetThreshold::MergePartialFromCodedStream(
         } else {
           goto handle_unusual;
         }
-        if (input->ExpectTag(18)) goto parse_loop_type_thresholds;
+        if (input->ExpectTag(34)) goto parse_loop_type_thresholds;
         input->UnsafeDecrementRecursionDepth();
         if (input->ExpectAtEnd()) goto success;
         break;
@@ -9580,10 +8937,10 @@ void OperationSetThreshold::SerializeWithCachedSizes(
     ::google::protobuf::internal::WireFormatLite::WriteInt64(1, this->tx_threshold(), output);
   }
 
-  // repeated .protocol.OperationTypeThreshold type_thresholds = 2;
+  // repeated .protocol.OperationTypeThreshold type_thresholds = 4;
   for (unsigned int i = 0, n = this->type_thresholds_size(); i < n; i++) {
     ::google::protobuf::internal::WireFormatLite::WriteMessageMaybeToArray(
-      2, this->type_thresholds(i), output);
+      4, this->type_thresholds(i), output);
   }
 
   // @@protoc_insertion_point(serialize_end:protocol.OperationSetThreshold)
@@ -9597,11 +8954,11 @@ void OperationSetThreshold::SerializeWithCachedSizes(
     target = ::google::protobuf::internal::WireFormatLite::WriteInt64ToArray(1, this->tx_threshold(), target);
   }
 
-  // repeated .protocol.OperationTypeThreshold type_thresholds = 2;
+  // repeated .protocol.OperationTypeThreshold type_thresholds = 4;
   for (unsigned int i = 0, n = this->type_thresholds_size(); i < n; i++) {
     target = ::google::protobuf::internal::WireFormatLite::
       InternalWriteMessageNoVirtualToArray(
-        2, this->type_thresholds(i), false, target);
+        4, this->type_thresholds(i), false, target);
   }
 
   // @@protoc_insertion_point(serialize_to_array_end:protocol.OperationSetThreshold)
@@ -9619,7 +8976,7 @@ int OperationSetThreshold::ByteSize() const {
         this->tx_threshold());
   }
 
-  // repeated .protocol.OperationTypeThreshold type_thresholds = 2;
+  // repeated .protocol.OperationTypeThreshold type_thresholds = 4;
   total_size += 1 * this->type_thresholds_size();
   for (int i = 0; i < this->type_thresholds_size(); i++) {
     total_size +=
@@ -9716,7 +9073,7 @@ void OperationSetThreshold::clear_tx_threshold() {
   // @@protoc_insertion_point(field_set:protocol.OperationSetThreshold.tx_threshold)
 }
 
-// repeated .protocol.OperationTypeThreshold type_thresholds = 2;
+// repeated .protocol.OperationTypeThreshold type_thresholds = 4;
 int OperationSetThreshold::type_thresholds_size() const {
   return type_thresholds_.size();
 }

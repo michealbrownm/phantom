@@ -25,7 +25,7 @@ namespace phantom {
 		friend class PbftInstance;
 		friend class PbftVcInstance;
 	private:
-		//For pbft instance
+		//for pbft instance
 		PbftInstanceMap instances_;
 		int64_t view_number_;
 		int64_t sequence_;
@@ -39,16 +39,16 @@ namespace phantom {
 
 		bool view_active_;
 
-		//For view change 
+		//for view change 
 		PbftVcInstanceMap vc_instances_;
 
-		//For synchronization
+		//for synchronize
 		PbftInstanceMap out_pbft_instances_;
 
-		//Check interval
+		//check interval
 		int64_t last_check_time_;
 
-		//For change view timer
+		//for change view timer
 		int64_t new_view_repond_timer_;
 
 		PbftEnvPointer NewPrePrepare(const std::string &value, int64_t sequence);

@@ -22,17 +22,10 @@
 namespace phantom {
 	const uint32_t General::OVERLAY_VERSION = 1000;
 	const uint32_t General::OVERLAY_MIN_VERSION = 1000;
-	/*
-		Based on ledger 1000, the following changes have been modified.
-		1.Create a common or contract account without signers.
-		2.Add the set privilege option.
-		3.Create a contract account without destination address, and it will be created automatically.
-	*/
-	const uint32_t General::LEDGER_VERSION_HISTORY_1000 = 1000;
-	const uint32_t General::LEDGER_VERSION = 1001;
+	const uint32_t General::LEDGER_VERSION = 1000;
 	const uint32_t General::LEDGER_MIN_VERSION = 1000;
 	const uint32_t General::MONITOR_VERSION = 1000;
-	const char *General::phantom_VERSION = "1.0.0.8";
+	const char *General::PHANTOM_VERSION = "1.0.0.0";
 
 #ifdef WIN32
 	const char *General::DEFAULT_KEYVALUE_DB_PATH = "data/keyvalue.db";
@@ -191,7 +184,7 @@ namespace phantom {
 				item->SlowTimerWrapper(utils::Timestamp::HighResolution());
 
 				if (item->IsSlowExpire(5 * utils::MICRO_UNITS_PER_SEC)){
-					LOG_WARN("The execution time(%s) (" FMT_I64 " us) is expired after 5s elapse", item->GetTimerName().c_str(), item->GetSlowLastExecuteTime());
+					LOG_WARN("The timer(%s) execute time(" FMT_I64 " us) is expire than 5s", item->GetTimerName().c_str(), item->GetSlowLastExecuteTime());
 				}
 			}
 
@@ -238,7 +231,6 @@ namespace phantom {
 		if (type_ == HASH_TYPE_SM3){
 			hash_ = new utils::Sm3();
 		}
-
 		else{
 			hash_ = new utils::Sha256();
 		}
@@ -324,7 +316,7 @@ namespace phantom {
 	int64_t GetBlockReward(const int64_t cur_block_height) {
 		int64_t period_index = cur_block_height / General::REWARD_PERIOD;
 
-		//Decrease by 1/4 every period.
+		//decrease 1/4 every period
 		int64_t result = General::REWARD_INIT_VALUE;
 		for (int64_t i = 0; i < period_index; i++)
 		{

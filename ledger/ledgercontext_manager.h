@@ -28,7 +28,7 @@ namespace phantom {
 	class LedgerContext;
 	typedef std::function< void(bool check_result)> PreProcessCallback;
 	class LedgerContext : public utils::Thread {
-		std::stack<int64_t> contract_ids_; //The contract_ids may be called by checking the thread or executing the thread, so contract_ids needs to be locked.
+		std::stack<int64_t> contract_ids_; //may be called by check thread or execute thread.so need lock
 		//parameter
 		int32_t type_; // -1 : normal, 0 : test v8 , 1: test evm ,2 test transaction
 		ContractTestParameter parameter_; // when type_ >= 0

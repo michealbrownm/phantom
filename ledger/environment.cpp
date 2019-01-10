@@ -105,7 +105,7 @@ namespace phantom{
 
 		protocol::Account account;
 		if (!account.ParseFromString(buff)){
-			PROCESS_EXIT("Failed to parse account(%s) from string, fatal error", address.c_str());
+			PROCESS_EXIT("fatal error, account(%s) ParseFromString failed", address.c_str());
 		}
 		account_ptr = std::make_shared<AccountFrm>(account);
 		return true;

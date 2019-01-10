@@ -6,10 +6,10 @@ set(PROTO_SRC
  	cpp/overlay.pb.cc cpp/merkeltrie.pb.cc cpp/monitor.pb.cc
 )
 
-#Generate static library files
+#generate static library file
 add_library(${LIB_PHANTOM_PROTO} ${PROTO_SRC}) 
 
-#Specify compiling options for target objects
+#specify compile options for target obj
 target_compile_options(${LIB_PHANTOM_PROTO}
     PUBLIC -std=c++11 
     PUBLIC -DASIO_STANDALONE

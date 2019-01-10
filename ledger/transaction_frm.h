@@ -29,6 +29,7 @@
 namespace phantom {
 
 	class OperationFrm;
+	class AccountEntry;
 	class LedgerFrm;
 	class TransactionFrm {
 	public:
@@ -38,7 +39,7 @@ namespace phantom {
 		std::vector<protocol::TransactionEnvStore> instructions_;
 		std::shared_ptr<Environment> environment_;
 	public:
-		//Valid only when the transaction belongs to a txset.
+		//only valid when the transaction belongs to a txset
 		TransactionFrm();
 		TransactionFrm(const protocol::TransactionEnv &env);
 		
@@ -86,21 +87,17 @@ namespace phantom {
 
 		void ApplyExpireResult(); // for sync node
 
-		int64_t GetSelfGas();
-
-		bool ValidForParameter(bool contract_trigger = false);
+		bool ValidForParameter(int64_t& total_op_fee);
 		
 		bool ValidForApply(std::shared_ptr<Environment> environment, bool check_priv = true);
-
-		bool CheckFee(const int64_t& gas_price, const int64_t& fee_limit, AccountFrm::pointer account);
-		static bool AddActualFee(TransactionFrm::pointer bottom_tx, TransactionFrm* txfrm);
 
 		bool PayFee(std::shared_ptr<Environment> environment,int64_t& total_fee);
 		bool ReturnFee(int64_t& total_fee);
 		int64_t GetFeeLimit() const;
 		int64_t GetGasPrice() const;
-		int64_t GetActualGas() const;
-		void AddActualGas(int64_t gas);
+		int64_t GetSelfByteFee();
+		int64_t GetActualFee() const;
+		void AddActualFee(int64_t fee);
 
 		void SetApplyStartTime(int64_t time);
 		void SetApplyEndTime(int64_t time);
@@ -112,7 +109,7 @@ namespace phantom {
 		int32_t GetContractStep();
 		void SetMemoryUsage(int64_t memory_usage);
 		int64_t GetMemoryUsage();
-		void SetStackRemain(int64_t remain_size);
+		void SetStackUsage(int64_t memory_usage);
 		int64_t GetStackUsage();
 		bool IsExpire(std::string &error_info);
 		void EnableChecked();
@@ -133,14 +130,12 @@ namespace phantom {
 		std::set<std::string> valid_signature_;
 		
 		int64_t incoming_time_;
-		int64_t actual_gas_;
-		int64_t actual_gas_for_query_;
+		int64_t actual_fee_;
 
-		//All the following variables will point to the initial transaction.
+		//flow the top tx
 		int64_t max_end_time_;
 		int32_t contract_step_;
 		int64_t contract_memory_usage_;
-		int64_t contract_stack_max_vaule_;
 		int64_t contract_stack_usage_;
 		bool enable_check_;
 		int64_t apply_start_time_;

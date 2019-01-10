@@ -21,6 +21,7 @@
 #include <utils/lrucache.hpp>
 #include <overlay/peer.h>
 #include <consensus/consensus_manager.h>
+#include "transaction_set.h"
 #include "transaction_queue.h"
 #include "ledger_upgrade.h"
 
@@ -31,6 +32,8 @@ namespace phantom {
 		public phantom::StatusModule,
 		public IConsensusNotify {
 
+		friend class TransactionSetFrm;
+
 		utils::Mutex lock_;
 		std::shared_ptr<TransactionQueue> tx_pool_;
 
@@ -40,17 +43,17 @@ namespace phantom {
 		int64_t ledgerclose_check_timer_;
 		int64_t start_consensus_timer_;
 
-		//For getting module status
+		//for get module status
 		time_t process_uptime_;
 
-		//For temp validation storage, need implementation by ledger
+		//for temp validation storage, need implement by ledger
 		//validations
 		protocol::ValidatorSet validations;
 
-		//Hardfork point
+		//hardfork point
 		std::set<std::string> hardfork_points_;
 
-		//For ledger upgrade
+		//for ledger upgrade
 		LedgerUpgrade ledger_upgrade_;
 
 		bool LoadLastLedger();
@@ -63,25 +66,25 @@ namespace phantom {
 		bool Initialize();
 		bool Exit();
 
-		bool StartConsensus(const std::string &last_consavlue); //Start to trigger consensus
-		bool CreateTableIfNotExist(); //Create the db.
+		bool StartConsensus(const std::string &last_consavlue); //start to trigger consensus
+		bool CreateTableIfNotExist(); //create the db
 		std::string CalculateTxTreeHash(const std::vector<TransactionFrm::pointer> &tx_array);
 		//const LedgerHeaderLiteFrmPtr GetLastLedger() const { return last_ledger_; };
 		int64_t GetIntervalTime(bool empty_block);
 
 		bool OnTransaction(TransactionFrm::pointer tx, Result &err);
-		bool OnConsensus(const ConsensusMsg &msg);
+		void OnConsensus(const ConsensusMsg &msg);
 		void NotifyErrTx(std::vector<TransactionFrm::pointer> &txs);
 
-		//Called by the ledger manger once the ledger is closed
+		//called by ledger manger once ledger closed
 		void UpdateValidators(const protocol::ValidatorSet &validators, const std::string &proof);
 		void LedgerHasUpgrade();
 
-		//Ledger upgrade
+		//ledger upgrade
 		void OnRecvLedgerUpMsg(const protocol::LedgerUpgradeNotify &msg);
 		protocol::Signature SignConsensusData(const std::string &data);
 
-		//Should be called by the ledger manager.
+		//should be called by ledger manager
 		bool CheckValueAndProof( const std::string &consensus_value, const std::string &proof);
 		int32_t CheckValueHelper(const protocol::ConsensusValue &consensus_value, int64_t now);
 		size_t GetTransactionCacheSize();

@@ -57,7 +57,7 @@ namespace phantom {
 		}
 
 		if (!priv_key_.From(Configure::Instance().p2p_configure_.node_private_key_)) {
-			LOG_ERROR("Failed to initialize a private key for the node");
+			LOG_ERROR("Initialize node private key failed");
 			return false;
 		}
 		peer_node_address_ = priv_key_.GetEncAddress();

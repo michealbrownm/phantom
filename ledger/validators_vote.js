@@ -145,7 +145,7 @@ function applyAsValidatorCandidate(){
         let comc = int64Compare(thisPayCoinAmount, minSuperadditionAmount);
         assert(comc === 1 || comc === 0, 'Superaddtion coin amount must more than ' + minSuperadditionAmount);
 
-        let amountc = int64Add(candidates[position][1], thisPayCoinAmount);
+        let amountc = int64Plus(candidates[position][1], thisPayCoinAmount);
         candidates.splice(position, 1);
         let newCandidates = insertCandidatesSorted(sender, amountc, candidates);
         setMetaData(candidatesVar, newCandidates);
@@ -163,7 +163,7 @@ function applyAsValidatorCandidate(){
             assert(coms === 1 || coms === 0, 'Superaddtion coin amount must more than ' + minSuperadditionAmount);
 
             applicant = JSON.parse(applicantStr); 
-            let amountp = int64Add(applicant[pledgeAmountVar], thisPayCoinAmount);
+            let amountp = int64Plus(applicant[pledgeAmountVar], thisPayCoinAmount);
             applicant[pledgeAmountVar] = amountp;
        }
        else{
@@ -173,7 +173,7 @@ function applyAsValidatorCandidate(){
             applicant[ballotVar] = [];
        }
 
-       /*Additional deposit allows you to update the deadline for voting*/
+       /*superaddition pledge coin can update vote expired time*/
        applicant[expiredTimeVar] = blockTimestamp + effectiveVoteInterval;
        setMetaData(applicantKey, applicant);
    }
@@ -191,7 +191,7 @@ function voteForApplicant(applicant){
     let applicantKey = applicantVar + applicant;
     let applicantStr = storageLoad(applicantKey);
     if(applicantStr === false){
-        log(applicantKey + ' is not existed, voting maybe passed or expired.');
+        log(applicantKey + ' is not exist, maybe voting passed or expired.');
         return false;
     }
 
@@ -205,7 +205,7 @@ function voteForApplicant(applicant){
 
     let candidates = getObjectMetaData(candidatesVar);
     if(candidates.length >= (validatorSetSize * 2)){
-        log('Validator candidates are enough');
+        log('Validator candidates is enough');
         return false;
     }
 
@@ -311,7 +311,7 @@ function voteAbolishValidator(malicious){
     let abolishKey = abolishVar + malicious;
     let abolishStr = storageLoad(abolishKey);
     if(abolishStr === false){
-        log(abolishKey + ' is not existed, voting maybe passed or expired.');
+        log(abolishKey + ' is not exist, maybe voting passed or expired.');
         return false;
     }
 
@@ -342,12 +342,12 @@ function voteAbolishValidator(malicious){
     let award   = int64Mod(forfeit, leftValidatorsCnt);
     let average = int64Div(forfeit, leftValidatorsCnt);
     if(award !== '0'){
-        candidates[0][1] = int64Add(candidates[0][1], award);
+        candidates[0][1] = int64Plus(candidates[0][1], award);
     }
 
     let i = 0;
     while(i < leftValidatorsCnt){
-        candidates[i][1] = int64Add(candidates[i][1], average);
+        candidates[i][1] = int64Plus(candidates[i][1], average);
         i += 1;
     }
 

@@ -167,8 +167,6 @@ namespace phantom {
 	bool GenesisConfigure::Load(const Json::Value &value) {
 		Configure::GetValue(value, "validators", validators_);
 		Configure::GetValue(value, "account", account_);
-		Configure::GetValue(value, "slogan", slogan_);
-		
 		if (validators_.empty()) {
 			return false;
 		}

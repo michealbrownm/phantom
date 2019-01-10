@@ -13,8 +13,8 @@
 	along with phantom.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef PHANTOM_ACCOUNT_H_
-#define PHANTOM_ACCOUNT_H_
+#ifndef BUBI_ACCOUNT_H_
+#define BUBI_ACCOUNT_H_
 
 #include <utils/base_int.h>
 #include <utils/crypto.h>

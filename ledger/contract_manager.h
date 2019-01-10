@@ -55,13 +55,7 @@ namespace phantom{
 		ContractTestParameter();
 		~ContractTestParameter();
 
-		typedef enum tagOptType {
-			INIT = 0,
-			MAIN = 1,
-			QUERY = 2
-		}OptType;
-
-		OptType opt_type_;
+		bool exe_or_query_; //true: exe, false:query
 		std::string contract_address_;
 		std::string code_;
 		std::string input_;
@@ -89,7 +83,7 @@ namespace phantom{
 		Result result_;
 		//int32_t error_code_;  //enum 0, FEE_NO_ENOUGH, MAX_TX
 		//std::string error_msg_;
-		int32_t tx_do_count_;  //Transactions triggerred by one contract.
+		int32_t tx_do_count_;  //transactions trigger by one contract
 		utils::StringList logs_;
 	public:
 		Contract();
@@ -123,6 +117,7 @@ namespace phantom{
 
 	class V8Contract : public Contract {
 		v8::Isolate* isolate_;
+		v8::Global<v8::Context> g_context_;
 	public:
 		V8Contract(bool readonly, const ContractParameter &parameter);
 		virtual ~V8Contract();
@@ -173,11 +168,9 @@ namespace phantom{
 		static void CallBackGetValidators(const v8::FunctionCallbackInfo<v8::Value>& args);
 		static void CallBackAddressValidCheck(const v8::FunctionCallbackInfo<v8::Value>& args);
 		static void CallBackPayCoin(const v8::FunctionCallbackInfo<v8::Value>& args);
-		static void CallBackIssueAsset(const v8::FunctionCallbackInfo<v8::Value>& args);
-		static void CallBackPayAsset(const v8::FunctionCallbackInfo<v8::Value>& args);
 		static void Include(const v8::FunctionCallbackInfo<v8::Value>& args);
 		static void InternalCheckTime(const v8::FunctionCallbackInfo<v8::Value>& args);
-		//Get transaction info from a transaction
+		//get transaction info from a transaction
 		static void CallBackGetTransactionInfo(const v8::FunctionCallbackInfo<v8::Value>& args);
 		static void CallBackContractQuery(const v8::FunctionCallbackInfo<v8::Value>& args);
 		//static void CallBackGetThisAddress(const v8::FunctionCallbackInfo<v8::Value>& args);
@@ -185,14 +178,14 @@ namespace phantom{
 		static bool JsValueToCppJson(v8::Handle<v8::Context>& context, v8::Local<v8::Value>& jsvalue, Json::Value& jsonvalue);
 		static bool CppJsonToJsValue(v8::Isolate* isolate, Json::Value& jsonvalue, v8::Local<v8::Value>& jsvalue);
 		static void CallBackConfigFee(const v8::FunctionCallbackInfo<v8::Value>& args);
-		//Assert an expression.
+		//assert a express
 		static void CallBackAssert(const v8::FunctionCallbackInfo<v8::Value>& args);
 
 		//to base unit, equal to * pow(10, 8)
 		static void CallBackToBaseUnit(const v8::FunctionCallbackInfo<v8::Value>& args);
-		//Get the balance of the given account 
+		//get balance of the given account 
 		static void CallBackGetBalance(const v8::FunctionCallbackInfo<v8::Value>& args);
-		//Get the hash of one of the 1024 most recent complete blocks
+		//get the hash of one of the 1024 most recent complete blocks
 		static void CallBackGetBlockHash(const v8::FunctionCallbackInfo<v8::Value>& args);
 
 		//Sends a message with arbitrary date to a given address path
@@ -210,10 +203,8 @@ namespace phantom{
 
 		//Get block timestamp 
 		static void CallBackGetBlockTimestamp(const v8::FunctionCallbackInfo<v8::Value>& args);
-		//str to int64 check
-		static void CallBackStoI64Check(const v8::FunctionCallbackInfo<v8::Value>& args);
 		//Int64 add
-		static void CallBackInt64Add(const v8::FunctionCallbackInfo<v8::Value>& args);
+		static void CallBackInt64Plus(const v8::FunctionCallbackInfo<v8::Value>& args);
 		//Int64 sub
 		static void CallBackInt64Sub(const v8::FunctionCallbackInfo<v8::Value>& args);
 		//Int64 div
@@ -244,6 +235,23 @@ namespace phantom{
 		void Cancel();
 		bool GetResult(Json::Value &result);
 	};
+
+// 	class TestContract : public utils::Thread {
+// 		int32_t type_;
+// 		ContractTestParameter parameter_;
+// 
+// 		Json::Value result_;
+// 		bool ret_;
+// 		LedgerContext ledger_context;
+// 	public:
+// 		TestContract();
+// 		~TestContract();
+// 
+// 		bool Init(int32_t type, const ContractTestParameter &parameter);
+// 		virtual void Run();
+// 		void Cancel();
+// 		bool GetResult(Json::Value &result);
+// 	};
 
 	typedef std::map<int64_t, Contract *> ContractMap;
 	class ContractManager :

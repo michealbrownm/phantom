@@ -1,13 +1,13 @@
-#PHANTOM overlay module CmakeLists.txt -- libPHANTOM_overlay.a
+#phantom overlay module CmakeLists.txt -- libphantom_overlay.a
 
-set(LIB_PHANTOM_OVERLAY PHANTOM_overlay)
-#Automatically get src files from the specified directory
+set(LIB_PHANTOM_OVERLAY phantom_overlay)
+#automaticall get src file in specifical dir
 aux_source_directory(${PHANTOM_SRC_DIR}/overlay/ OVERLAY_SRC)
 
-#Generate static library files
+#generate static library file
 add_library(${LIB_PHANTOM_OVERLAY} ${OVERLAY_SRC})
 
-#Specify compiling options for the target objects
+#specify compile options for target obj
 target_compile_options(${LIB_PHANTOM_OVERLAY}
     PUBLIC -std=c++11 
     PUBLIC -DASIO_STANDALONE

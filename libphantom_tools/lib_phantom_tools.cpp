@@ -14,7 +14,7 @@ PHANTOM_TOOLS_API int InitPhantomTools()
 	utils::Logger &logger = utils::Logger::Instance();
 	logger.SetExpireDays(1);
 	if (!logger.Initialize(utils::LOG_DEST_ALL, utils::LOG_LEVEL_ALL, "", false)){
-		printf("Failed to initialize logger\n");
+		printf("Initialize logger failed\n");
 		return -1;
 	}
 
@@ -29,25 +29,25 @@ PHANTOM_TOOLS_API void UnInitPhantomTools()
 
 PHANTOM_TOOLS_API int CreateAccountAddress(const char *input_signtype, char *output_result, int *output_len) {
 	if (input_signtype == NULL || strlen(input_signtype) == 0) {
-		printf("Failed to create account address, signtype data or data length is error\n");
+		printf("input_signtype data or len error\n");
 		return -1;
 	}
 
 	if (output_result == NULL || output_len == nullptr ||  (*output_len <= 0)) {
-		printf("Failed to create account address, output data or length is error\n");
+		printf("output_result data or len error\n");
 		return -1;
 	}
 
 	std::string str_singtype(input_signtype);
 	phantom::SignatureType type = phantom::GetSignTypeByDesc(str_singtype);
 	if (type == phantom::SIGNTYPE_NONE) {
-		printf("Failed to create account address, signtype \"%s\" error, support: ed25519 or sm2 \n", str_singtype.c_str());
+		printf("input_signtype \"%s\" error, support: ed25519 or sm2 \n", str_singtype.c_str());
 		return -2;
 	}
 
 	phantom::PrivateKey priv_key(type);
 	if (!priv_key.IsValid()) {
-		printf("Failed to check private key, invalid private key");
+		printf("Generate private key error");
 		return -2;
 	}
 
@@ -66,7 +66,7 @@ PHANTOM_TOOLS_API int CreateAccountAddress(const char *input_signtype, char *out
 	//printf("%s\n", result.toStyledString().c_str());
 
 	if (*output_len <= (int)result.toStyledString().size()) {
-		printf("Failed to check private key, output result length is error\n");
+		printf("output_result len error\n");
 		return -1;
 	}
 
@@ -77,7 +77,7 @@ PHANTOM_TOOLS_API int CreateAccountAddress(const char *input_signtype, char *out
 
 PHANTOM_TOOLS_API int CheckAccountAddressValid(const char *input_encode_address) {
 	if (input_encode_address == NULL || strlen(input_encode_address) == 0) {
-		printf("Failed to check account address, input data or length is error\n");
+		printf("input data or len error\n");
 		return -1;
 	}
 
@@ -87,12 +87,12 @@ PHANTOM_TOOLS_API int CheckAccountAddressValid(const char *input_encode_address)
 
 PHANTOM_TOOLS_API int CreateKeystore(const char *input_password, char *output_keystore, int *output_len) {
 	if (input_password == NULL || strlen(input_password) == 0) {
-		printf("Failed to create keystore, input data or length is error\n");
+		printf("input data or len error\n");
 		return -1;
 	}
 
 	if (output_keystore == NULL || output_len == nullptr || (*output_len <= 0)) {
-		printf("Failed to create keystore, output data or length is error\n");
+		printf("output data or len error\n");
 		return -1;
 	}
 
@@ -117,12 +117,12 @@ PHANTOM_TOOLS_API int CreateKeystore(const char *input_password, char *output_ke
 
 PHANTOM_TOOLS_API int CheckKeystoreValid(const char *input_keystore, const char *input_password) {
 	if (input_keystore == NULL || strlen(input_keystore) == 0) {
-		printf("Failed to check keystore, input keystore data or length is error\n");
+		printf("input_keystore data or len error\n");
 		return -1;
 	}
 
 	if (input_password == NULL || strlen(input_password) == 0) {
-		printf("Failed to check keystore, input password data or length is error\n");
+		printf("input_password data or len error\n");
 		return -1;
 	}
 	std::string str_keystore(input_keystore);
@@ -142,17 +142,17 @@ PHANTOM_TOOLS_API int CheckKeystoreValid(const char *input_keystore, const char 
 
 PHANTOM_TOOLS_API int SignData(const char *input_privkey, const char *input_rawdata, char *output_data, int *output_len) {
 	if (input_privkey == NULL || strlen(input_privkey) == 0) {
-		printf("Failed to sign data, input privkey data or length is error\n");
+		printf("input_privkey data or len error\n");
 		return -1;
 	}
 
 	if (input_rawdata == NULL || strlen(input_rawdata) == 0) {
-		printf("Failed to sign data, input raw data or length is error\n");
+		printf("input_rawdata data or len error\n");
 		return -1;
 	}
 
 	if (output_data == NULL || output_len == nullptr || (*output_len <= 0)) {
-		printf("Failed to sign data, output data or length is error\n");
+		printf("output_data data or len error\n");
 		return -1;
 	}
 
@@ -184,19 +184,19 @@ PHANTOM_TOOLS_API int SignData(const char *input_privkey, const char *input_rawd
 
 PHANTOM_TOOLS_API int SignDataWithKeystore(const char *input_keystore, const char *input_password, const char *input_blob, char *output_data, int *output_len) {
 	if (input_keystore == NULL || strlen(input_keystore) == 0) {
-		printf("Failed to sign data with keystore, input keystore data or length is error\n");
+		printf("input_keystore data or len error\n");
 		return -1;
 	}
 	if (input_password == NULL || strlen(input_password) == 0) {
-		printf("Failed to sign data with keystore, input password data or length is error\n");
+		printf("input_password data or len error\n");
 		return -1;
 	}
 	if (input_blob == NULL || strlen(input_blob) == 0) {
-		printf("Failed to sign data with keystore, input password data or length is error\n");
+		printf("input_password data or len error\n");
 		return -1;
 	}
 	if (output_data == NULL || output_len == nullptr || (*output_len <= 0)) {
-		printf("Failed to sign data with keystore, output data or length is error\n");
+		printf("output_data data or len error\n");
 		return -1;
 	}
 
@@ -210,7 +210,7 @@ PHANTOM_TOOLS_API int SignDataWithKeystore(const char *input_keystore, const cha
 	std::string private_key;
 	bool ret = key_store.From(key_store_json, str_password, private_key);
 	if (!ret) {
-		printf("Failed to sign data with keystore, invalid keystore \n");
+		printf("error\n");
 		return -2;
 	}
 
@@ -234,15 +234,15 @@ PHANTOM_TOOLS_API int SignDataWithKeystore(const char *input_keystore, const cha
 
 PHANTOM_TOOLS_API int CheckSignedData(const char *input_blob, const char *input_signeddata, const char *input_pubkey) {
 	if (input_blob == NULL || strlen(input_blob) == 0) {
-		printf("Failed to check signed data, input blob data or length is error\n");
+		printf("input_blob data or len error\n");
 		return -1;
 	}
 	if (input_signeddata == NULL || strlen(input_signeddata) == 0) {
-		printf("Failed to check signed data, input signed data or length is error\n");
+		printf("input_signeddata data or len error\n");
 		return -1;
 	}
 	if (input_pubkey == NULL || strlen(input_pubkey) == 0) {
-		printf("Failed to check signed data, input public key data or length is error\n");
+		printf("input_pubkey data or len error\n");
 		return -1;
 	}
 
@@ -255,15 +255,15 @@ PHANTOM_TOOLS_API int CheckSignedData(const char *input_blob, const char *input_
 
 PHANTOM_TOOLS_API int CreateKeystoreFromPrivkey(const char *input_privkey, const char *input_password, char *output_data, int *output_len) {
 	if (input_privkey == NULL || strlen(input_privkey) == 0) {
-		printf("Failed to create keystore from private key, input private key data or length is error\n");
+		printf("input_privkey data or len error\n");
 		return -1;
 	}
 	if (input_password == NULL || strlen(input_password) == 0) {
-		printf("Failed to create keystore from private key, input password data or length is error\n");
+		printf("input_password data or len error\n");
 		return -1;
 	}
 	if (output_data == NULL || output_len == nullptr || (*output_len <= 0)) {
-		printf("Failed to create keystore from private key, output data or length is error\n");
+		printf("output_data data or len error\n");
 		return -1;
 	}
 
@@ -272,14 +272,14 @@ PHANTOM_TOOLS_API int CreateKeystoreFromPrivkey(const char *input_privkey, const
 
 	phantom::PrivateKey key(str_privkey);
 	if (!key.IsValid()) {
-		printf("Failed to create keystore from private key, invalid private key\n");
+		printf("error, private key not valid\n");
 		return -2;
 	}
 
 	phantom::KeyStore key_store;
 	Json::Value key_store_json;
 	if (!key_store.Generate(srt_password, key_store_json, str_privkey)) {
-		printf("Failed to create keystore from private key, keystore cannot be generated\n");
+		printf("error\n");
 		return -2;
 	}
 
@@ -294,12 +294,12 @@ PHANTOM_TOOLS_API int CreateKeystoreFromPrivkey(const char *input_privkey, const
 
 int GetAddressFromPubkey(const char *input_pubkey, char *output_data, int *output_len) {
 	if (input_pubkey == NULL || strlen(input_pubkey) == 0) {
-		printf("Failed to get address from public key, input pubkey data or length is error\n");
+		printf("input_pubkey data or len error\n");
 		return -1;
 	}
 
 	if (output_data == NULL || *output_len <= 0) {
-		printf("Failed to get address from public key, output data or length is error\n");
+		printf("output_data data or len error\n");
 		return -1;
 	}
 	std::string str_pubkey(input_pubkey);
@@ -316,7 +316,7 @@ int GetAddressFromPubkey(const char *input_pubkey, char *output_data, int *outpu
 	//printf("%s\n", result.toStyledString().c_str());
 
 	if (result["public_key_raw"].asString().size() <= 0 || result["sign_type"].asString().size() <= 0) {
-		printf("Failed to get address from public key, invalid input data without public key raw or sign type!\n");
+		printf("input_pubkey format error!\n");
 		return -2;
 	}
 
@@ -331,17 +331,17 @@ int GetAddressFromPubkey(const char *input_pubkey, char *output_data, int *outpu
 
 PHANTOM_TOOLS_API int GetPrivatekeyFromKeystore(const char *input_keystore, const char *input_password, char *output_data, int *output_len) {
 	if (input_keystore == NULL || strlen(input_keystore) == 0) {
-		printf("Failed to get private key from keystore, input keystore data or length is error\n");
+		printf("input_keystore data or len error\n");
 		return -1;
 	}
 
 	if (input_password == NULL || strlen(input_password) == 0) {
-		printf("Failed to get private key from keystore, input password data or length is error\n");
+		printf("input_password data or len error\n");
 		return -1;
 	}
 
 	if (output_data == NULL || output_len == nullptr || (*output_len <= 0)) {
-		printf("Failed to get private key from keystore, output data or length is error\n");
+		printf("output_data data or len error\n");
 		return -1;
 	}
 
@@ -354,7 +354,7 @@ PHANTOM_TOOLS_API int GetPrivatekeyFromKeystore(const char *input_keystore, cons
 	std::string private_key;
 	bool ret = key_store.From(key_store_json, str_password, private_key);
 	if (!ret) {
-		printf("Failed to get private key from keystore, invalid keystore parameter");
+		printf("error");
 		return -2;
 	}
 

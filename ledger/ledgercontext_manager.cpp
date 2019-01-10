@@ -18,7 +18,7 @@
 #include "contract_manager.h"
 
 namespace phantom {
-	//For synchronizing blocks.
+	//for sync process
 	LedgerContext::LedgerContext(const std::string &chash, const protocol::ConsensusValue &consvalue) :
 		type_(AT_NORMAL),
 		lpmanager_(NULL),
@@ -32,7 +32,7 @@ namespace phantom {
 	}
 
 
-	//For synchronizing the block before the current block.
+	//for sync pre process
 	LedgerContext::LedgerContext(LedgerContextManager *lpmanager, const std::string &chash, const protocol::ConsensusValue &consvalue, bool propose) :
 		type_(AT_NORMAL),
 		lpmanager_(lpmanager),
@@ -68,7 +68,7 @@ namespace phantom {
 	LedgerContext::~LedgerContext() {}
 
 	void LedgerContext::Run() {
-		LOG_INFO("Preprocessing the consensus value, ledger(" FMT_I64 ")", consensus_value_.ledger_seq());
+		LOG_INFO("Thread preprocessing the consensus value, ledger seq(" FMT_I64 ")", consensus_value_.ledger_seq());
 		start_time_ = utils::Timestamp::HighResolution();
 		switch (type_)
 		{
@@ -85,7 +85,7 @@ namespace phantom {
 			TestTransaction();
 			break;
 		default:
-			LOG_ERROR("Action type unknown of LedgerContext.");
+			LOG_ERROR("LedgerContext action type unknown");
 			break;
 		}
 	}
@@ -112,7 +112,7 @@ namespace phantom {
 
 		//async
 		if (lpmanager_) {
-			//Move the finished transactions to the complete list.
+			//move running to complete
 			if (propose_result_.exec_result_) {
 				lpmanager_->MoveRunningToComplete(this);
 			}
@@ -123,10 +123,10 @@ namespace phantom {
 	}
 
 	bool LedgerContext::TestV8() {
-		//If the source address for starting the contract does not exist, a temporary account will be created.
+		//if address not exist, then create temporary account
 		std::shared_ptr<Environment> environment = std::make_shared<Environment>(nullptr);
 		if (parameter_.contract_address_.empty()) {
-			//Create a temporary account
+			//create a temporary account
 			PrivateKey priv_key(SIGNTYPE_ED25519);
 			Json::Value account_json = Json::Value(Json::objectValue);
 			protocol::Account account;
@@ -137,7 +137,7 @@ namespace phantom {
 			parameter_.contract_address_ = account.address();
 			std::shared_ptr<AccountFrm> dest_account = std::make_shared<AccountFrm>(account);
 			if (!environment->AddEntry(dest_account->GetAccountAddress(), dest_account)) {
-				LOG_ERROR("Failed to add account(%s) entry.", account.address().c_str());
+				LOG_ERROR("Add account(%s) entry failed", account.address().c_str());
 				propose_result_.exec_result_ = false;
 				return false;
 			}
@@ -149,7 +149,7 @@ namespace phantom {
 				PrivateKey priv_key(SIGNTYPE_ED25519);
 				parameter_.source_address_ = priv_key.GetEncAddress();
 			}
-			//Create a temporary source address
+			//create a tempory source address
 			protocol::Account account;
 			account.set_address(parameter_.source_address_);
 			account.set_nonce(0);
@@ -158,7 +158,7 @@ namespace phantom {
 			dest_account->SetProtoMasterWeight(1);
 			dest_account->SetProtoTxThreshold(1);
 			if (!environment->AddEntry(dest_account->GetAccountAddress(), dest_account)) {
-				LOG_ERROR("Failed to add account(%s) entry.", account.address().c_str());
+				LOG_ERROR("Add account(%s) entry failed", account.address().c_str());
 				propose_result_.exec_result_ = false;
 				return false;
 			}
@@ -168,53 +168,20 @@ namespace phantom {
 		consensus_value_.set_ledger_seq(lcl.seq() + 1);
 		consensus_value_.set_close_time(lcl.close_time() + 1);
 
-		if (ContractTestParameter::INIT == parameter_.opt_type_){
+		if (parameter_.exe_or_query_) {
+			//construct consensus value
+
+			//construct trigger tx
 			protocol::TransactionEnv env;
 			protocol::Transaction *tx = env.mutable_transaction();
 			tx->set_source_address(parameter_.source_address_);
 			tx->set_fee_limit(parameter_.fee_limit_);
 			tx->set_gas_price(parameter_.gas_price_);
 			protocol::Operation *ope = tx->add_operations();
-			ope->set_type(protocol::Operation_Type_CREATE_ACCOUNT);
-
-			protocol::OperationCreateAccount* create_account = ope->mutable_create_account();
-			create_account->set_init_input(parameter_.input_);
-			create_account->set_init_balance(100000000000000);
-			protocol::AccountPrivilege *priv = create_account->mutable_priv();
-			priv->set_master_weight(0);
-			priv->mutable_thresholds()->set_tx_threshold(1);
-			create_account->mutable_contract()->set_payload(parameter_.code_);
-			create_account->mutable_contract()->set_type((protocol::Contract_ContractType)type_);
-
-			TransactionFrm::pointer tx_frm = std::make_shared<TransactionFrm>(env);
-			tx_frm->environment_ = environment;
-			int64_t time_now = utils::Timestamp::HighResolution();
-			tx_frm->SetApplyStartTime(time_now);
-			tx_frm->SetMaxEndTime(time_now + 5 * utils::MICRO_UNITS_PER_SEC);
-			tx_frm->EnableChecked();
-
-			transaction_stack_.push_back(tx_frm);
-			closing_ledger_->apply_tx_frms_.push_back(tx_frm);
-
-			closing_ledger_->value_ = std::make_shared<protocol::ConsensusValue>(consensus_value_);
-			closing_ledger_->lpledger_context_ = this;
-
-			bool ret = LedgerManager::Instance().DoTransaction(env, this).code() == 0;
-			tx_frm->SetApplyEndTime(utils::Timestamp::HighResolution());
-			return ret;
-		}
-		else if (ContractTestParameter::MAIN == parameter_.opt_type_) {
-			//Construct trigger tx
-			protocol::TransactionEnv env;
-			protocol::Transaction *tx = env.mutable_transaction();
-			tx->set_source_address(parameter_.source_address_);
-			tx->set_fee_limit(parameter_.fee_limit_);
-			tx->set_gas_price(parameter_.gas_price_);
-			protocol::Operation *ope = tx->add_operations();
-			ope->set_type(protocol::Operation_Type_PAY_ASSET);
-			protocol::OperationPayAsset *payAsset = ope->mutable_pay_asset();
-			payAsset->set_dest_address(parameter_.contract_address_);
-			payAsset->set_input(parameter_.input_);
+			ope->set_type(protocol::Operation_Type_PAYMENT);
+			protocol::OperationPayment *payment = ope->mutable_payment();
+			payment->set_dest_address(parameter_.contract_address_);
+			payment->set_input(parameter_.input_);
 
 			TransactionFrm::pointer tx_frm = std::make_shared<TransactionFrm>(env);
 			//tx_frm->SetMaxEndTime(utils::Timestamp::HighResolution() + utils::MICRO_UNITS_PER_SEC);
@@ -233,8 +200,7 @@ namespace phantom {
 			bool ret = LedgerManager::Instance().DoTransaction(env, this).code() == 0;
 			tx_frm->SetApplyEndTime(utils::Timestamp::HighResolution());
 			return ret;
-		}
-		else if(ContractTestParameter::QUERY == parameter_.opt_type_){
+		} else{
 			do {
 				if (parameter_.code_.empty()) {
 					break;
@@ -269,10 +235,7 @@ namespace phantom {
 			parameter.ope_index_ = 0;
 			parameter.consensus_value_ = Proto2Json(consensus_value_).toFastString();
 			parameter.ledger_context_ = this;
-			parameter.timestamp_ = consensus_value_.close_time();
-			parameter.blocknumber_ = consensus_value_.ledger_seq();
-
-			//Query
+			//do query
 			TransactionFrm::pointer tx_frm = std::make_shared<TransactionFrm>();
 			tx_frm->environment_ = environment;
 			transaction_stack_.push_back(tx_frm);
@@ -285,9 +248,6 @@ namespace phantom {
 			bool ret = ContractManager::Instance().Query(type_, parameter, query_result);
 			tx_frm->SetApplyEndTime(utils::Timestamp::HighResolution());
 			return ret;
-		}
-		else {
-			return false;
 		}
 	}
 
@@ -419,7 +379,7 @@ namespace phantom {
 			return ledger_context.closing_ledger_;
 		}
 		else {
-			LOG_ERROR("Failed to process ledger synchronized.");
+			LOG_ERROR("Syn process failed");
 			return NULL;
 		}
 	}
@@ -445,20 +405,10 @@ namespace phantom {
 				if (code.empty()) {
 					break;
 				}
-
-				ContractTestParameter::OptType opt_type = ((ContractTestParameter*)parameter)->opt_type_;
-				if (opt_type > ContractTestParameter::QUERY || opt_type < ContractTestParameter::INIT){
-					result.set_code(protocol::ERRCODE_INVALID_PARAMETER);
-					result.set_desc(utils::String::Format("opt_type overload:%d", opt_type));
-					delete ledger_context;
-					return false;
-				}
-
 				result = ContractManager::Instance().SourceCodeCheck(Contract::TYPE_V8, code);
 				if (result.code() == protocol::ERRCODE_SUCCESS) {
 					break;
 				}
-				delete ledger_context;
 				return false;
 			} while (false);
 		}
@@ -468,14 +418,15 @@ namespace phantom {
 		}
 		else {
 			LOG_ERROR("Test type(%d) error",type);
+			delete ledger_context;
 			return false;
 		}
 
 		if (!ledger_context->Start(thread_name)) {
-			LOG_ERROR_ERRNO("Failed to start test thread.",
+			LOG_ERROR_ERRNO("Start test thread failed",
 				STD_ERR_CODE, STD_ERR_DESC);
 			result.set_code(protocol::ERRCODE_INTERNAL_ERROR);
-			result.set_desc("Failed to start thread.");
+			result.set_desc("Start thread failed");
 			delete ledger_context;
 			return false;
 		}
@@ -493,8 +444,8 @@ namespace phantom {
 		if (is_timeout) { //cancel it
 			ledger_context->Cancel();
 			result.set_code(protocol::ERRCODE_TX_TIMEOUT);
-			result.set_desc("Contract execution timeout");
-			LOG_ERROR("Testing consensus value(" FMT_I64 "ms) timeout", total_timeout / utils::MICRO_UNITS_PER_MILLI);
+			result.set_desc("Execute contract timeout");
+			LOG_ERROR("Test consvalue time(" FMT_I64 "ms) is out", total_timeout / utils::MICRO_UNITS_PER_MILLI);
 			ledger_context->JoinWithStop();
 			delete ledger_context;
 			return false;
@@ -502,10 +453,7 @@ namespace phantom {
 
 		//add tx
 		LedgerFrm::pointer ledger = ledger_context->closing_ledger_;
-		std::vector<TransactionFrm::pointer> &apply_tx_frms = ledger->apply_tx_frms_;
-		if (apply_tx_frms.size() == 0)
-			apply_tx_frms = ledger->dropped_tx_frms_;
-
+		const std::vector<TransactionFrm::pointer> &apply_tx_frms = ledger->apply_tx_frms_;
 		for (size_t i = 0; i < apply_tx_frms.size(); i++) {
 			const TransactionFrm::pointer ptr = apply_tx_frms[i];
 
@@ -519,28 +467,17 @@ namespace phantom {
 				env_store.set_actual_fee(ptr->GetFeeLimit());
 			else{
 				if (type == LedgerContext::AT_TEST_V8)
-					env_store.set_actual_fee(ptr->GetActualGas()*ptr->GetGasPrice());
-				else if (LedgerContext::AT_TEST_TRANSACTION) {
-					int64_t actual_gas = 0;
-					//64 is length of signature data, 76 is length of public key, 5 and 20 for redundancy
-					if (!utils::SafeIntAdd(ptr->GetActualGas(), (int64_t)(signature_number*(64 + 76 + 5) + 20), actual_gas)) {
-						LOG_ERROR("Calculate actual gas overflow, actual gas (" FMT_I64 "), signature number(" FMT_I64 ")", ptr->GetActualGas(), signature_number);
-					}
+					env_store.set_actual_fee(ptr->GetActualFee());
+				else if (LedgerContext::AT_TEST_TRANSACTION){
+					int64_t gas_price = LedgerManager::Instance().GetCurFeeConfig().gas_price();
+					env_store.set_actual_fee(ptr->GetActualFee() + (signature_number*(64 + 76) + 20)*gas_price);//pub:64, sig:76
 
-					int64_t actual_fee = 0;
-					if (!utils::SafeIntMul(actual_gas, ptr->GetGasPrice(), actual_fee)) {
-						LOG_ERROR("Calculate actual fee overflow, actual gas(" FMT_I64 "), gas price(" FMT_I64 ")", actual_gas, ptr->GetGasPrice());
-					}
-					env_store.set_actual_fee(actual_fee);
-
-					result = ptr->GetResult();
 					Json::Value jtx = Proto2Json(env_store);
-					jtx["gas"] = actual_gas;
+					jtx["gas"] = env_store.actual_fee() / gas_price;
 					txs[txs.size()] = jtx;
 				}
 			}
-			if (LedgerContext::AT_TEST_TRANSACTION)
-				result = ptr->GetResult();
+				
 			//batch.Put(ComposePrefix(General::TRANSACTION_PREFIX, ptr->GetContentHash()), env_store.SerializeAsString());
 
 			for (size_t j = 0; j < ptr->instructions_.size(); j++) {
@@ -556,13 +493,6 @@ namespace phantom {
 		//add stat
 		if (ledger_context->transaction_stack_.size() > 0) {
 			TransactionFrm::pointer ptr = ledger_context->transaction_stack_[0];
-			stat["step"] = ptr->GetContractStep();
-			stat["memory_usage"] = ptr->GetMemoryUsage();
-			stat["stack_usage"] = ptr->GetStackUsage();
-			stat["apply_time"] = ptr->GetApplyTime();
-		}
-		if (type == LedgerContext::AT_TEST_TRANSACTION){
-			TransactionFrm::pointer ptr = apply_tx_frms[0];
 			stat["step"] = ptr->GetContractStep();
 			stat["memory_usage"] = ptr->GetMemoryUsage();
 			stat["stack_usage"] = ptr->GetStackUsage();
@@ -589,7 +519,7 @@ namespace phantom {
 		LedgerContext *ledger_context = new LedgerContext(this, chash, consensus_value, propose);
 
 		if (!ledger_context->Start("process-value")) {
-			LOG_ERROR_ERRNO("Failed to start processing consensus value, consensus value hash(%s)", utils::String::BinToHexString(chash).c_str(), 
+			LOG_ERROR_ERRNO("Start process value thread failed, consvalue hash(%s)", utils::String::BinToHexString(chash).c_str(), 
 				STD_ERR_CODE, STD_ERR_DESC);
 
 			propose_result.block_timeout_ = true;
@@ -608,7 +538,7 @@ namespace phantom {
 
 		if (propose_result.block_timeout_) { //cancel it
 			ledger_context->Cancel();
-			LOG_ERROR("Pre-executing consensus value(" FMT_I64 "ms) timeout", (utils::Timestamp::HighResolution() - time_start) / utils::MICRO_UNITS_PER_MILLI);
+			LOG_ERROR("Pre execute consvalue time(" FMT_I64 "ms) is out", (utils::Timestamp::HighResolution() - time_start) / utils::MICRO_UNITS_PER_MILLI);
 			return false;
 		}
 

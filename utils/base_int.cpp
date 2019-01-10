@@ -199,7 +199,7 @@ uint128_t uint128_t::operator-=(const uint128_t & rhs){
 }
 
 uint128_t uint128_t::operator*(const uint128_t & rhs) const{
-    // Split values into 4 32-bit parts
+    // split values into 4 32-bit parts
     uint64_t top[4] ={UPPER >> 32, UPPER & 0xffffffff, LOWER >> 32, LOWER & 0xffffffff};
     uint64_t bottom[4] ={rhs.UPPER >> 32, rhs.UPPER & 0xffffffff, rhs.LOWER >> 32, rhs.LOWER & 0xffffffff};
     uint64_t products[4][4];
@@ -210,25 +210,25 @@ uint128_t uint128_t::operator*(const uint128_t & rhs) const{
         }
     }
 
-    // Initial row
+    // initial row
     uint64_t fourth32 = products[0][3] & 0xffffffff;
     uint64_t third32 = (products[0][2] & 0xffffffff) + (products[0][3] >> 32);
     uint64_t second32 = (products[0][1] & 0xffffffff) + (products[0][2] >> 32);
     uint64_t first32 = (products[0][0] & 0xffffffff) + (products[0][1] >> 32);
 
-    // Second row
+    // second row
     third32 += products[1][3] & 0xffffffff;
     second32 += (products[1][2] & 0xffffffff) + (products[1][3] >> 32);
     first32 += (products[1][1] & 0xffffffff) + (products[1][2] >> 32);
 
-    // Third row
+    // third row
     second32 += products[2][3] & 0xffffffff;
     first32 += (products[2][2] & 0xffffffff) + (products[2][3] >> 32);
 
-    // Fourth row
+    // fourth row
     first32 += products[3][3] & 0xffffffff;
 
-    // Combines the values, taking care of carry over
+    // combines the values, taking care of carry over
     return uint128_t(first32 << 32, 0) + uint128_t(third32 >> 32, third32 << 32) + uint128_t(second32, 0) + uint128_t(fourth32);
 }
 
@@ -401,7 +401,7 @@ bool utils::bigDivide(int64_t& result, int64_t A, int64_t B, int64_t C) {
 }
 
 bool utils::bigDivide(uint64_t& result, uint64_t A, uint64_t B, uint64_t C) {
-	// Update when moving to (signed) int128
+	// update when moving to (signed) int128
 	uint128_t a(A);
 	uint128_t b(B);
 	uint128_t c(C);

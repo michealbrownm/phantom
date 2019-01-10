@@ -22,7 +22,7 @@
 namespace phantom {
 
 	//AccountFrm::AccountFrm() {
-	//	utils::AtomicInc(&phantom::General::account_new_count);
+	//	utils::AtomicInc(&bubi::General::account_new_count);
 	//	assets_ = nullptr;
 	//	storage_ = nullptr;
 	//}
@@ -48,7 +48,7 @@ namespace phantom {
 
 	bool AccountFrm::UnSerializer(const std::string &str) {
 		if (!account_info_.ParseFromString(str)) {
-			LOG_ERROR("Account deserialization failed!");
+			LOG_ERROR("Accountunserializer is erro!");
 			return false;
 		}
 		return true;
@@ -63,13 +63,9 @@ namespace phantom {
 	}
 
 	bool AccountFrm::AddBalance(int64_t amount){
-		int64_t balance = 0;
-		if (!utils::SafeIntAdd(account_info_.balance(), amount, balance)) {
-			LOG_ERROR("The result overflowed when the balance increased for the account: account address:%s, balance(" FMT_I64 "), increasing amount(" FMT_I64 ")", 
-				account_info_.address().c_str(), account_info_.balance(), amount);
-			return false;
-		}
-		account_info_.set_balance(balance);
+		int64_t tmp = account_info_.balance() + amount;
+		if (tmp < 0)	return false;
+		account_info_.set_balance(tmp);
 		return true;
 	}
 	

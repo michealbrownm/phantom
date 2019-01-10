@@ -72,7 +72,7 @@ namespace phantom {
 		hello.set_ledger_version(General::LEDGER_VERSION);
 		hello.set_overlay_version(General::OVERLAY_VERSION);
 		hello.set_listening_port(listen_port);
-		hello.set_phantom_version(General::phantom_VERSION);
+		hello.set_phantom_version(General::PHANTOM_VERSION);
 		hello.set_node_address(node_address);
 		hello.set_node_rand(node_rand);
 		hello.set_network_id(network_id);
@@ -87,19 +87,18 @@ namespace phantom {
 		status["active"] = IsActive();
 		status["active_time"] = active_time_;
 	}
-/*  modified by lqh
+
 	int64_t Peer::GetDelay() const {
 		return delay_;
 	}
-*/
-/*	modified by lqh
-     bool Peer::OnNetworkTimer(int64_t current_time) {
+
+	bool Peer::OnNetworkTimer(int64_t current_time) {
 		if (!IsActive() && current_time - connect_start_time_ > 10 * utils::MICRO_UNITS_PER_SEC) {
-			LOG_ERROR("Failed to check peer active, (%s) timeout", GetPeerAddress().ToIpPort().c_str());
+			LOG_ERROR("Peer(%s) active timeout", GetPeerAddress().ToIpPort().c_str());
 			return false;
 		} 
 
 		return true;
 	}
-*/  
+
 }

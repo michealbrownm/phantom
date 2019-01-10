@@ -38,7 +38,7 @@ bool utils::LogWriter::Init(LogDest dest, const std::string &file_name, bool ope
 				break;
 			}
 
-			// Seek to end
+			// seek to end
 			fseek64(file_ptr_, 0, SEEK_END);
 
 			begin_time_ = File::GetAttribue(file_name.c_str()).create_time_;
@@ -118,8 +118,8 @@ bool utils::LogWriter::Write(
 				//	m_strFile.c_str(), strBackupFile.c_str(), __UERR_CODE, __UERR_STR);
 				//fflush(stderr);
 
-				// Try to copy the file if the file could not be moved
-				// because some program is still opening the log file
+				// try copy file if move failed
+				// because of some program may is still opening the log file
 				// such as using #tail -f xxx.log
 				utils::File::Copy(file_name_, backup_file_name);
 			}
@@ -132,9 +132,9 @@ bool utils::LogWriter::Write(
 			}
 			else {
 #ifdef WIN32
-				// Fix Windows file's creation time
-				// The new log file's creation time still keeps the original file time
-				// We don't use the copy() function to copy file because the move() function is more quick
+				// fix Windows file's create time
+				// the new log file's create time still keeps the original file time
+				// we don't use copy() file because of move() is more quickly
 				HANDLE hWin32Handle = (HANDLE)_get_osfhandle(fileno(file_ptr_));
 				if (INVALID_HANDLE_VALUE != hWin32Handle) {
 					FILETIME nCurrentTime = { 0 };

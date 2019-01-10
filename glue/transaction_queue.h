@@ -50,7 +50,7 @@ namespace phantom {
 		struct PriorityCompare
 		{
 			TransactionQueue& transaction_queue_;
-			/// Compare transactions by nonce height and fee.
+			/// Compare transaction by nonce height and fee.
 			bool operator()(TransactionFrm::pointer const& first, TransactionFrm::pointer const& second) const
 			{
 				int64_t const& height1 = first->GetNonce() - transaction_queue_.account_nonce_[first->GetSourceAddress()];
@@ -65,14 +65,14 @@ namespace phantom {
 
 		struct TimePriorityCompare
 		{
-			/// Compare transactions by incoming time
+			/// Compare transaction by incoming time
 			bool operator()(TransactionFrm::pointer const& first, TransactionFrm::pointer const& second) const
 			{
 				return first->GetInComingTime() < second->GetInComingTime();
 			}
 		};
 
-		//Time order
+		//time order
 		using TimeQueue = std::multiset<TransactionFrm::pointer, TimePriorityCompare>;
 		TimeQueue time_queue_;
 
@@ -82,11 +82,11 @@ namespace phantom {
 		QueueByAddressAndNonce queue_by_address_and_nonce_;
 
 		std::unordered_map<std::string, TransactionFrm::pointer> queue_by_hash_;
-		//Record account system nonce
+		//record account system nonce
 		std::unordered_map<std::string, int64_t> account_nonce_;
 
 		uint32_t queue_limit_;
-		//Maximum number of transactions per account
+		//Maximum number of transaction per account
 		uint32_t account_txs_limit_;
 
 		std::pair<bool, TransactionFrm::pointer> Remove(const std::string& account_address,const int64_t& nonce);

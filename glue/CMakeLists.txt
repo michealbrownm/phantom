@@ -2,13 +2,13 @@
 
 set(LIB_PHANTOM_GLUE phantom_glue)
 
-#Automatically get src files from the specified directory
+#automaticall get src file in specifical dir
 aux_source_directory(${PHANTOM_SRC_DIR}/glue/ GLUE_SRC)
 
-#Generate static library files
+#generate static library file
 add_library(${LIB_PHANTOM_GLUE} ${GLUE_SRC})
 
-#Specify compiling options for target objects
+#specify compile options for target obj
 target_compile_options(${LIB_PHANTOM_GLUE}
     PUBLIC -std=c++11 
     PUBLIC -DASIO_STANDALONE

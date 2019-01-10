@@ -42,7 +42,7 @@ namespace phantom {
 		do {
 			utils::MutexGuard guard(lock_);
 
-			//Delete the expired
+			//delete the expire
 			for (LedgerUpgradeFrmMap::iterator iter = current_states_.begin();
 				iter != current_states_.end();
 				) {
@@ -57,7 +57,7 @@ namespace phantom {
 
 		} while (false);
 
-		//Send the current state every 30s
+		//send the current state every 30s'
 		protocol::LedgerUpgradeNotify *notify = NULL;
 		do {
 			utils::MutexGuard guard(lock_);
@@ -79,9 +79,6 @@ namespace phantom {
 		if (notify && ConsensusManager::Instance().GetConsensus()->IsValidator()){
 			PeerManager::Instance().Broadcast(protocol::OVERLAY_MSGTYPE_LEDGER_UPGRADE_NOTIFY, notify->SerializeAsString());
 			Recv(*notify);
-		}
-
-		if (notify){
 			delete notify;
 		}
 	}
@@ -93,7 +90,7 @@ namespace phantom {
 		raw_data += utils::String::ToString(msg.nonce());
 
 		if (!PublicKey::Verify(raw_data, sig.sign_data(), sig.public_key())) {
-			LOG_ERROR("Failed to verify ledger upgrade message.");
+			LOG_ERROR("Verify ledger upgrade failed");
 			return;
 		} 
 
@@ -149,7 +146,7 @@ namespace phantom {
 
 	bool LedgerUpgrade::ConfNewVersion(int32_t new_version) {
 		local_state_.set_new_ledger_version(new_version);
-		LOG_INFO("Pre-configured new version(%d).", new_version);
+		LOG_INFO("Prepare config new version(%d)", new_version);
 		return true;
 	}
 

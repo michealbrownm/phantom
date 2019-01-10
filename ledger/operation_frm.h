@@ -25,6 +25,7 @@
 namespace phantom{
 
 	class TransactionFrm;
+	class AccountEntry;
 	class OperationFrm {
 	protected:
 		protocol::Operation operation_;
@@ -49,20 +50,16 @@ namespace phantom{
 	protected:
 		void CreateAccount(std::shared_ptr<Environment> environment);
 		void IssueAsset(std::shared_ptr<Environment> environment);
-		void PayAsset(std::shared_ptr<Environment> environment);
+		void Payment(std::shared_ptr<Environment> environment);
 		void SetMetaData(std::shared_ptr<Environment> environment);
 		void SetSignerWeight(std::shared_ptr<Environment> environment);
 		void SetThreshold(std::shared_ptr<Environment> environment);
 		void PayCoin(std::shared_ptr<Environment> environment);
 		void Log(std::shared_ptr<Environment> environment);
-		void SetPrivilege(std::shared_ptr<Environment> environment);
 		void Exit(std::shared_ptr<Environment> environment);
 		//void OperationDeployContract(Environment *environment);
 		//void InvokeContract(Environment *environment);
-
-	private:
-		static Result CheckCreateAccountGt1000(const protocol::OperationCreateAccount& create_account);
-		static Result CheckSetPrivilege(const protocol::OperationSetPrivilege &set_privilege, const std::string &source_address);
+		
 	};
 };
 #endif

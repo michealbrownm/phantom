@@ -71,14 +71,14 @@ namespace phantom {
 
 	bool PbftInstance::Go(const protocol::PbftEnv &env, Pbft *pbft_object, int32_t check_value) {
 		if (env.pbft().type() < (int32_t)phase_) {
-			//It is received again
+			//it is received again
 			if (env.pbft().type() == protocol::PBFT_TYPE_PREPREPARE)
 				pbft_object->OnPrePrepare(env.pbft(), *this, check_value);
 			else if (env.pbft().type() == protocol::PBFT_TYPE_PREPARE)
 				pbft_object->OnPrepare(env.pbft(), *this);
 			else if (env.pbft().type() == protocol::PBFT_TYPE_COMMIT)
 				pbft_object->OnCommit(env.pbft(), *this);
-			return false;
+			return true;
 		}
 
 		bool doret = false;
@@ -123,7 +123,7 @@ namespace phantom {
 	}
 
 	bool PbftInstance::NeedSendCommitAgain(int64_t current_time) {
-		return last_commit_send_time_ != 0 &&  //If the commit message has been sent successfully, then it will be sent regularly later
+		return last_commit_send_time_ != 0 &&  //should be sent normal firstly, then we can repeart it
 			(current_time - last_commit_send_time_ >= g_pbft_commit_send_interval) && (phase_ >= PBFT_PHASE_PREPARED);
 	}
 

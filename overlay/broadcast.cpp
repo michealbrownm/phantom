@@ -36,7 +36,7 @@ namespace phantom{
 		std::string hash = HashWrapper::Crypto(data);
 		utils::MutexGuard guard(mutex_msg_sending_);
 		BroadcastRecordMap::iterator result = records_.find(hash);
-		if (result == records_.end()){ // We have never seen this message
+		if (result == records_.end()){ // we have never seen this message
 			BroadcastRecord::pointer record = std::make_shared<BroadcastRecord>(type, data, peer_id);
 			records_[hash] = record;
 			records_couple_[record->time_stamp_] = hash;
@@ -50,18 +50,11 @@ namespace phantom{
 		return true;
 	}
 
-	bool Broadcast::IsQueued(int64_t type, const std::string &data) {
-		std::string hash = HashWrapper::Crypto(data);
-		utils::MutexGuard guard(mutex_msg_sending_);
-		BroadcastRecordMap::iterator result = records_.find(hash);
-		return result != records_.end();
-	}
-
 	void Broadcast::Send(int64_t type, const std::string &data) {
 		std::string hash = HashWrapper::Crypto(data);
 		utils::MutexGuard guard(mutex_msg_sending_);
 		BroadcastRecordMap::iterator result = records_.find(hash);
-		if (result == records_.end()){ // No one has sent us this message
+		if (result == records_.end()){ // no one has sent us this message
 			BroadcastRecord::pointer record = std::make_shared<BroadcastRecord>(
 				type, data, 0);
 
@@ -74,7 +67,7 @@ namespace phantom{
 				record->peers_.insert(peer_id);
 			}
 		}
-		else{ // Send it to people who haven't sent it to us
+		else{ // send it to people that haven't sent it to us
 			std::set<int64_t>& peersTold = result->second->peers_;
 			for (const auto peer : driver_->GetActivePeerIds()){
 				if (peersTold.find(peer) == peersTold.end())
@@ -91,8 +84,8 @@ namespace phantom{
 		int64_t current_time = utils::Timestamp::HighResolution();
 
 		for (auto it = records_couple_.begin(); it != records_couple_.end();){
-			// Give one ledger of leeway
-			if (it->first + 3600 * utils::MICRO_UNITS_PER_SEC < current_time)
+			// give one ledger of leeway
+			if (it->first + 120 * utils::MICRO_UNITS_PER_SEC < current_time)
 			{
 				records_.erase(it->second);
 				records_couple_.erase(it++);
@@ -102,22 +95,5 @@ namespace phantom{
 				break;
 			}
 		}
-
-		size_t max_size = 1000 * 1000;
-		if (records_couple_.size() > max_size) {
-			size_t i = 0;
-			for (auto it = records_couple_.begin(); it != records_couple_.end();) {
-
-				if (i < max_size / 2) {
-					records_.erase(it->second);
-					records_couple_.erase(it++);
-					i++;
-				}
-				else {
-					break;
-				}
-			}
-		} 
-
 	}
 }

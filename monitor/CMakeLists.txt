@@ -1,13 +1,13 @@
 #phantom monitor module CmakeLists.txt -- libphantom_monitor.a
 set(LIB_PHANTOM_MONITOR phantom_monitor)
 
-#Automatically get src files from the specified directory
+#automaticall get src file in specifical dir
 aux_source_directory(${PHANTOM_SRC_DIR}/monitor/ MONITOR_SRC)
 
-#Generate static library files
+#generate static library file
 add_library(${LIB_PHANTOM_MONITOR} ${MONITOR_SRC})
 
-#Specify compiling options for the target objects
+#specify compile options for target obj
 target_compile_options(${LIB_PHANTOM_MONITOR}
     PUBLIC -std=c++11 
     PUBLIC -DASIO_STANDALONE

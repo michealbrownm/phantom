@@ -196,7 +196,7 @@ namespace utils {
 					err_desc = "y2!=x3+ax+b mod p";
 					break;
 				}
-				//n is a prime number
+				//n 是素数
 				if (!BN_is_prime_ex(n, BN_prime_checks, NULL, NULL)) {
 					err_desc = "n is not a prime number";
 					break;
@@ -268,34 +268,34 @@ namespace utils {
 		BIGNUM* a = BN_CTX_get(ctx);
 		BIGNUM* b = BN_CTX_get(ctx);
 		EC_GROUP_get_curve_GFp(group, NULL, a, b, ctx);
-		///The national standard does not have English annotations
+		///国标不写英文注释
 		//////////////////////////////////////////////////////////////////////////
 		uint32_t entla = id.length() * 8;
 		std::string za = "";
-		//Combine ENTLA
+		//拼接ENTLA
 		unsigned char c1 = entla >> 8;
 		unsigned char c2 = entla & 0xFF;
 		za.push_back(c1);
 		za.push_back(c2);
-		//Combine user ID
+		//拼接用户ID
 		za += id;
 
-		//Combine a
+		//拼接a
 		za += Bn2FixedString(a, 32);
 
-		//Combine b
+		//拼接b
 		za += Bn2FixedString(b, 32);
 
-		//Combine xG
+		//拼接xG
 		za += Bn2FixedString(xG, 32);
 
-		//Combine yG
+		//拼接yG
 		za += Bn2FixedString(yG, 32);
 
-		//Combine xA
+		//拼接xA
 		za += Bn2FixedString(xA, 32);
 
-		//Combine xA
+		//拼接xA
 		za += Bn2FixedString(yA, 32);
 		
 		std::string ZA = utils::Sm3::Crypto(za);
@@ -338,7 +338,7 @@ namespace utils {
 					break;
 				}
 			}
-			//The first version of the national standard requires that the first byte of the X, Y coordinate of the public key cannot be 0.
+			//国标第一版要求，公钥的x，y坐标第一字节不能为0
 			//if (BN_num_bytes(order) > BN_num_bytes(x) || BN_num_bytes(order) > BN_num_bytes(y)) {
 			//	error_ = "SM2 rule: the first byte of publickey can not be zero"; 
 			//	break;
@@ -380,7 +380,7 @@ namespace utils {
 				}
 			}
 			
-			//The first version of the national standard requires that the first byte of the X, Y coordinate of the public key cannot be 0.
+			//国标第一版要求，公钥的x，y坐标第一字节不能为0
 			if (BN_num_bytes(order) != BN_num_bytes(x) || BN_num_bytes(order) != BN_num_bytes(y)) {
 				continue;
 			}
@@ -438,11 +438,11 @@ namespace utils {
 		EC_GROUP_get_order(group_, order, ctx);
 		EC_GROUP_get_curve_GFp(group_, p, NULL, NULL, ctx);
 
-		//Step 1  M^ = ZA||M
+		//第一步  M^ = ZA||M
 		ZA = getZA(group_, id, pkey_);
 		M = ZA + msg;
 
-		//Step 2 e=Hv(M^)
+		//第二步 e=Hv(M^)
 		stre = utils::Sm3::Crypto(M);
 
 		dgstlen = sizeof(dgst) / sizeof(unsigned char);
@@ -452,7 +452,7 @@ namespace utils {
 		}
 
 		do {
-			//Step 3  generate random k [1,n-1]
+			//第三步 产生随机数k [1,n-1]
 			do {
 				do {
 					if (!BN_rand_range(k, order)) {
@@ -460,12 +460,12 @@ namespace utils {
 					}
 				} while (BN_is_zero(k) || (BN_ucmp(k, order) == 0));
 
-				//Step 4  calculate node G pt1(x1,y1) = [K]
+				//第四步  计算pt1(x1,y1) = [K]G这个点
 				if (!EC_POINT_mul(group_, pt1, k, NULL, NULL, ctx)) {
 					goto end;
 				}
 
-				//Obtain the coordinate for pt1
+				//获取pt1的坐标
 				if (EC_METHOD_get_field_type(EC_GROUP_method_of(group_)) == NID_X9_62_prime_field) {
 					if (!EC_POINT_get_affine_coordinates_GFp(group_, pt1, x1, NULL, ctx)) {
 						goto end;
@@ -483,7 +483,7 @@ namespace utils {
 
 			} while (BN_is_zero(x1));
 
-			//Step 5  calculate r = (e + x1) mod n
+			//第五步 计算 r = (e + x1) mod n
 			BN_copy(r, x1);
 			if (!BN_mod_add(r, r, e, order, ctx)) {
 				goto end;
@@ -493,12 +493,12 @@ namespace utils {
 				goto end;
 			}
 
-			//Ensure r!=0 and r+k!=n namely (r+k) != 0 mod n 
+			//确保r!=0 且 r+k!=n 也就是 (r+k) != 0 mod n 
 			if (BN_is_zero(r) || BN_is_zero(bn)) {
 				continue;
 			}
 
-			//Step 6  calculate s = ((1 + d)^-1 * (k - rd)) mod n 
+			//第六步 计算 s = ((1 + d)^-1 * (k - rd)) mod n 
 			if (!BN_one(bn)) {
 				goto end;
 			}
@@ -520,11 +520,11 @@ namespace utils {
 				goto end;
 			}
 
-			//Ensure s != 0 
+			//确保s != 0 
 			if (!BN_is_zero(s)) {
 				break;
 			}
-			//Step seven Output r and s
+			//第七步 输出r和s
 		} while (1);
 
 		ok = true;
@@ -598,7 +598,7 @@ namespace utils {
 			goto end;
 		}
 
-		// Step 1 and 2: r, s are in the range of [1, n-1] and r + s != 0 (mod n) 
+		// 第1,2步: r,s 在 [1, n-1]范围  且 r + s != 0 (mod n) 
 		if (BN_is_zero(sig->r) ||
 			BN_is_negative(sig->r) ||
 			BN_ucmp(sig->r, order) >= 0 ||
@@ -609,7 +609,7 @@ namespace utils {
 			goto end;
 		}
 
-		//Step 5  (r' + s') != 0 mod n
+		//第5步 (r' + s') != 0 mod n
 		if (!BN_mod_add(t, sig->r, sig->s, order, ctx)) {
 			goto end;
 		}
@@ -618,11 +618,11 @@ namespace utils {
 			goto end;
 		}
 
-		//Step 3  Calculate _M = ZA||M'
+		//第3步 计算 _M = ZA||M'
 		ZA = getZA(group, id, pub_key);
 		M = ZA + msg;
 
-		//Step 4  calculate e' = Hv(_M)
+		//第4步  计算e' = Hv(_M)
 		stre = utils::Sm3::Crypto(M);
 		memcpy(dgst, stre.c_str(), stre.length());
 		dgstlen = stre.length();
@@ -631,7 +631,7 @@ namespace utils {
 			goto end;
 		}
 
-		//Step 6 calculate point (x',y')=sG + tP  P is public key point
+		//第6步计算点 (x',y')=sG + tP  P是公钥点
 
 		if (!EC_POINT_mul(group, point, sig->s, pub_key, t, ctx)) {
 			goto end;
@@ -650,7 +650,7 @@ namespace utils {
 			goto end;
 		}
 
-		//Step 7  R=(e+x') mod n
+		//第7步 R=(e+x') mod n
 
 		if (!BN_mod_add(R, x1, e, order, ctx)) {
 			goto end;

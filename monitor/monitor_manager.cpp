@@ -25,14 +25,11 @@
 
 namespace phantom {
 	MonitorManager::MonitorManager() : Network(SslParameter()) {
-		// By default the interval between two connections is 120 seconds
 		connect_interval_ = 120 * utils::MICRO_UNITS_PER_SEC;
-		// By default the interval between checking two alerts is 5 seconds
-		check_alert_interval_ = 5 * utils::MICRO_UNITS_PER_SEC; 
+		check_alert_interval_ = 5 * utils::MICRO_UNITS_PER_SEC;
 		last_alert_time_ = utils::Timestamp::HighResolution();
 		last_connect_time_ = 0;
 
-		// Add the monitor to message
 		request_methods_[monitor::MONITOR_MSGTYPE_HELLO] = std::bind(&MonitorManager::OnMonitorHello, this, std::placeholders::_1, std::placeholders::_2);
 		request_methods_[monitor::MONITOR_MSGTYPE_REGISTER] = std::bind(&MonitorManager::OnMonitorRegister, this, std::placeholders::_1, std::placeholders::_2);
 		request_methods_[monitor::MONITOR_MSGTYPE_PHANTOM] = std::bind(&MonitorManager::OnPhantomStatus, this, std::placeholders::_1, std::placeholders::_2);
@@ -45,44 +42,31 @@ namespace phantom {
 	MonitorManager::~MonitorManager() {
 		if (thread_ptr_){
 			delete thread_ptr_;
-			thread_ptr_ = NULL;
 		} 
 	}
 
 	bool MonitorManager::Initialize() {
-		// Check whether the monitor is enabled
 		MonitorConfigure& monitor_configure = Configure::Instance().monitor_configure_;
-		if (!monitor_configure.enabled_){
-			LOG_TRACE("Failed to initialize monitor, config file does not allow startup");
-			return true;
-		}
-
-		// Get the monitor id
 		monitor_id_ = monitor_configure.id_;
 
-        // Start the thread of the monitor
 		thread_ptr_ = new utils::Thread(this);
 		if (!thread_ptr_->Start("monitor")) {
 			return false;
 		}
 
-		// Add the register of StatusModule and TimeNotify
 		StatusModule::RegisterModule(this);
 		TimerNotify::RegisterModule(this);
-		LOG_INFO("Initialized monitor manager successfully");
+		LOG_INFO("monitor manager initialized");
 		return true;
 	}
 
 	bool MonitorManager::Exit() {
 		Stop();
-		if (thread_ptr_) {
-			thread_ptr_->JoinWithStop();
-		}
+		thread_ptr_->JoinWithStop();
 		return true;
 	}
 
 	void MonitorManager::Run(utils::Thread *thread) {
-		// Start the thread of the monitor
 		Start(utils::InetAddress::None());
 	}
 
@@ -92,31 +76,22 @@ namespace phantom {
 	}
 
 	void MonitorManager::OnDisconnect(Connection *conn) {
-		// Update the active time to zero
 		Monitor *monitor = (Monitor *)conn;
 		monitor->SetActiveTime(0);
 	}
 
 	bool MonitorManager::SendMonitor(int64_t type, const std::string &data) {
 		bool bret = false;
-		MonitorConfigure& monitor_configure = Configure::Instance().monitor_configure_;
-		if (!monitor_configure.enabled_){
-			LOG_TRACE("Failed to send message, configuration file is not allowed");
-			return true;
-		}
-
 		do {
 			utils::MutexGuard guard(conns_list_lock_);
-			// Get the connection of the client
 			Monitor *monitor = (Monitor *)GetClientConnection();
 			if (NULL == monitor || !monitor->IsActive()) {
 				break;
 			}
 
 			std::error_code ignore_ec;
-			// Send the monitor request
 			if (!monitor->SendRequest(type, data, ignore_ec)) {
-				LOG_ERROR("Failed to send a monitor message, (type: " FMT_I64 ") from ip(%s) (%d:%s)", type, monitor->GetPeerAddress().ToIpPort().c_str(),
+				LOG_ERROR("Send monitor(type: " FMT_I64 ") from ip(%s) failed (%d:%s)", type, monitor->GetPeerAddress().ToIpPort().c_str(),
 					ignore_ec.value(), ignore_ec.message().c_str());
 				break;
 			}
@@ -129,27 +104,24 @@ namespace phantom {
 	bool MonitorManager::OnMonitorHello(protocol::WsMessage &message, int64_t conn_id) {
 		bool bret = false;
 		do {
-			// Get the connection
 			Monitor *monitor = (Monitor*)GetConnection(conn_id);
 			std::error_code ignore_ec;
 
 			monitor::Hello hello;
-			// Parse hello message
 			if (!hello.ParseFromString(message.data())) {
-				LOG_ERROR("Failed to receive hello message from ip(%s) (%d:parse hello message)", monitor->GetPeerAddress().ToIpPort().c_str(),
+				LOG_ERROR("Receive hello from ip(%s) failed (%d:parse hello message failed)", monitor->GetPeerAddress().ToIpPort().c_str(),
 					ignore_ec.value());
 				break;
 			}
-			// Check the phantom version
 			if (hello.service_version() != 3) {
-				LOG_ERROR("Failed to receive hello message from ip(%s) (%d: monitor center version is low (3))", monitor->GetPeerAddress().ToIpPort().c_str(),
+				LOG_ERROR("Receive hello from ip(%s) failed (%d: monitor center version is low (3))", monitor->GetPeerAddress().ToIpPort().c_str(),
 					ignore_ec.value());
 				break;
 			}
 
 			connect_time_out_ = hello.connection_timeout();
 
-			LOG_INFO("Received a hello message from center (ip: %s, version: %d, timestamp: %lld)", monitor->GetPeerAddress().ToIpPort().c_str(), 
+			LOG_INFO("Receive hello from center (ip: %s, version: %d, timestamp: %lld)", monitor->GetPeerAddress().ToIpPort().c_str(), 
 				hello.service_version(), hello.timestamp());
 
 			monitor::Register reg;
@@ -158,9 +130,8 @@ namespace phantom {
 			reg.set_data_version(phantom::General::MONITOR_VERSION);
 			reg.set_timestamp(utils::Timestamp::HighResolution());
 
-			// Send the hello request
 			if (NULL == monitor || !monitor->SendRequest(monitor::MONITOR_MSGTYPE_REGISTER, reg.SerializeAsString(), ignore_ec)) {
-				LOG_ERROR("Failed to send register from monitor ip(%s) (%d:%s)", monitor->GetPeerAddress().ToIpPort().c_str(),
+				LOG_ERROR("Send register from monitor ip(%s) failed (%d:%s)", monitor->GetPeerAddress().ToIpPort().c_str(),
 					ignore_ec.value(), ignore_ec.message().c_str());
 				break;
 			}
@@ -174,49 +145,42 @@ namespace phantom {
 	bool MonitorManager::OnMonitorRegister(protocol::WsMessage &message, int64_t conn_id) {
 		bool bret = false;
 		do {
-			// Get the connection
 			Monitor *monitor = (Monitor*)GetConnection(conn_id);
 			std::error_code ignore_ec;
 
 			monitor::Register reg;
-			// Parse the register message
 			if (!reg.ParseFromString(message.data())) {
-				LOG_ERROR("Failed to receive register from ip(%s) (%d:failed to parse register message)", monitor->GetPeerAddress().ToIpPort().c_str(),
+				LOG_ERROR("Receive register from ip(%s) failed (%d:parse register message failed)", monitor->GetPeerAddress().ToIpPort().c_str(),
 					ignore_ec.value());
 				break;
 			}
 
-			// Set the active time
 			monitor->SetActiveTime(utils::Timestamp::HighResolution());
 
-			LOG_INFO("Received a register message from center (ip: %s, timestamp: " FMT_I64 ")", monitor->GetPeerAddress().ToIpPort().c_str(), reg.timestamp());
+			LOG_INFO("Receive register from center (ip: %s, timestamp: " FMT_I64 ")", monitor->GetPeerAddress().ToIpPort().c_str(), reg.timestamp());
 			bret = true;
 		} while (false);
+
 
 		return bret;
 	}
 
 	bool MonitorManager::OnPhantomStatus(protocol::WsMessage &message, int64_t conn_id) {
 		monitor::PhantomStatus phantom_status;
-		// Get the status of phantom
 		GetPhantomStatus(phantom_status);
 
 		bool bret = true;
 		std::error_code ignore_ec;
-		// Get the connection
 		Connection *monitor = GetConnection(conn_id);
-
-		// Send the response of phantom status
 		if (NULL == monitor || !monitor->SendResponse(message, phantom_status.SerializeAsString(), ignore_ec)) {
 			bret = false;
-			LOG_ERROR("Failed to send phantom status from ip(%s) (%d:%s)", monitor->GetPeerAddress().ToIpPort().c_str(),
+			LOG_ERROR("Send bubi status from ip(%s) failed (%d:%s)", monitor->GetPeerAddress().ToIpPort().c_str(),
 				ignore_ec.value(), ignore_ec.message().c_str());
 		}
 		return bret;
 	}
 
 	bool MonitorManager::OnLedgerStatus(protocol::WsMessage &message, int64_t conn_id) {
-		// Get the ledger status
 		monitor::LedgerStatus ledger_status;
 		ledger_status.mutable_ledger_header()->CopyFrom(LedgerManager::Instance().GetLastClosedLedger());
 		ledger_status.set_transaction_size(GlueManager::Instance().GetTransactionCacheSize());
@@ -225,20 +189,16 @@ namespace phantom {
 
 		bool bret = true;
 		std::error_code ignore_ec;
-		// Get the connection
 		Monitor *monitor = (Monitor *)GetConnection(conn_id);
-
-		// Send the response of ledger status
 		if (NULL == monitor || !monitor->SendResponse(message, ledger_status.SerializeAsString(), ignore_ec)) {
 			bret = false;
-			LOG_ERROR("Failed to send ledger status from ip(%s) (%d:%s)", monitor->GetPeerAddress().ToIpPort().c_str(),
+			LOG_ERROR("Send ledger status from ip(%s) failed (%d:%s)", monitor->GetPeerAddress().ToIpPort().c_str(),
 				ignore_ec.value(), ignore_ec.message().c_str());
 		}
 		return bret;
 	}
 
 	bool MonitorManager::OnSystemStatus(protocol::WsMessage &message, int64_t conn_id) {
-		// Get the system status
 		monitor::SystemStatus* system_status = new monitor::SystemStatus();
 		std::string disk_paths = Configure::Instance().monitor_configure_.disk_path_;
 		system_manager_.GetSystemMonitor(disk_paths, system_status);
@@ -247,13 +207,10 @@ namespace phantom {
 		std::error_code ignore_ec;
 
 		utils::MutexGuard guard(conns_list_lock_);
-		// Get the connection
 		Connection *monitor = GetConnection(conn_id);
-
-		// Send the response of system status
 		if (NULL == monitor || !monitor->SendResponse(message, system_status->SerializeAsString(), ignore_ec)) {
 			bret = false;
-			LOG_ERROR("Failed to send system status from ip(%s) (%d:%s)", monitor->GetPeerAddress().ToIpPort().c_str(),
+			LOG_ERROR("Send system status from ip(%s) failed (%d:%s)", monitor->GetPeerAddress().ToIpPort().c_str(),
 				ignore_ec.value(), ignore_ec.message().c_str());
 		}
 		if (system_status) {
@@ -267,12 +224,12 @@ namespace phantom {
 		phantom::Connection* monitor = NULL;
 		for (auto item : connections_) {
 			Monitor *peer = (Monitor *)item.second;
-			// Not self
 			if (!peer->InBound()) {
 				monitor = peer;
 				break;
 			}
 		}
+
 		return monitor;
 	}
 
@@ -288,28 +245,23 @@ namespace phantom {
 	}
 
 	void MonitorManager::OnTimer(int64_t current_time) {
-		// Reconnect if disconnected
+		// reconnect if disconnect
 		if (current_time - last_connect_time_ > connect_interval_) {
 			utils::MutexGuard guard(conns_list_lock_);
 			Monitor *monitor = (Monitor *)GetClientConnection();
-			// Check whether the monitor is NULL
 			if (NULL == monitor) {
 				std::string url = utils::String::Format("ws://%s", Configure::Instance().monitor_configure_.center_.c_str());
-
-				// Reconnect
 				Connect(url);
 			}
-			// Update the last connection time
 			last_connect_time_ = current_time;
 		}
 	}
 
 	void MonitorManager::OnSlowTimer(int64_t current_time) {
 
-		// Update cpu
 		system_manager_.OnSlowTimer(current_time);
 
-		// Send alerts
+		// send alert
 		if (current_time - last_alert_time_ > check_alert_interval_) {
 			monitor::AlertStatus alert_status;
 			alert_status.set_ledger_sequence(LedgerManager::Instance().GetLastClosedLedger().seq());
@@ -323,15 +275,12 @@ namespace phantom {
 
 			utils::MutexGuard guard(conns_list_lock_);
 			Monitor *monitor = (Monitor *)GetClientConnection();
-
-			// Send the request of alert
 			if ( monitor && !monitor->SendRequest(monitor::MONITOR_MSGTYPE_ALERT, alert_status.SerializeAsString(), ignore_ec)) {
 				bret = false;
-				LOG_ERROR("Failed to send alert status message to ip(%s) (%d:%s)", monitor->GetPeerAddress().ToIpPort().c_str(),
+				LOG_ERROR("Send alert status to ip(%s) failed (%d:%s)", monitor->GetPeerAddress().ToIpPort().c_str(),
 					ignore_ec.value(), ignore_ec.message().c_str());
 			}
 
-			// Update the checking time of last alert
 			last_alert_time_ = current_time;
 		}
 	}

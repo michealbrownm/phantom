@@ -19,7 +19,7 @@
 #include <monitor/monitor_manager.h>
 #include "ledger_manager.h"
 #include "contract_manager.h"
-#include "fee_calculate.h"
+#include "fee_compulate.h"
 
 namespace phantom {
 	LedgerManager::LedgerManager() : tree_(NULL) {
@@ -71,7 +71,7 @@ namespace phantom {
 					seq_kvdb, seq_rational);
 			}
 
-			LOG_INFO("The maximum ledger sequence that is closed=" FMT_I64, seq_rational);
+			LOG_INFO("max closed ledger seq=" FMT_I64, seq_rational);
 			last_closed_ledger_ = std::make_shared<LedgerFrm>();
 			if (!last_closed_ledger_->LoadFromDb(seq_rational)) {
 				return false;
@@ -79,7 +79,7 @@ namespace phantom {
 		}
 		else {
 			if (!CreateGenesisAccount()) {
-				LOG_ERROR("Failed to create genesis account.");
+				LOG_ERROR("Create genesis account failed");
 				return false;
 			}
 			seq_kvdb = 1;
@@ -97,14 +97,14 @@ namespace phantom {
 		const protocol::LedgerHeader& lclheader = last_closed_ledger_->GetProtoHeader();
 		std::string validators_hash = lclheader.validators_hash();
 		if (!ValidatorsGet(validators_hash, validators_)) {
-			LOG_ERROR("Failed to get validators!");
+			LOG_ERROR("Get validators failed!");
 			return false;
 		}
 
 		//fee
 		std::string fees_hash = lclheader.fees_hash();
 		if (!FeesConfigGet(fees_hash, fees_)) {
-			LOG_ERROR("Failed to get config fee!");
+			LOG_ERROR("Get config fee failed!");
 			return false;
 		}
 	
@@ -113,7 +113,7 @@ namespace phantom {
 		//load proof
 		Storage::Instance().account_db()->Get(General::LAST_PROOF, proof_);
 
-		//Update consensus configuration.
+		//update consensus configure
 		Global::Instance().GetIoService().post([this]() {
 			GlueManager::Instance().UpdateValidators(validators_, proof_);
 		});
@@ -127,7 +127,7 @@ namespace phantom {
 		}
 
 		if (lclheader.version() > General::LEDGER_VERSION) {
-			PROCESS_EXIT("Consensus ledger version:%d, software ledger version:%d", lclheader.version(), General::LEDGER_VERSION);
+			PROCESS_EXIT("consensus ledger version:%d,software ledger version:%d", lclheader.version(), General::LEDGER_VERSION);
 		}
 
 		TimerNotify::RegisterModule(this);
@@ -142,7 +142,7 @@ namespace phantom {
 			delete tree_;
 			tree_ = NULL;
 		}
-		LOG_INFO("Ledger manager stoped. [OK]");
+		LOG_INFO("Ledger manager stop [OK]");
 		return true;
 	}
 
@@ -176,7 +176,7 @@ namespace phantom {
 			next_seq = last_closed_ledger_->GetProtoHeader().seq() + 1;
 
 			sync_.update_time_ = current_time;
-			LOG_INFO("OnTimer. Request maximum ledger sequence from neighbours. BEGIN");
+			LOG_INFO("OnTimer. request max ledger seq from neighbours. BEGIN");
 
 			gl.set_begin(next_seq);
 			gl.set_end(next_seq);
@@ -199,7 +199,7 @@ namespace phantom {
 				}
 				enable_peers.insert(pid);
 			}
-			LOG_INFO("OnTimer. Request maximum ledger sequence from neighbours. END");
+			LOG_INFO("OnTimer. request max ledger seq from neighbours. END");
 		} while (false);
 
 		for (auto it = enable_peers.begin(); it != enable_peers.end(); it++)
@@ -216,7 +216,7 @@ namespace phantom {
 	}
 
 	void LedgerManager::ValidatorsSet(std::shared_ptr<WRITE_BATCH> batch, const protocol::ValidatorSet& validators) {
-		//should be recoded
+		//should be recode ?
 		std::string hash = HashWrapper::Crypto(validators.SerializeAsString());
 		batch->Put(utils::String::Format("validators-%s", utils::String::BinToHexString(hash).c_str()), validators.SerializeAsString());
 	}
@@ -247,23 +247,18 @@ namespace phantom {
 	}
 
 	bool LedgerManager::CreateGenesisAccount() {
-		LOG_INFO("There is no ledger, then create an init ledger.");
+		LOG_INFO("There is no ledger exist,then create a init ledger");
 
-		//Set the calculated hash values in the global ledger header.
+		//set global hash caculate
 		int32_t account_count = 0;
-		//Create the genesis account.
+		//create account of genesis
 		AccountFrm::pointer acc_frm =AccountFrm::CreatAccountFrm(Configure::Instance().genesis_configure_.account_, 100000000000000000);
 		tree_->Set(DecodeAddress(acc_frm->GetAccountAddress()), acc_frm->Serializer());
 		account_count++;
 
-		//Load the list of validators. Create validators' accounts.
+		//load validators config,create account of validators
 		const utils::StringList &list = Configure::Instance().genesis_configure_.validators_;
 		for (utils::StringList::const_iterator iter = list.begin(); iter != list.end(); iter++) {
-			if (*iter == Configure::Instance().genesis_configure_.account_){
-				LOG_ERROR("Validator's address could not be equal to genesis account address.");
-				return false;
-			}
-
 			auto validator = validators_.add_validators();
 			validator->set_address(*iter);
 			validator->set_pledge_coin_amount(0);
@@ -299,8 +294,8 @@ namespace phantom {
 		fees_.set_base_reserve(Configure::Instance().genesis_configure_.fees_.base_reserve_);
 		std::string fees_hash = HashWrapper::Crypto(fees_.SerializeAsString());
 		header->set_fees_hash(fees_hash);
-		header->set_reserve(Configure::Instance().genesis_configure_.slogan_);
-		header->set_hash ("");
+
+		header->set_hash("");
 		header->set_hash(HashWrapper::Crypto(ledger.SerializeAsString()));
 
 		last_closed_ledger_ = std::make_shared<LedgerFrm>();
@@ -318,7 +313,7 @@ namespace phantom {
 
 		batch->Put(General::STATISTICS, statistics_.toFastString());
 		if (!Storage::Instance().account_db()->WriteBatch(*batch)) {
-			PROCESS_EXIT("Failed to write account to database, %s", Storage::Instance().account_db()->error_desc().c_str());
+			PROCESS_EXIT("Write account batch failed, %s", Storage::Instance().account_db()->error_desc().c_str());
 		}
 
 		return true;
@@ -343,18 +338,18 @@ namespace phantom {
 			std::string str_max_seq;
 			account_db->Get(General::KEY_LEDGER_SEQ, str_max_seq);
 			int64_t seq_kvdb = utils::String::Stoi64(str_max_seq);
-			LOG_INFO("The maximum ledger sequence that is closed =" FMT_I64, seq_kvdb);
+			LOG_INFO("Max closed ledger seq=" FMT_I64, seq_kvdb);
 
 			//load ledger from db
 			protocol::LedgerHeader last_closed_ledger_hdr;
 			phantom::KeyValueDb *ledger_db = phantom::Storage::Instance().ledger_db();
 			std::string ledger_header;
 			if (ledger_db->Get(ComposePrefix(General::LEDGER_PREFIX, seq_kvdb), ledger_header) <= 0) {
-				LOG_ERROR("Failed to load ledger from database, error(%s)", ledger_db->error_desc().c_str());
+				LOG_ERROR("Load ledger from db failed, error(%s)", ledger_db->error_desc().c_str());
 				break;
 			}
 			if (!last_closed_ledger_hdr.ParseFromString(ledger_header)) {
-				LOG_ERROR("Failed to parse last closed ledger.");
+				LOG_ERROR("Parse last closed ledger failed");
 				break;
 			}
 
@@ -370,7 +365,7 @@ namespace phantom {
 			PrivateKey private_key(Configure::Instance().ledger_configure_.validation_privatekey_);
             std::string this_node_address = private_key.GetEncAddress();
 
-			//Compose the new ledger
+			//compose the new ledger
 			LedgerFrm::pointer ledger_frm = std::make_shared<LedgerFrm>();
 			protocol::Ledger &ledger = ledger_frm->ProtoLedger();
 			protocol::LedgerHeader *header = ledger.mutable_header();
@@ -400,20 +395,20 @@ namespace phantom {
 			std::string validators_hash = HashWrapper::Crypto(new_validator_set.SerializeAsString());
 			header->set_validators_hash(validators_hash);
 
-			//calculate block reward
+			//calc block reward
 			ProposeTxsResult prop_result;
 			ledger_frm->ApplyPropose(request, NULL, prop_result);
 			int64_t new_count = 0, change_count = 0;
 			ledger_frm->Commit(LedgerManager::GetInstance()->tree_, new_count, change_count);
 
-			//Update account hash
+			//update account hash
 			LedgerManager::GetInstance()->tree_->UpdateHash();
 			header->set_account_tree_hash(LedgerManager::GetInstance()->tree_->GetRootHash());
 
-			//Write account db
+			//write account db
 			auto batch_account = LedgerManager::GetInstance()->tree_->batch_;
 			if (!Storage::Instance().account_db()->WriteBatch(*batch_account)) {
-				PROCESS_EXIT("Failed to write account to database, %s", Storage::Instance().account_db()->error_desc().c_str());
+				PROCESS_EXIT("Write account batch failed, %s", Storage::Instance().account_db()->error_desc().c_str());
 			}
 
 			header->set_hash(HashWrapper::Crypto(ledger_frm->ProtoLedger().SerializeAsString()));
@@ -424,21 +419,21 @@ namespace phantom {
 
 			ValidatorsSet(batch, new_validator_set);
 
-			//Write ledger db
+			//write ledger db
 			WRITE_BATCH batch_ledger;
 			batch_ledger.Put(phantom::General::KEY_LEDGER_SEQ, utils::String::ToString(header->seq()));
 			batch_ledger.Put(ComposePrefix(General::LEDGER_PREFIX, header->seq()), header->SerializeAsString());
 			batch_ledger.Put(ComposePrefix(General::CONSENSUS_VALUE_PREFIX, header->seq()), request.SerializeAsString());
 			if (!ledger_db->WriteBatch(batch_ledger)) {
-				PROCESS_EXIT("Failed to write ledger and transaction to database(%s)", ledger_db->error_desc().c_str());
+				PROCESS_EXIT("Write ledger and transaction failed(%s)", ledger_db->error_desc().c_str());
 			}
 
-			//Write acount db
+			//write acount db
 			if (!Storage::Instance().account_db()->WriteBatch(*batch)) {
-				PROCESS_EXIT("Failed to write account to database, %s", Storage::Instance().account_db()->error_desc().c_str());
+				PROCESS_EXIT("Write account batch failed, %s", Storage::Instance().account_db()->error_desc().c_str());
 			}
 
-			LOG_INFO("Created hard fork ledger successfully: sequence(" FMT_I64 "), consensus value hash(%s)",
+			LOG_INFO("Create hard fork ledger successful, seq(" FMT_I64 "), consensus value hash(%s)",
 				header->seq(),
 				utils::String::BinToHexString(header->consensus_value_hash()).c_str());
 
@@ -462,11 +457,11 @@ namespace phantom {
 	}
 
 	int LedgerManager::OnConsent(const protocol::ConsensusValue &consensus_value, const std::string& proof) {
-		LOG_INFO("OnConsent ledger: consensus value sequence(" FMT_I64 ")", consensus_value.ledger_seq());
+		LOG_INFO("OnConsent Ledger consensus_value seq(" FMT_I64 ")", consensus_value.ledger_seq());
 
 		utils::MutexGuard guard(gmutex_);
 		if (last_closed_ledger_->GetProtoHeader().seq() >= consensus_value.ledger_seq()) {
-			LOG_ERROR("Received duplicated consensus, maximum ledger closed(" FMT_I64 ")>= received request(" FMT_I64 ")",
+			LOG_ERROR("received duplicated consensus, max closed ledger seq(" FMT_I64 ")>= received request(" FMT_I64 ")",
 				last_closed_ledger_->GetProtoHeader().seq(),
 				consensus_value.ledger_seq());
 			return 1;
@@ -484,7 +479,7 @@ namespace phantom {
 		std::string str_value;
 		int32_t ret = ledger_db->Get(General::KEY_LEDGER_SEQ, str_value);
 		if (ret < 0) {
-			PROCESS_EXIT_ERRNO("Failed to get max ledger sequence, error desc(%s)", ledger_db->error_desc().c_str());
+			PROCESS_EXIT_ERRNO("Get max ledger seq failed, error desc(%s)", ledger_db->error_desc().c_str());
 		}
 		else if (ret == 0) {
 			return 0;
@@ -516,7 +511,7 @@ namespace phantom {
 			protocol::PbftProof proof_proto;
 			proof_proto.ParseFromString(proof);
 
-			LOG_ERROR("Failed to execute CheckValueAndProof function:%s\n proof=%s",
+			LOG_ERROR("CheckValueAndProof failed:%s\nproof=%s",
 				Proto2Json(consensus_value).toFastString().c_str(),
 				Proto2Json(proof_proto).toFastString().c_str());
 
@@ -593,7 +588,7 @@ namespace phantom {
 		}
 		header->set_fees_hash(HashWrapper::Crypto(fees_.SerializeAsString()));
 		
-		//This header must be for the latest block.
+		//must be last
 		header->set_hash(HashWrapper::Crypto(closing_ledger->ProtoLedger().SerializeAsString()));
 
 		//proof
@@ -605,26 +600,21 @@ namespace phantom {
 		WRITE_BATCH ledger_db_batch;
 		ledger_db_batch.Put(ComposePrefix(General::CONSENSUS_VALUE_PREFIX, consensus_value.ledger_seq()), consensus_value.SerializeAsString());
 
-		do {
-			utils::WriteLockGuard guard(Storage::Instance().account_ledger_lock_);
+		if (!closing_ledger->AddToDb(ledger_db_batch)) {
+			PROCESS_EXIT("AddToDb failed");
+		}
 
-			if (!closing_ledger->AddToDb(ledger_db_batch)) {
-				PROCESS_EXIT("Failed to write ledger to database.");
-			}
+		if (!Storage::Instance().account_db()->WriteBatch(*account_db_batch)) {
+			PROCESS_EXIT("Write batch failed: %s", Storage::Instance().account_db()->error_desc().c_str());
+		}
 
-			if (!Storage::Instance().account_db()->WriteBatch(*account_db_batch)) {
-				PROCESS_EXIT("Failed to write accounts to database: %s", Storage::Instance().account_db()->error_desc().c_str());
-			}
-
-		} while (false);
-
-		//Update the variable when the write is successful.
+		//write successful, then update the variable
 		last_closed_ledger_ = closing_ledger;
 
 		int64_t time3 = utils::Timestamp().HighResolution();
 		tree_->batch_ = std::make_shared<WRITE_BATCH>();
 		tree_->FreeMemory(4);
-		LOG_INFO("ledger(" FMT_I64 "): closed transaction count(" FMT_SIZE "), ledger hash(%s), time of apply ledger ="  FMT_I64_EX(-8) " time of calculating hash="  FMT_I64_EX(-8) " time of addtodb=" FMT_I64_EX(-8)
+		LOG_INFO("ledger(" FMT_I64 ") closed txcount(" FMT_SIZE ") hash(%s) apply="  FMT_I64_EX(-8) " calc_hash="  FMT_I64_EX(-8) " addtodb=" FMT_I64_EX(-8)
 			" total=" FMT_I64_EX(-8) " LoadValue=" FMT_I64 " tsize=" FMT_SIZE,
 			closing_ledger->GetProtoHeader().seq(),
 			closing_ledger->GetTxOpeCount(),
@@ -642,7 +632,7 @@ namespace phantom {
 	}
 
 	void LedgerManager::NotifyLedgerClose(LedgerFrm::pointer closing_ledger, bool has_upgrade) {
-		//Avoid dead lock
+		//avoid dead lock
 		protocol::LedgerHeader tmp_lcl_header;
 		do {
 			utils::WriteLockGuard guard(lcl_header_mutex_);
@@ -658,10 +648,10 @@ namespace phantom {
 
 		context_manager_.RemoveCompleted(tmp_lcl_header.seq());
 
-		//Broadcast that the ledger is closed.
+		//notice ledger closed
 		WebSocketServer::Instance().BroadcastMsg(protocol::CHAIN_LEDGER_HEADER, tmp_lcl_header.SerializeAsString());
 
-		// The broadcast message is applied.
+		// notice applied
 		for (size_t i = 0; i < closing_ledger->apply_tx_frms_.size(); i++) {
 			TransactionFrm::pointer tx = closing_ledger->apply_tx_frms_[i];
 			protocol::TransactionEnvStore apply_tx_msg;
@@ -671,17 +661,10 @@ namespace phantom {
 			apply_tx_msg.set_error_code(tx->GetResult().code());
 			apply_tx_msg.set_error_desc(tx->GetResult().desc());
 			apply_tx_msg.set_hash(tx->GetContentHash());
-			if (tx->GetResult().code() != 0){
+			if (tx->GetResult().code() != 0)
 				apply_tx_msg.set_actual_fee(tx->GetFeeLimit());
-			}
-			else {
-				int64_t actual_fee=0;
-				if (!utils::SafeIntMul(tx->GetActualGas(), tx->GetGasPrice(), actual_fee)){
-					LOG_ERROR("Overflowed when caculate actual fee.");
-				}
-				apply_tx_msg.set_actual_fee(actual_fee);
-			}
-				
+			else
+				apply_tx_msg.set_actual_fee(tx->GetActualFee());
 			WebSocketServer::Instance().BroadcastChainTxMsg(apply_tx_msg);
 
 			if (tx->GetResult().code() == protocol::ERRCODE_SUCCESS)
@@ -728,12 +711,12 @@ namespace phantom {
 			}
 
 			if (message.end() - message.begin() < 0) {
-				LOG_ERROR("Begin is greater than end [" FMT_I64 "," FMT_I64 "]", message.begin(), message.end());
+				LOG_ERROR("begin is bigger than end [" FMT_I64 "," FMT_I64 "]", message.begin(), message.end());
 				return;
 			}
 
 			if (last_closed_ledger_->GetProtoHeader().seq() < message.end()) {
-				LOG_INFO("Peer node(" FMT_I64 ") request ledger[" FMT_I64 "," FMT_I64 "] while the max consensus value is (" FMT_I64 ")",
+				LOG_INFO("peer(" FMT_I64 ") request [" FMT_I64 "," FMT_I64 "] while the max consensus_value is (" FMT_I64 ")",
 					peer_id, message.begin(), message.end(), last_closed_ledger_->GetProtoHeader().seq());
 				return;
 			}
@@ -745,7 +728,7 @@ namespace phantom {
 				protocol::ConsensusValue item;
 				if (!ConsensusValueFromDB(i, item)) {
 					ret = false;
-					LOG_ERROR("Failed to get consensus value from database: consensus value sequence=" FMT_I64, i);
+					LOG_ERROR("ConsensusValueFromDB failed seq=" FMT_I64, i);
 					break;
 				}
 				ledgers.add_values()->CopyFrom(item);
@@ -780,16 +763,16 @@ namespace phantom {
 		do {
 			utils::MutexGuard guard(gmutex_);
 			if (ledgers.values_size() == 0) {
-				LOG_ERROR("Received empty Ledgers from(" FMT_I64 ")", peer_id);
+				LOG_ERROR("received empty Ledgers from(" FMT_I64 ")", peer_id);
 				break;
 			}
 			int64_t begin = ledgers.values(0).ledger_seq();
 			int64_t end = ledgers.values(ledgers.values_size() - 1).ledger_seq();
 
-			LOG_INFO("OnReceiveLedgers [" FMT_I64 "," FMT_I64 "] from peer node(" FMT_I64 ")", begin, end, peer_id);
+			LOG_INFO("OnReceiveLedgers [" FMT_I64 "," FMT_I64 "] from peer(" FMT_I64 ")", begin, end, peer_id);
 
 			if (sync_.peers_.find(peer_id) == sync_.peers_.end()) {
-				LOG_ERROR("Received unexpected ledgers [" FMT_I64 "," FMT_I64 "] from (" FMT_I64 ")",
+				LOG_ERROR("received unexpected ledgers [" FMT_I64 "," FMT_I64 "] from (" FMT_I64 ")",
 					begin, end, peer_id);
 				break;
 			}
@@ -798,7 +781,7 @@ namespace phantom {
 			itm.send_time_ = 0;
 
 			if (begin != itm.gl_.begin() || end != itm.gl_.end()) {
-				LOG_ERROR("Received unexpected ledgers[" FMT_I64 "," FMT_I64 "] while expect[" FMT_I64 "," FMT_I64 "]",
+				LOG_ERROR("received unexpected ledgers[" FMT_I64 "," FMT_I64 "] while expect[" FMT_I64 "," FMT_I64 "]",
 					begin, end, itm.gl_.begin(), itm.gl_.end());
 				itm.probation_ = utils::Timestamp::HighResolution() + 60 * utils::MICRO_UNITS_PER_SEC;
 				itm.gl_.set_begin(0);
@@ -848,7 +831,7 @@ namespace phantom {
 	}
 
 	void LedgerManager::RequestConsensusValues(int64_t pid, protocol::GetLedgers& gl, int64_t time) {
-		LOG_TRACE("Request consensus values from peer(" FMT_I64 "), [" FMT_I64 "," FMT_I64 "]", pid, gl.begin(), gl.end());
+		LOG_TRACE("RequestConsensusValues from peer(" FMT_I64 "), [" FMT_I64 "," FMT_I64 "]", pid, gl.begin(), gl.end());
 		do {
 			utils::MutexGuard guard(gmutex_);
 			auto &peer = sync_.peers_[pid];
@@ -872,16 +855,14 @@ namespace phantom {
 		auto header = std::make_shared<protocol::LedgerHeader>(ledger_context->closing_ledger_->GetProtoHeader());
 
 		TransactionFrm::pointer txfrm = std::make_shared<phantom::TransactionFrm >(env);
-		TransactionFrm::pointer bottom_tx = ledger_context->GetBottomTx();
-		do {
-			
 
+		do {
 			if (ledger_context->transaction_stack_.size() > General::CONTRACT_MAX_RECURSIVE_DEPTH) {
 				txfrm->result_.set_code(protocol::ERRCODE_CONTRACT_TOO_MANY_RECURSION);
-				txfrm->result_.set_desc("Too many recursion.");
-				//Add byte fee
+				txfrm->result_.set_desc("Too many recursion ");
+				//add byte fee
 				TransactionFrm::pointer bottom_tx = ledger_context->GetBottomTx();
-				bottom_tx->AddActualGas(txfrm->GetSelfGas());
+				bottom_tx->AddActualFee(txfrm->GetSelfByteFee());
 				break;
 			}
 
@@ -894,7 +875,7 @@ namespace phantom {
 					//break;
 					result.set_code(protocol::ERRCODE_CONTRACT_TOO_MANY_TRANSACTIONS);
 					result.set_desc("Too many transaction");
-					LOG_ERROR("Too many transactions triggered by transaction(hash:%s)", contract->GetParameter().sender_.c_str());
+					LOG_ERROR("Too many transaction called by transaction(hash:%s)", contract->GetParameter().sender_.c_str());
 					return result;
 				}
 			}
@@ -902,8 +883,10 @@ namespace phantom {
 			ledger_context->transaction_stack_.push_back(txfrm);
 			txfrm->SetMaxEndTime(back->GetMaxEndTime());
 			txfrm->NonceIncrease(ledger_context->closing_ledger_.get(), back->environment_);
-			if (txfrm->ValidForParameter(true)) {
-				if (back->environment_->useAtomMap_){
+			int64_t total_op_fee = 0;
+			if (txfrm->ValidForParameter(total_op_fee)) {
+				if (back->environment_->useAtomMap_)
+				{
 					std::shared_ptr<Environment> cacheEnv = back->environment_->NewStackFrameEnv();
 					txfrm->Apply(ledger_context->closing_ledger_.get(), cacheEnv, true);
 				}
@@ -911,10 +894,17 @@ namespace phantom {
 					txfrm->Apply(ledger_context->closing_ledger_.get(), back->environment_, true);
 			}
 			else {
-				TransactionFrm::AddActualFee(bottom_tx, txfrm.get());
+				TransactionFrm::pointer bottom_tx = ledger_context->GetBottomTx();
+				bottom_tx->AddActualFee(txfrm->GetSelfByteFee());
+				if (bottom_tx->GetActualFee() > bottom_tx->GetFeeLimit()) {
+					txfrm->result_.set_code(protocol::ERRCODE_FEE_NOT_ENOUGH);
+					txfrm->result_.set_desc(utils::String::Format("Transaction(%s) fee limit(" FMT_I64 ") not enough,current actual fee(" FMT_I64 ") ,transaction(%s) self byte fee(" FMT_I64 ")",
+						utils::String::BinToHexString(bottom_tx->GetContentHash()).c_str(), bottom_tx->GetFeeLimit(), bottom_tx->GetActualFee(), utils::String::BinToHexString(txfrm->GetContentHash()).c_str(), txfrm->GetSelfByteFee()));
+				}
 			}
 
-			//Throw the contract
+			TransactionFrm::pointer bottom_tx = ledger_context->GetBottomTx();
+			//throw the contract
 			if (txfrm->GetResult().code() == protocol::ERRCODE_FEE_NOT_ENOUGH ||
 				txfrm->GetResult().code() == protocol::ERRCODE_CONTRACT_TOO_MANY_TRANSACTIONS) {
 				result = txfrm->GetResult();
@@ -938,12 +928,15 @@ namespace phantom {
 			   so if txfrm->ValidForParameter() failed, there was no txfrm->environment_,
 			   and txfrm->environment_->ClearChangeBuf() would access nonexistent memory,
 			   so that would be a serious error, and also seriously is that this problem only
-			   exists when operation called by the contract, it means only in Dotransaction function,
+			   exist when operation called by contract, it means only in Dotransaction function,
 			   because there is only one environment in normal operation, txfrm->environment_ is a reference to it*/
 			//txfrm->environment_->ClearChangeBuf();
 			tx_store.set_error_code(txfrm->GetResult().code());
 			tx_store.set_error_desc(txfrm->GetResult().desc());
-				
+			if (txfrm->GetResult().code() != 0)
+				tx_store.set_actual_fee(txfrm->GetFeeLimit());
+			else
+				tx_store.set_actual_fee(txfrm->GetActualFee());
 			back->instructions_.push_back(tx_store);
 			ledger_context->transaction_stack_.pop_back();
 
@@ -951,10 +944,14 @@ namespace phantom {
 			return result;
 		} while (false);
 
+		//
 		protocol::TransactionEnvStore tx_store;
 		tx_store.set_error_code(txfrm->GetResult().code());
 		tx_store.set_error_desc(txfrm->GetResult().desc());
-			
+		if (txfrm->GetResult().code() != 0)
+			tx_store.set_actual_fee(txfrm->GetFeeLimit());
+		else
+			tx_store.set_actual_fee(txfrm->GetActualFee());
 		tx_store.mutable_transaction_env()->CopyFrom(txfrm->GetProtoTxEnv());
 		auto trigger = tx_store.mutable_transaction_env()->mutable_trigger();
 		trigger->mutable_transaction()->set_hash(back->GetContentHash());

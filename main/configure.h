@@ -103,7 +103,6 @@ namespace phantom {
 			int64_t base_reserve_;
 		};
 		FeeConfigure fees_;
-		std::string slogan_;
 
 		std::string account_;
 		utils::StringList validators_;
@@ -132,7 +131,7 @@ namespace phantom {
 		LoggerConfigure logger_configure_;
 
 		WebServerConfigure webserver_configure_;
-		WsServerConfigure wsserver_configure_; //Websocket server
+		WsServerConfigure wsserver_configure_; //websocket server
 		
 		P2pConfigure p2p_configure_;
 		LedgerConfigure ledger_configure_;

@@ -56,7 +56,7 @@ namespace phantom {
 		tls_client *tls_client_;
 		connection_hdl handle_;
 
-		//Status
+		//status
 		int64_t connect_end_time_;
 
 		int64_t last_receive_time_;
@@ -94,7 +94,7 @@ namespace phantom {
 		websocketpp::lib::error_code GetErrorCode() const;
 		bool InBound() const;
 
-		//Get status
+		//get status
 		bool IsConnectExpired(int64_t time_out) const;
 		bool IsDataExpired(int64_t time_out) const;
 		virtual void ToJson(Json::Value &status) const;
@@ -149,21 +149,21 @@ namespace phantom {
 
 		void Start(const utils::InetAddress &ip);
 		void Stop();
-		//For client
+		//for client
 		bool Connect(std::string const & uri);
 		uint16_t GetListenPort() const;
 	protected:
-		//For server
+		//for server
 		void OnOpen(connection_hdl hdl);
 		void OnClose(connection_hdl hdl);
 		virtual void OnMessage(connection_hdl hdl, server::message_ptr msg);
 		void OnFailed(connection_hdl hdl);
 
-		//For client
+		//for client
 		void OnClientOpen(connection_hdl hdl);
 		//void OnClientMessage(connection_hdl hdl, server::message_ptr msg);
 
-		//For TLS
+		//for tls
 		context_ptr OnTlsInit(tls_mode mode, websocketpp::connection_hdl hdl);
 		virtual bool OnValidate(websocketpp::connection_hdl hdl);
 		virtual bool OnVerifyCallback(
@@ -173,26 +173,26 @@ namespace phantom {
 
 		void OnPong(connection_hdl hdl, std::string payload);
 		
-		//Get password.
+		//get password
 		std::string GetCertPassword();
 
-		//The thread is not safe when you get a peer object.
+		//Get peer object not thread safe
 		Connection *GetConnection(int64_t id);
 		Connection *GetConnection(connection_hdl hdl);
 
-		//The thread is not safe when you remove or close a network connection.
+		//remove peer,  not thread safe
 		void RemoveConnection(Connection *conn);
 		void RemoveConnection(int64_t conn_id);
 
-		//Mapp message type to function.
+		//message type to function
 		MessageConnPocMap request_methods_;
 		MessageConnPocMap response_methods_;
 
-		//Send custom message.
+		//send custom message
 		bool OnRequestPing(protocol::WsMessage &message, int64_t conn_id);
 		bool OnResponsePing(protocol::WsMessage &message, int64_t conn_id);
 
-		//When requested, create a connection.
+		//could be drived
 		virtual Connection *CreateConnectObject(server *server_h, client *client_h, 
 			tls_server *tls_server_h, tls_client *tls_client_h,
 			connection_hdl con, const std::string &uri, int64_t id);

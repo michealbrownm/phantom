@@ -30,7 +30,7 @@ namespace phantom {
 
 	bool Consensus::Initialize() {
 		if (!private_key_.IsValid()) {
-			LOG_ERROR("The format of consensus private key is error.");
+			LOG_ERROR("The consensus private key format is error");
 			return false;
 		}
 
@@ -102,7 +102,7 @@ namespace phantom {
 
 	bool Consensus::SendMessage(const std::string &message) {
 		if (!is_validator_) {
-			return true;
+			return false;
 		}
 
 		notify_->SendConsensusMessage(message);
@@ -156,7 +156,7 @@ namespace phantom {
 	}
 
 	bool Consensus::SaveValue(const std::string &name, int64_t value) {
-		LOG_INFO("Set %s, value = " FMT_I64 ".", name.c_str(), value);
+		LOG_INFO("Set %s to value(" FMT_I64 ") ", name.c_str(), value);
 		return SaveValue(name, utils::String::ToString(value));
 	}
 
@@ -204,11 +204,11 @@ namespace phantom {
 	void ValueSaver::SaveValue(const std::string &name, const std::string &value) {
 		writes.Put(utils::String::Format("%s_%s", phantom::General::CONSENSUS_PREFIX, name.c_str()), value);
 		write_size++;
-		LOG_TRACE("Set %s, value size =" FMT_SIZE ".", name.c_str(), value.size());
+		LOG_TRACE("Set %s of size(" FMT_SIZE ")", name.c_str(), value.size());
 	}
 
 	void ValueSaver::SaveValue(const std::string &name, int64_t value) {
-		LOG_TRACE("Set %s, value = " FMT_I64 ".", name.c_str(), value);
+		LOG_TRACE("Set %s to value(" FMT_I64 ") ", name.c_str(), value);
 		SaveValue(name, utils::String::ToString(value));
 	}
 

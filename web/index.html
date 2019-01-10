@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Bubi API 接口示例</title>
+    <link rel="stylesheet" type="text/css" href="themes/default/easyui.css">
+    <link rel="stylesheet" type="text/css" href="themes/icon.css">
+    <link rel="stylesheet" type="text/css" href="demo.css">
+    <script type="text/javascript" src="jquery.min.js"></script>
+    <script type="text/javascript" src="jquery.easyui.min.js"></script>
+    <script type="text/javascript" src="lib/nacl_factory.js"></script>
+</head>
+<body>
+    <div style="margin:20px 0;"></div>
+    <div class="easyui-panel" title="POST 操作" style="width:100%;padding:1px 1px">
+    	<div style="margin-bottom:20px">
+	        <div>方法名:</div>
+	        <select class="easyui-combobox" name="method" style="width:200px;">
+				<option value="submitTransaction">SubmitTransaction</option>
+				<option value="getTransactionBlob">GetTransactionBlob</option>
+				<option value="getSignature">getSignature</option>
+			</select>
+        </div>
+     
+        
+        <div1 style="margin-bottom:20px">
+            <div>消息体:</div>
+            <input class="easyui-textbox" name="param" data-options="multiline:true,prompt:'{}'" style="width:700px;height:300px">
+            <a href="javascript:void(0)" class="easyui-linkbutton" iconCls="icon-ok" onclick="submitForm()" style="width:100px;height:32px">提交</a>
+			
+			<div>执行次数</div>
+			 <input id="count" name="count" type="text" style="width:70px;height:20px" >
+			 <a href="javascript:void(0)" class="easyui-linkbutton" iconCls="icon-ok" onclick="MoreSubmt()" style="width:200px;height:32px">批量执行</a>
+			 
+			 <a href="javascript:void(0)" class="easyui-linkbutton" iconCls="icon-ok" onclick="autoCreate()" style="width:200px;height:32px">自动创建帐号</a>
+        </div1>
+        <div style="margin-bottom:20px">
+            <div>返回值:</div>
+            <input id="result" name="result" type="text" data-options="multiline:true" style="width:700px;height:100px">
+			<a 	href="javascript:void(0)" class="easyui-linkbutton" iconCls="icon-ok" onclick="ab()" style="width:150px;height:32px">查询交易记录</a>
+        </div>
+    </div>
+    
+     <script>
+     function obj2string(o){ 
+				    var r=[]; 
+				    if(typeof o=="string"){ 
+				        return "\""+o.replace(/([\'\"\\])/g,"\\$1").replace(/(\n)/g,"\\n").replace(/(\r)/g,"\\r").replace(/(\t)/g,"\\t")+"\""; 
+				    } 
+				    if(typeof o=="object"){ 
+				        if(!o || !o.sort){ 
+				            for(var i in o){ 
+				                r.push('"'+i+'"'+":"+obj2string(o[i])); 
+				            } 
+				            if(!!document.all&&!/^\n?function\s*toString\(\)\s*\{\n?\s*\[native code\]\n?\s*\}\n?\s*$/.test(o.toString)){ 
+				                r.push("toString:"+o.toString.toString()); 
+				            } 
+				            r="{"+r.join()+"}"; 
+				        }else{ 
+				            for(var i=0;i<o.length;i++){ 
+				                r.push(obj2string(o[i])) 
+				            } 
+				            r="["+r.join()+"]"; 
+				        }  
+				        return r; 
+				    }  
+				    return o.toString(); 
+				} 
+				
+        function submitForm(){
+		var a = $("input[name='param']").attr('value');
+		var url = $("input[name='method']").attr('value');
+	  
+		//var d =  $.parseJSON(a);
+	  
+		var aj = $.ajax( {    
+					url:url, 
+					data:a,    
+					type:'post',    
+					cache:false,    
+					dataType:'json',
+					async: true,
+					success:function(data) {
+						var j1 = obj2string(data);
+						document.getElementById("result").value=j1;
+					 },
+					 error : function() {
+						  alert("异常！");
+					 }
+				}); 
+	}
+		
+	function MoreSubmt()
+	{
+	 var n = $("input[name='count']").attr('value');
+	 	var a = $("input[name='param']").attr('value');
+		var url = $("input[name='method']").attr('value');
+		var d =  $.parseJSON(a);
+		 for(i=0;i<n;i++)
+		 {
+			$.ajax({    
+						url:url, 
+						data:a,    
+						type:'post',    
+						cache:false,    
+						dataType:'json',
+						async: true,
+						success:function(data) {
+
+							var j1 = obj2string(data);
+							document.getElementById("result").value=j1;
+							//$("#d1").html(j1);
+						 },
+						 error : function() {
+							  // view("异常！");
+							  alert("异常！");
+						 }
+				  }); 
+		}
+	}
+	
+	function autoCreate()
+	{
+			formData =
+			{
+				"items":[]
+			};
+			
+			tx=		{
+			"private_keys" : ["privBwAEW6DPXHrVXgoZua3Hmgr2L7DYv8t7B9GGYXpznQpf1Qsfk82W"],
+			"transaction_json" :
+			{
+				"source_address" : "BUBiV8iEtt2P9ZD6SvQQx9xSQQLiYaWRykjXt2Lv",
+				"fee" : 10000,
+				"operations" : []
+			}
+		};
+		var count=0;	
+		for(i=0;i<30;i++)
+		{
+				$.ajax({
+				url : "createAccount",
+				type : 'get',
+				cache : false,
+				dataType : 'json',
+				async : false,
+				success : function (response)
+				{
+					var opitem ={
+						"type" : 0,
+						"dest_address" : "BUBiV8hyz3CWyzhDT7nd99Hj8PEpF7ZQhd2Lq36W",
+						"init_balance" : 1001000000,
+						"threshold" :
+						{
+							"master_weight" : 1,
+							"low_threshold" : 1,
+							"med_threshold" : 1,
+							"high_threshold" : 1
+						},
+						"signers" : [
+							{
+								"address" : "abcd1",
+								"weight" : 10
+							}]
+					};
+					opitem.dest_address=response.result.address;
+					tx.transaction_json.operations[0]=opitem;
+					formData.items[i]=tx;
+					count++;
+					if(count == 30){
+							$.ajax(
+							{
+								url : "submitTransaction",
+								type : 'POST',
+								cache : false,
+								dataType : 'json',
+								data : obj2string(formData),
+								async : false,
+								success : function (response)
+								{
+									//autoCreate();
+								},
+								error : function ()  {}
+							});
+					}
+				},
+				error : function ()  {}
+			});
+		}
+	}
+
+		
+		function ab()
+		{
+		 str = document.getElementById("result").value;
+		 var json = $.parseJSON(str);
+		 str_hash = json['result']['hash'];
+					$.ajax( {    
+						url:"getTransactionHistory?hash="+str_hash, 
+						data:{},
+						type:'get',
+						cache:false,
+						dataType:'json',
+						async: true,
+						success:function(data) {
+							alert(obj2string(data));
+						 },
+						 error : function() {
+						 }
+					}); 
+		 
+		}
+    </script>
+</body>
+</html>

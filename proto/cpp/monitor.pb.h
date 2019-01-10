@@ -39,7 +39,6 @@ void protobuf_AssignDesc_monitor_2eproto();
 void protobuf_ShutdownFile_monitor_2eproto();
 
 class AlertStatus;
-class PhantomStatus;
 class CPU;
 class GlueManager;
 class Hello;
@@ -47,6 +46,7 @@ class LedgerStatus;
 class Partition;
 class Peer;
 class PeerManager;
+class PhantomStatus;
 class Register;
 class SystemProperty;
 class SystemResource;

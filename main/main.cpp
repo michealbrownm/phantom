@@ -33,33 +33,6 @@
 void SaveWSPort();
 void RunLoop();
 int main(int argc, char *argv[]){
-
-#ifdef WIN32
-	_set_output_format(_TWO_DIGIT_EXPONENT);
-#else
-	pthread_attr_t attr;
-	pthread_attr_init(&attr);
-	size_t stacksize = 0;
-	int ret = pthread_attr_getstacksize(&attr, &stacksize);
-	if (ret != 0) {
-		printf("get stacksize error!:%d\n", (int)stacksize);
-		return -1;
-	}
-
-	if (stacksize <= 2 * 1024 * 1024)
-	{
-		stacksize = 2 * 1024 * 1024;
-
-		pthread_attr_t object_attr;
-		pthread_attr_init(&object_attr);
-		ret = pthread_attr_setstacksize(&object_attr, stacksize);
-		if (ret != 0) {
-			printf("set main stacksize error!:%d\n", (int)stacksize);
-			return -1;
-		}
-	}
-#endif
-
 	utils::SetExceptionHandle();
 	utils::Thread::SetCurrentThreadName("phantom-thread");
 
@@ -91,7 +64,7 @@ int main(int argc, char *argv[]){
 		phantom::InstallSignal();
 
 		if (arg.console_){
-			arg.log_dest_ = utils::LOG_DEST_FILE; //Cancel the std output
+			arg.log_dest_ = utils::LOG_DEST_FILE; //cancel the std output
 			phantom::Console &console = phantom::Console::Instance();
 			console.Initialize();
 			object_exit.Push(std::bind(&phantom::Console::Exit, &console));
@@ -103,7 +76,7 @@ int main(int argc, char *argv[]){
 		utils::Daemon &daemon = utils::Daemon::Instance();
 		if (!phantom::g_enable_ || !daemon.Initialize((int32_t)1234))
 		{
-			LOG_STD_ERRNO("Failed to initialize daemon", STD_ERR_CODE, STD_ERR_DESC);
+			LOG_STD_ERRNO("Initialize daemon failed", STD_ERR_CODE, STD_ERR_DESC);
 			break;
 		}
 		object_exit.Push(std::bind(&utils::Daemon::Exit, &daemon));
@@ -116,7 +89,7 @@ int main(int argc, char *argv[]){
 		}
 
 		if (!config.Load(config_path)){
-			LOG_STD_ERRNO("Failed to load configuration", STD_ERR_CODE, STD_ERR_DESC);
+			LOG_STD_ERRNO("Load configure failed", STD_ERR_CODE, STD_ERR_DESC);
 			break;
 		}
 
@@ -130,50 +103,50 @@ int main(int argc, char *argv[]){
 		logger.SetExpireDays(logger_config.expire_days_);
 		if (!phantom::g_enable_ || !logger.Initialize((utils::LogDest)(arg.log_dest_ >= 0 ? arg.log_dest_ : logger_config.dest_),
 			(utils::LogLevel)logger_config.level_, log_path, true)){
-			LOG_STD_ERR("Failed to initialize logger");
+			LOG_STD_ERR("Initialize logger failed");
 			break;
 		}
 		object_exit.Push(std::bind(&utils::Logger::Exit, &logger));
-		LOG_INFO("Initialized daemon successfully");
-		LOG_INFO("Loaded configure successfully");
-		LOG_INFO("Initialized logger successfully");
+		LOG_INFO("Initialize daemon successful");
+		LOG_INFO("Load configure successful");
+		LOG_INFO("Initialize logger successful");
 
 		// end run command
 		phantom::Storage &storage = phantom::Storage::Instance();
-		LOG_INFO("The path of the database is as follows: keyvalue(%s),account(%s),ledger(%s)", 
+		LOG_INFO("keyvalue(%s),account(%s),ledger(%s)", 
 			config.db_configure_.keyvalue_db_path_.c_str(),
 			config.db_configure_.account_db_path_.c_str(),
 			config.db_configure_.ledger_db_path_.c_str());
 
 		if (!phantom::g_enable_ || !storage.Initialize(config.db_configure_, arg.drop_db_)) {
-			LOG_ERROR("Failed to initialize database");
+			LOG_ERROR("Initialize db failed");
 			break;
 		}
 		object_exit.Push(std::bind(&phantom::Storage::Exit, &storage));
-		LOG_INFO("Initialized database successfully");
+		LOG_INFO("Initialize db successful");
 
 		if (arg.drop_db_) {
-			LOG_INFO("Droped database successfully");
+			LOG_INFO("Drop db successfully");
 			return 1;
 		} 
 		
 		if ( arg.clear_consensus_status_ ){
 			phantom::Pbft::ClearStatus();
-			LOG_INFO("Cleared consensus status successfully");
+			LOG_INFO("Clear consensus status successfully");
 			return 1;
 		}
 
 		if (arg.clear_peer_addresses_) {
 			phantom::KeyValueDb *db = phantom::Storage::Instance().keyvalue_db();
 			db->Put(phantom::General::PEERS_TABLE, "");
-			LOG_INFO("Cleared peer addresss list successfully");
+			LOG_INFO("Clear peer addresss list successfully");
 			return 1;
 		} 
 
 		if (arg.create_hardfork_) {
 			phantom::LedgerManager &ledgermanger = phantom::LedgerManager::Instance();
 			if (!ledgermanger.Initialize()) {
-				LOG_ERROR("Failed to initialize legder manger!");
+				LOG_ERROR("legder manger init error!!!");
 				return -1;
 			}
 			phantom::LedgerManager::CreateHardforkLedger();
@@ -182,92 +155,92 @@ int main(int argc, char *argv[]){
 
 		phantom::Global &global = phantom::Global::Instance();
 		if (!phantom::g_enable_ || !global.Initialize()){
-			LOG_ERROR_ERRNO("Failed to initialize global variable", STD_ERR_CODE, STD_ERR_DESC);
+			LOG_ERROR_ERRNO("Initialize global variable failed", STD_ERR_CODE, STD_ERR_DESC);
 			break;
 		}
 		object_exit.Push(std::bind(&phantom::Global::Exit, &global));
-		LOG_INFO("Initialized global module successfully");
+		LOG_INFO("Initialize global variable successful");
 
-		//Consensus manager must be initialized before ledger manager and glue manager
+		//consensus manager must be initialized before ledger manager and glue manager
 		phantom::ConsensusManager &consensus_manager = phantom::ConsensusManager::Instance();
 		if (!phantom::g_enable_ || !consensus_manager.Initialize(phantom::Configure::Instance().ledger_configure_.validation_type_)) {
-			LOG_ERROR("Failed to initialize consensus manager");
+			LOG_ERROR("Initialize consensus manager failed");
 			break;
 		}
 		object_exit.Push(std::bind(&phantom::ConsensusManager::Exit, &consensus_manager));
-		LOG_INFO("Initialized consensus manager successfully");
+		LOG_INFO("Initialize consensus manager successful");
 
 		phantom::LedgerManager &ledgermanger = phantom::LedgerManager::Instance();
 		if (!phantom::g_enable_ || !ledgermanger.Initialize()) {
-			LOG_ERROR("Failed to initialize ledger manager");
+			LOG_ERROR("Initialize ledger manager failed");
 			break;
 		}
 		object_exit.Push(std::bind(&phantom::LedgerManager::Exit, &ledgermanger));
-		LOG_INFO("Initialized ledger successfully");
+		LOG_INFO("Initialize ledger successful");
 
 		phantom::GlueManager &glue = phantom::GlueManager::Instance();
 		if (!phantom::g_enable_ || !glue.Initialize()){
-			LOG_ERROR("Failed to initialize glue manager");
+			LOG_ERROR("Initialize glue manager failed");
 			break;
 		}
 		object_exit.Push(std::bind(&phantom::GlueManager::Exit, &glue));
-		LOG_INFO("Initialized glue manager successfully");
+		LOG_INFO("Initialize glue manager successful");
 
 		phantom::PeerManager &p2p = phantom::PeerManager::Instance();
 		if (!phantom::g_enable_ || !p2p.Initialize(NULL, false)) {
-			LOG_ERROR("Failed to initialize peer network");
+			LOG_ERROR("Initialize peer network failed");
 			break;
 		}
 		object_exit.Push(std::bind(&phantom::PeerManager::Exit, &p2p));
-		LOG_INFO("Initialized peer network successfully");
+		LOG_INFO("Initialize peer network successful");
 
 		phantom::SlowTimer &slow_timer = phantom::SlowTimer::Instance();
 		if (!phantom::g_enable_ || !slow_timer.Initialize(1)){
-			LOG_ERROR_ERRNO("Failed to initialize slow timer", STD_ERR_CODE, STD_ERR_DESC);
+			LOG_ERROR_ERRNO("Initialize slow timer failed", STD_ERR_CODE, STD_ERR_DESC);
 			break;
 		}
 		object_exit.Push(std::bind(&phantom::SlowTimer::Exit, &slow_timer));
-		LOG_INFO("Initialized slow timer with " FMT_SIZE " successfully", utils::System::GetCpuCoreCount());
+		LOG_INFO("Initialize slow timer with " FMT_SIZE " successful", utils::System::GetCpuCoreCount());
 
 		phantom::WebSocketServer &ws_server = phantom::WebSocketServer::Instance();
 		if (!phantom::g_enable_ || !ws_server.Initialize(phantom::Configure::Instance().wsserver_configure_)) {
-			LOG_ERROR("Failed to initialize web server");
+			LOG_ERROR("Initialize web server failed");
 			break;
 		}
 		object_exit.Push(std::bind(&phantom::WebSocketServer::Exit, &ws_server));
-		LOG_INFO("Initialized web server successfully");
+		LOG_INFO("Initialize web server successful");
 
 		phantom::WebServer &web_server = phantom::WebServer::Instance();
 		if (!phantom::g_enable_ || !web_server.Initialize(phantom::Configure::Instance().webserver_configure_)) {
-			LOG_ERROR("Failed to initialize web server");
+			LOG_ERROR("Initialize web server failed");
 			break;
 		}
 		object_exit.Push(std::bind(&phantom::WebServer::Exit, &web_server));
-		LOG_INFO("Initialized web server successfully");
+		LOG_INFO("Initialize web server successful");
 
 		SaveWSPort();
 		
 		phantom::MonitorManager &monitor_manager = phantom::MonitorManager::Instance();
 		if (!phantom::g_enable_ || !monitor_manager.Initialize()) {
-			LOG_ERROR("Failed to initialize monitor manager");
+			LOG_ERROR("Initialize monitor manager failed");
 			break;
 		}
 		object_exit.Push(std::bind(&phantom::MonitorManager::Exit, &monitor_manager));
-		LOG_INFO("Initialized monitor manager successfully");
+		LOG_INFO("Initialize monitor manager successful");
 
 		phantom::ContractManager &contract_manager = phantom::ContractManager::Instance();
 		if (!contract_manager.Initialize(argc, argv)){
-			LOG_ERROR("Failed to initialize contract manager");
+			LOG_ERROR("Initialize contract manager failed");
 			break;
 		}
 		object_exit.Push(std::bind(&phantom::ContractManager::Exit, &contract_manager));
-		LOG_INFO("Initialized contract manager successfully");
+		LOG_INFO("Initialize contract manager successful");
 
 		phantom::g_ready_ = true;
 
 		RunLoop();
 
-		LOG_INFO("Process begins to quit...");
+		LOG_INFO("Process begin quit...");
 		delete phantom::StatusModule::modules_status_;
 
 	} while (false);
@@ -286,9 +259,6 @@ int main(int argc, char *argv[]){
 	utils::Logger::ExitInstance();
 	utils::Daemon::ExitInstance();
 	
-	if (arg.console_ && !phantom::g_ready_) {
-		printf("Initialized failed, please check log for detail\n");
-	}
 	printf("process exit\n");
 }
 
@@ -301,7 +271,7 @@ void RunLoop(){
 		for (auto item : phantom::TimerNotify::notifys_){
 			item->TimerWrapper(utils::Timestamp::HighResolution());
 			if (item->IsExpire(utils::MICRO_UNITS_PER_SEC)){
-				LOG_WARN("The execution time(" FMT_I64 " us) for the timer(%s) is expired after 1s elapses", item->GetLastExecuteTime(), item->GetTimerName().c_str());
+				LOG_WARN("The timer(%s) execute time(" FMT_I64 " us) is expire than 1s", item->GetTimerName().c_str(), item->GetLastExecuteTime());
 			}
 		}
 

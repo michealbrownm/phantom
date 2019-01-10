@@ -145,7 +145,7 @@ namespace phantom
 			try{ SetValue(key, val); }
 			catch(std::exception& e)
 			{ 
-				LOG_ERROR("Catched an set exception, detail: %s", e.what());
+				LOG_ERROR("set exception, detail: %s", e.what());
 				ret = false;
 			}
 
@@ -159,7 +159,7 @@ namespace phantom
 			try{ ret = GetValue(key, val); }
 			catch(std::exception& e)
 			{ 
-				LOG_ERROR("Catched an get exception, detail: %s", e.what());
+				LOG_ERROR("get exception, detail: %s", e.what());
 				ret = false;
 			}
 			return ret;
@@ -172,7 +172,7 @@ namespace phantom
 			try{ actionBuf_[key] = ActValue(DEL); }
 			catch(std::exception& e)
 			{ 
-				LOG_ERROR("Catched an delete exception, detail: %s", e.what());
+				LOG_ERROR("delete exception, detail: %s", e.what());
 				ret = false;
 			}
 
@@ -190,7 +190,7 @@ namespace phantom
 			}
 			catch (std::exception& e)
 			{
-				LOG_ERROR("Catched an copy exception, detail: %s", e.what());
+				LOG_ERROR("copy commit exception, detail: %s", e.what());
 				actionBuf_.clear();
 				return false;
 			}
@@ -198,7 +198,7 @@ namespace phantom
 			data_->swap(copyBuf);
 
 			//CAUTION: now the pointers in actionBuf_ and dataCopy_ are overlapped with data_,
-			//so it must be clear, otherwise the later modification to them will aslo directly act on data_.
+			//so must be clear, otherwise the later modification to them will aslo directly act on data_.
 			actionBuf_.clear(); 
 			return true;
 		}
@@ -209,14 +209,13 @@ namespace phantom
 			return CopyCommit();
 		}
 
-		//Call ClearChange to discard the modification if Commit failed
+		//call ClearChange to discard the modification if Commit failed
 		void ClearChangeBuf()
 		{
 			actionBuf_.clear();
 		}
 
 		virtual bool GetFromDB(const KEY& key, pointer& val){ return false; }
-
 		virtual void updateToDB(){}
 	};
 }

@@ -19,7 +19,7 @@
 #include <utils/file.h>
 #include "storage.h"
 #include "general.h"
-#define phantom_ROCKSDB_MAX_OPEN_FILES 5000
+#define PHANTOM_ROCKSDB_MAX_OPEN_FILES 5000
 
 namespace phantom {
 	KeyValueDb::KeyValueDb() {}
@@ -62,7 +62,7 @@ namespace phantom {
 	int32_t LevelDbDriver::Get(const std::string &key, std::string &value) {
 		assert(db_ != NULL);
 
-		//Retry 10 times. Interval is 0.1 second.
+		//retry 10s
 		size_t timers = 0;
 		int32_t ret = -1;
 		while (timers < 10) {
@@ -267,11 +267,11 @@ namespace phantom {
 			if (bdropdb) {
 				bool do_success = false;
 				do {
-					//Check only for linux or mac whether the account db can be opened.
+					//check the db if opened only for linux or mac
 #ifndef WIN32
 					KeyValueDb *account_db = NewKeyValueDb(db_config);
 					if (!account_db->Open(db_config.account_db_path_, -1)) {
-						LOG_ERROR("Failed to drop db.Error description(%s)", account_db->error_desc().c_str());
+						LOG_ERROR("Drop failed, error desc(%s)", account_db->error_desc().c_str());
 						delete account_db;
 						break;
 					}
@@ -279,17 +279,17 @@ namespace phantom {
 					delete account_db;
 #endif
 					if (utils::File::IsExist(db_config.keyvalue_db_path_) && !utils::File::DeleteFolder(db_config.keyvalue_db_path_)) {
-						LOG_ERROR_ERRNO("Failed to delete keyvalue db", STD_ERR_CODE, STD_ERR_DESC);
+						LOG_ERROR_ERRNO("Delete keyvalue db failed", STD_ERR_CODE, STD_ERR_DESC);
 						break;
 					}
 
 					if (utils::File::IsExist(db_config.ledger_db_path_) && !utils::File::DeleteFolder(db_config.ledger_db_path_)) {
-						LOG_ERROR_ERRNO("Failed to delete ledger db", STD_ERR_CODE, STD_ERR_DESC);
+						LOG_ERROR_ERRNO("Delete ledger db failed", STD_ERR_CODE, STD_ERR_DESC);
 						break;
 					}
 					
 					if (utils::File::IsExist(db_config.account_db_path_) && !utils::File::DeleteFolder(db_config.account_db_path_)) {
-						LOG_ERROR_ERRNO("Failed to delete account db", STD_ERR_CODE, STD_ERR_DESC);
+						LOG_ERROR_ERRNO("Delete account db failed", STD_ERR_CODE, STD_ERR_DESC);
 						break;
 					}
 					
@@ -319,7 +319,7 @@ namespace phantom {
 				keyvaule_max_open_files = 2;
 				ledger_max_open_files = 4;
 				account_max_open_files = 4; 
-				LOG_INFO("In mac os, the maximum number (%d) of files handles is too low.", max_open_files);
+				LOG_ERROR("mac os max open files is too lower:%d.", max_open_files);
 			}
 			else
 			{
@@ -327,30 +327,30 @@ namespace phantom {
 				ledger_max_open_files = 4 + (max_open_files - 100) * 0.4;
 				account_max_open_files = 4 + (max_open_files - 100) * 0.4;
 
-				keyvaule_max_open_files = (keyvaule_max_open_files > phantom_ROCKSDB_MAX_OPEN_FILES) ? -1 : keyvaule_max_open_files;
-				ledger_max_open_files = (ledger_max_open_files > phantom_ROCKSDB_MAX_OPEN_FILES) ? -1 : ledger_max_open_files;
-				account_max_open_files = (account_max_open_files > phantom_ROCKSDB_MAX_OPEN_FILES) ? -1 : account_max_open_files;
+				keyvaule_max_open_files = (keyvaule_max_open_files > PHANTOM_ROCKSDB_MAX_OPEN_FILES) ? -1 : keyvaule_max_open_files;
+				ledger_max_open_files = (ledger_max_open_files > PHANTOM_ROCKSDB_MAX_OPEN_FILES) ? -1 : ledger_max_open_files;
+				account_max_open_files = (account_max_open_files > PHANTOM_ROCKSDB_MAX_OPEN_FILES) ? -1 : account_max_open_files;
 			}
-			LOG_INFO("Assigned number of file handles in mac os, max :%d, keyvaule used:%d, ledger used:%d, account used:%d:",
+			LOG_INFO("mac os db file limited:%d, keyvaule:%d, ledger:%d, account:%d:",
 				max_open_files, keyvaule_max_open_files, ledger_max_open_files, account_max_open_files);
 #endif
 			keyvalue_db_ = NewKeyValueDb(db_config);
 			if (!keyvalue_db_->Open(db_config.keyvalue_db_path_, keyvaule_max_open_files)) {
-				LOG_ERROR("Failed to open keyvalue db path(%s), the reason is(%s)\n",
+				LOG_ERROR("Keyvalue_db path(%s) open fail(%s)\n",
 					db_config.keyvalue_db_path_.c_str(), keyvalue_db_->error_desc().c_str());
 				break;
 			}
 
 			ledger_db_ = NewKeyValueDb(db_config);
 			if (!ledger_db_->Open(db_config.ledger_db_path_, ledger_max_open_files)) {
-				LOG_ERROR("Failed to open ledger db path(%s), the reason is(%s)\n",
+				LOG_ERROR("Ledger db path(%s) open fail(%s)\n",
 					db_config.ledger_db_path_.c_str(), ledger_db_->error_desc().c_str());
 				break;
 			}
 
 			account_db_ = NewKeyValueDb(db_config);
 			if (!account_db_->Open(db_config.account_db_path_, account_max_open_files)) {
-				LOG_ERROR("Failed to open account db path(%s), the reason is(%s)\n",
+				LOG_ERROR("Ledger db path(%s) open fail(%s)\n",
 					db_config.account_db_path_.c_str(), account_db_->error_desc().c_str());
 				break;
 			}

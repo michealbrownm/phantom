@@ -1,6 +1,5 @@
 syntax = "proto3";
 package protocol;
-option java_package = "io.phantom.sdk.core.extend.protobuf";
 
 import "common.proto";
 
@@ -39,7 +38,7 @@ message PbftPreparedSet
 message PbftViewChange
 {
 	int64 view_number = 1; //v+1
-	int64 sequence = 2;     //last execution seq
+	int64 sequence = 2;     //last execute seq
 	bytes prepred_value_digest = 3; //prepared value hash
 	int64 replica_id = 4;
 }
@@ -47,7 +46,7 @@ message PbftViewChange
 message PbftViewChangeWithRawValue
 {
 	PbftEnv view_change_env = 1; // view change env
-	PbftPreparedSet prepared_set = 2;  //prepared messages larger than n
+	PbftPreparedSet prepared_set = 2;  //prepared messages large than n
 }
 
 message PbftNewView
@@ -75,7 +74,7 @@ enum PbftValueType {
 
 message Pbft
 {
-	int64 round_number = 1; //for sending again
+	int64 round_number = 1; //for send again
 	PbftMessageType type = 2;
 	PbftPrePrepare pre_prepare = 3;
 	PbftPrepare prepare = 4;

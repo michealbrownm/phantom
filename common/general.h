@@ -27,11 +27,10 @@ namespace phantom {
 	public:
 		const static uint32_t OVERLAY_VERSION;
 		const static uint32_t OVERLAY_MIN_VERSION;
-		const static uint32_t LEDGER_VERSION_HISTORY_1000;
 		const static uint32_t LEDGER_VERSION;
 		const static uint32_t LEDGER_MIN_VERSION;
 		const static uint32_t MONITOR_VERSION;
-		const static char *phantom_VERSION;
+		const static char *PHANTOM_VERSION;
 
 		const static int CONSENSUS_PORT = 16001;
 		const static int WEBSERVER_PORT = 16002;
@@ -41,17 +40,17 @@ namespace phantom {
 		const static int ASSET_CODE_MAX_SIZE = 64;
 		const static int EXPRCONDITION_MAXSIZE = 256;
 
-		//Contract A can invoke contract B, and contract B can invoke contract C...
-		// The max RECURSIVE DEPTH is 3.
-		const static int CONTRACT_MAX_RECURSIVE_DEPTH = 3;
+		//contract A can invoke contract B, and contract B can invoke contract C...
+		// the max RECURSIVE DEPTH is 4
+		const static int CONTRACT_MAX_RECURSIVE_DEPTH = 4;
 
-		//At most 512 transactions can be created when a contract is executed.
+		//at most 512 transaction can be created when a contract executed
 		const static int CONTRACT_TRANSACTION_LIMIT = 512;
 
 		const static int CONTRACT_CODE_LIMIT = 256 * utils::BYTES_PER_KILO;
 		const static int CONTRACT_STEP_LIMIT = 10 * utils::BYTES_PER_KILO;
-		const static int CONTRACT_MEMORY_LIMIT = 30 * utils::BYTES_PER_MEGA; //Limit memory to 30M
-		const static int CONTRACT_STACK_LIMIT = 256 * utils::BYTES_PER_KILO;
+		const static int CONTRACT_MEMORY_LIMIT = 30 * utils::BYTES_PER_MEGA; //limit memory 30M
+		const static int CONTRACT_STACK_LIMIT = 512 * utils::BYTES_PER_KILO;
 
 		const static int TX_EXECUTE_TIME_OUT = utils::MICRO_UNITS_PER_SEC;
 		const static int BLOCK_EXECUTE_TIME_OUT = 5 * utils::MICRO_UNITS_PER_SEC;
@@ -282,8 +281,6 @@ namespace phantom {
 	std::string ComposePrefix(const std::string &prefix, const std::string &value);
 	std::string ComposePrefix(const std::string &prefix, int64_t value);
 	int64_t GetBlockReward(const int64_t cur_block_height);
-
-#define CHECK_VERSION_GT_1000 (LedgerManager::Instance().GetLastClosedLedger().version() > General::LEDGER_VERSION_HISTORY_1000)
 }
 
 #endif

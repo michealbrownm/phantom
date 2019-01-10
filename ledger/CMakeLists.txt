@@ -2,13 +2,13 @@
 
 set(LIB_PHANTOM_LEDGER phantom_ledger)
 
-#Automatically get src files from the specified directory
+#automaticall get src file in specifical dir
 aux_source_directory(${PHANTOM_SRC_DIR}/ledger/ LEDGER_SRC)
 
-#Generate static library files
+#generate static library file
 add_library(${LIB_PHANTOM_LEDGER} ${LEDGER_SRC})
 
-#Specify compiling options for target objects
+#specify compile options for target obj
 target_compile_options(${LIB_PHANTOM_LEDGER}
     PUBLIC -std=c++11 
     PUBLIC -DASIO_STANDALONE

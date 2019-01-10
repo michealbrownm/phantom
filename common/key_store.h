@@ -22,7 +22,7 @@ namespace phantom {
 		KeyStore();
 		~KeyStore();
 
-		bool Generate(const std::string &password, Json::Value &key_store, std::string &new_priv_key);  //If new_private_key is empty, create a new private key.
+		bool Generate(const std::string &password, Json::Value &key_store, std::string &new_priv_key);  //if new_private_key is empty,then create a new private key
 		bool From(const Json::Value &key_store, const std::string &password, std::string &priv_key);
 	};
 }

@@ -88,14 +88,14 @@ namespace phantom{
 		//add or set a k/v
 		bool Set(const std::string &key, const std::string &value);
 
-		//Return false if it is not existed; otherwise, return true.
+		//return false if not exists else return true
 		bool Get(const std::string& key, std::string& value);
 
 		bool Exists(NodeFrm::POINTER node, const Location& key);
 
 		void GetAll(const std::string& key, std::vector<std::string>& values);
 
-		//Return false if it is not existed; otherwise, return true.
+		//return false if not exists else return true
 		bool Delete(const std::string& key);
 
 		HASH GetRootHash();

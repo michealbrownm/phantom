@@ -17,6 +17,7 @@
 #define LEDGER_MANAGER_H_
 
 #include <utils/headers.h>
+#include <utils/exprparser.h>
 #include <utils/entry_cache.h>
 #include <common/general.h>
 #include <common/storage.h>
@@ -38,11 +39,13 @@
 #endif
 
 namespace phantom {
+	class LedgerFetch;
 	class ContractManager;
 	class LedgerManager : public utils::Singleton<phantom::LedgerManager>,
 		public phantom::TimerNotify,
 		public phantom::StatusModule {
 		friend class utils::Singleton<phantom::LedgerManager>;
+		friend class LedgerFetch;
 	public:
 
 		bool Initialize();

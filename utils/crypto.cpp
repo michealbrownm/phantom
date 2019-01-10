@@ -76,16 +76,16 @@ namespace utils {
 	};
 
 	//Get crc16 value
-	//puchMsg: array to be checked
+	//puchMsg: array to be check
 	//usDataLen: array length
-	//Initialize value 0XFFFF, XOR 0x0000, LSB First, polynomial 8005
+	//initialize value 0XFFFF,XOR 0x0000,LSB First,polynomial 8005
 	uint16_t Get_Crc16(uint8_t *puchMsg, uint16_t usDataLen) {
-		uint8_t uchCRCHi = 0xFF; 	//High CRC
-		uint8_t uchCRCLo = 0xFF; 	//Low CRC
+		uint8_t uchCRCHi = 0xFF; 	//high CRC
+		uint8_t uchCRCLo = 0xFF; 	//low CRC
 		uint32_t uIndex; 		//CRC index
 		while (usDataLen--) 	
 		{
-			uIndex = uchCRCHi^*puchMsg++; //Caculate CRC 
+			uIndex = uchCRCHi^*puchMsg++; //caculate CRC 
 			uchCRCHi = uchCRCLo^auchCRCHi[uIndex];
 			uchCRCLo = auchCRCLo[uIndex];
 			//		uchCRCLo=uchCRCHi^auchCRCHi[uIndex];
@@ -94,7 +94,7 @@ namespace utils {
 		return (uchCRCHi << 8 | uchCRCLo);
 	}
 	//CRC8 check
-	//ptr:array to be checked
+	//ptr:array to be check
 	//len:array length
 	//return:CRC8 
 	//polynomial 0X31,LSB First,initialize 0X00  x8+x5+x4+1 CRC-8/MAXIM
@@ -116,9 +116,9 @@ namespace utils {
 		return Crc8((uint8_t *)data.c_str(), data.length());
 	}
 	//get CRC16
-	//puchMsg:array to be checked
+	//puchMsg:array to be check
 	//usDataLen:array length
-	//Initialize 0XFFFF, XOR 0x0000, LSB First, polynomial A001
+	//initialize 0XFFFF, XOR 0x0000,LSB First,polynomial A001
 	uint16_t Crc16(uint8_t* pdata, uint16_t datalen) {
 		uint8_t CRC16Lo, CRC16Hi, CL, CH, SaveHi, SaveLo;
 		uint16_t i, Flag;
@@ -679,7 +679,7 @@ namespace utils {
 
 		AES_KEY dec_key;
 		/* AES-128 bit CBC Decryption */
-		memset(iv, 0x00, AES_BLOCK_SIZE); // Don't forget to set iv vector again, or you can't decrypt data properly
+		memset(iv, 0x00, AES_BLOCK_SIZE); // don't forget to set iv vector again, else you can't decrypt data properly
 		AES_set_decrypt_key((const unsigned char *)key.c_str(), key.size() * 8, &dec_key); // Size of key is in bits
 		AES_cbc_encrypt((const unsigned char *)input.c_str(), (unsigned char *)enc_out.c_str(), enc_out.size(), &dec_key, iv, AES_DECRYPT);
 		enc_out.resize(strlen(enc_out.c_str()));
@@ -694,7 +694,7 @@ namespace utils {
 			return "key error";
 		}
 
-		// Set the encryption length
+		// set the encryption length
 		size_t len = 0;
 		if ((input.size() + 1) % AES_BLOCK_SIZE == 0) {
 			len = input.size() + 1;
@@ -702,7 +702,7 @@ namespace utils {
 			len = ((input.size() + 1) / AES_BLOCK_SIZE + 1) * AES_BLOCK_SIZE;
 		}
 
-		// Set the input string
+		// set the input string
 		unsigned char* input_string = (unsigned char*)calloc(len, sizeof(unsigned char));
 		if (input_string == NULL) {
 			fprintf(stderr, "Unable to allocate memory for input_string\n");

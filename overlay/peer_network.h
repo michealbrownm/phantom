@@ -40,10 +40,10 @@ namespace phantom {
 		bool dns_seed_inited_;
 		bool cert_is_valid_;
 
-		//Peer cache list
+		//Peer cach list
 		protocol::Peers db_peer_cache_;
 
-		//Peers infomation received
+		//peers infomation received
 		utils::Mutex peer_lock_;
 		std::list<utils::StringMap> received_peer_list_;
 

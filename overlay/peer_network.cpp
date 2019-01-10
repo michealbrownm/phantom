@@ -60,10 +60,10 @@ namespace phantom {
 		do {
 			peer_node_address_ = node_address;
 
-			//Get network id from the ledger db
+			//get network id from ledger db
 			LedgerFrm ledger;
 			if (!ledger.LoadFromDb(1)) {
-				LOG_ERROR("Failed to load from db");
+				LOG_ERROR("Load from db failed");
 				break;
 			}
 			network_id_ = Configure::Instance().p2p_configure_.network_id_;
@@ -78,8 +78,8 @@ namespace phantom {
 	}
 
 	bool PeerNetwork::Exit() {
-		//Join and wait
-		LOG_INFO("Exited peer netwrok ok.");
+		//join and wait
+		LOG_INFO("close async OK");
 
 		return true;
 	}
@@ -99,7 +99,7 @@ namespace phantom {
 			std::string ip = peerp.ip();
 			uint16_t port = (uint16_t)peerp.port();
 
-			//Check if it is the local address
+			//check if it's local address
 			utils::InetAddressVec addresses;
 			bool is_local_addr = false;
 			if (utils::net::GetNetworkAddress(addresses)) {
@@ -140,28 +140,28 @@ namespace phantom {
 
 			if (NodeExist(hello.node_address(), peer->GetId())) {
 				res.set_error_code(protocol::ERRCODE_INVALID_PARAMETER);
-				res.set_error_desc(utils::String::Format("Duplicated connection with ip(%s), id(" FMT_I64 ")", peer->GetPeerAddress().ToIp().c_str(), peer->GetId()));
-				LOG_ERROR("Failed to process the peer hello message.%s",res.error_desc().c_str());
+				res.set_error_desc(utils::String::Format("Disconnect duplicated connection with ip(%s), id(" FMT_I64 ")", peer->GetPeerAddress().ToIp().c_str(), peer->GetId()));
+				LOG_ERROR("%s",res.error_desc().c_str());
 				break;
 			}
 			
 			if (network_id_ != hello.network_id()) {
 				res.set_error_code(protocol::ERRCODE_INVALID_PARAMETER);
-				res.set_error_desc(utils::String::Format("Different network id, remote id(" FMT_I64 ") is not equal to the local id(" FMT_I64 ")",
+				res.set_error_desc(utils::String::Format("Peer connect break as peer network id(" FMT_I64 ") not equal to local id(" FMT_I64 ")",
 					hello.network_id(), network_id_));
-				LOG_ERROR("Failed to process the peer hello message.%s", res.error_desc().c_str());
+				LOG_ERROR("%s", res.error_desc().c_str());
 				break;
 			}
 
 			if (peer_node_address_ == hello.node_address()) {
 				res.set_error_code(protocol::ERRCODE_INVALID_PARAMETER);
 				if (node_rand_ != hello.node_rand()) {
-					res.set_error_desc(utils::String::Format("The peer connection breaks as the configuration node addresses are duplicated"));
-					LOG_ERROR("Failed to process the peer hello message.%s", res.error_desc().c_str());
+					res.set_error_desc(utils::String::Format("Peer connect break as configure node address duplicated"));
+					LOG_ERROR("%s", res.error_desc().c_str());
 				}
 				else {
-					res.set_error_desc(utils::String::Format("The peer connection is broken because it connects itself")); 
-					LOG_ERROR("Failed to process the peer hello message.%s", res.error_desc().c_str());
+					res.set_error_desc(utils::String::Format("Peer connect self break"));
+					LOG_ERROR("%s", res.error_desc().c_str());
 				}
 				break;
 			}
@@ -169,10 +169,10 @@ namespace phantom {
 			if (hello.overlay_version() < phantom::General::OVERLAY_MIN_VERSION) {
 				res.set_error_code(protocol::ERRCODE_INVALID_PARAMETER);
 				res.set_error_desc(utils::String::Format("Peer's overlay version(%d) is too old,", hello.overlay_version()));
-				LOG_ERROR("Failed to process the peer hello message.%s", res.error_desc().c_str());
+				LOG_ERROR("%s", res.error_desc().c_str());
 				break;
 			}
-			//if (hello->ledger_version() < phantom::General::LEDGER_MIN_VERSION){
+			//if (hello->ledger_version() < bubi::General::LEDGER_MIN_VERSION){
 			//	LOG_ERROR("Peer's leger version(%d) is too old,", hello->ledger_version());
 			//	break;
 			//}
@@ -180,11 +180,11 @@ namespace phantom {
 				hello.listening_port() > utils::MAX_UINT16) {
 				res.set_error_code(protocol::ERRCODE_INVALID_PARAMETER);
 				res.set_error_desc(utils::String::Format("Peer's listen port(%d) is not valid", hello.listening_port()));
-				LOG_ERROR("Failed to process the peer hello message.%s", res.error_desc().c_str());
+				LOG_ERROR("%s", res.error_desc().c_str());
 				break;
 			}
 
-			LOG_INFO("Received a hello message, peer(%s) is active", peer->GetRemoteAddress().ToIpPort().c_str());
+			LOG_INFO("Recv hello, peer(%s) is active", peer->GetRemoteAddress().ToIpPort().c_str());
 			peer->SetActiveTime(utils::Timestamp::HighResolution());
 
 			if (peer->InBound()) {
@@ -193,13 +193,13 @@ namespace phantom {
 				std::error_code ec;
 				peer->SendHello(p2p_configure.listen_port_, peer_node_address_, network_id_, node_rand_, last_ec_);
 
-				//Create
+				//create
 				if (total_peers_count_ < General::PEER_DB_COUNT) CreatePeerIfNotExist(peer->GetRemoteAddress());
 
-				//Asynchronously send peers
+				//async send peers
 				int64_t peer_id = peer->GetId();
 				Global::GetInstance()->GetIoService().post([peer_id, this] {
-					//Send the local peer list
+					//send local peer list
 					GetActivePeers(50);
 
 					utils::MutexGuard guard(conns_list_lock_);
@@ -213,7 +213,7 @@ namespace phantom {
 			else {
 			}
 
-			//Update status
+			//update status
 			protocol::Peer values;
 			values.set_num_failures(0);
 			values.set_active_time(peer->GetActiveTime());
@@ -230,32 +230,22 @@ namespace phantom {
 
 	bool PeerNetwork::OnMethodTransaction(protocol::WsMessage &message, int64_t conn_id) {
 		if (message.data().size() > General::TRANSACTION_LIMIT_SIZE + 2 * utils::BYTES_PER_MEGA) {
-			LOG_ERROR("Failed to process the peer transaction message.Transaction data size(" FMT_SIZE ") is too large", message.data().size());
+			LOG_ERROR("Transaction p2p data size(" FMT_SIZE ") too large", message.data().size());
 			return false;
 		}
 
-		if (broadcast_.IsQueued(protocol::OVERLAY_MSGTYPE_TRANSACTION, message.data())) {
-			LOG_TRACE("Failed to process the peer transaction message.The transaction has been broadcast, from connection id (" FMT_I64 ")", conn_id);
-			return true;
+		if (ReceiveBroadcastMsg(protocol::OVERLAY_MSGTYPE_TRANSACTION, message.data(), conn_id)) {
+			protocol::TransactionEnv tran;
+			tran.ParseFromString(message.data());
+			TransactionFrm::pointer tran_ptr = std::make_shared<TransactionFrm>(tran);
+			//switch to main thread
+			Global::Instance().GetIoService().post([tran_ptr, message, this]() {
+				Result ig_err;
+				if (GlueManager::Instance().OnTransaction(tran_ptr, ig_err)) {
+					BroadcastMsg(message.type(), message.data());
+				}
+			});
 		}
-
-		//if (ReceiveBroadcastMsg(protocol::OVERLAY_MSGTYPE_TRANSACTION, message.data(), conn_id)) {
-		protocol::TransactionEnv tran;
-		if (!tran.ParseFromString(message.data())) {
-			LOG_TRACE("Failed to parse transaction from a connection which id is(" FMT_I64 ")", conn_id);
-			return false;
-		}
-
-		TransactionFrm::pointer tran_ptr = std::make_shared<TransactionFrm>(tran);
-		//Switch to main thread
-		Global::Instance().GetIoService().post([tran_ptr, message, this, conn_id]() {
-			Result ig_err;
-			if (GlueManager::Instance().OnTransaction(tran_ptr, ig_err)) {
-				ReceiveBroadcastMsg(protocol::OVERLAY_MSGTYPE_TRANSACTION, message.data(), conn_id);
-				BroadcastMsg(message.type(), message.data());
-			}
-		});
-
 		return true;
 	}
 
@@ -283,7 +273,7 @@ namespace phantom {
 		protocol::HelloResponse env;
 		env.ParseFromString(message.data());
 		if (env.error_code() != 0) {
-			LOG_ERROR("Failed to response the peer hello message.Peer reponse error code(%d), desc(%s)", env.error_code(), env.error_desc().c_str());
+			LOG_ERROR("Peer reponse error code(%d), desc(%s)", env.error_code(), env.error_desc().c_str());
 			return false;
 		}
 
@@ -292,66 +282,58 @@ namespace phantom {
 
 	bool PeerNetwork::OnMethodPbft(protocol::WsMessage &message, int64_t conn_id) {
 		if (message.data().size() > General::TXSET_LIMIT_SIZE + 2 * utils::BYTES_PER_MEGA) {
-			LOG_ERROR("Failed to process the peer pbft message.Consensus p2p data size(" FMT_SIZE ") is too large", message.data().size());
+			LOG_ERROR("Consensus p2p data size(" FMT_SIZE ") too large", message.data().size());
 			return false;
 		}
 
 		protocol::PbftEnv env;
 		env.ParseFromString(message.data());
 		if (!env.has_pbft()) {
-			LOG_ERROR("Failed to process the peer pbft message.Pbft env is not initialized");
+			LOG_ERROR("Pbft env is not initialize");
 			return false;
 		}
 
-		//Should be in validators
+		//should in validators
 		ConsensusMsg msg(env);
 		if (ConsensusManager::Instance().GetConsensus()->GetValidatorIndex(msg.GetNodeAddress()) < 0) {
-			LOG_TRACE("Failed to find validator (%s) in the list.", msg.GetNodeAddress());
+			LOG_TRACE("Cann't find the validator(%s) in list", msg.GetNodeAddress());
 			return true;
 		}
 
 		std::string hash = utils::String::Bin4ToHexString(msg.GetHash());
 
-		LOG_TRACE("Received pbft consensus,hash(%s),from node address(%s) sequence(" FMT_I64 ") pbft type(%s) size(" FMT_SIZE ")",
+		LOG_TRACE("On pbft hash(%s), receive consensus from node address(%s) sequence(" FMT_I64 ") pbft type(%s) size(" FMT_SIZE ")",
 			hash.c_str(), msg.GetNodeAddress(), msg.GetSeq(),
 			PbftDesc::GetMessageTypeDesc(msg.GetPbft().pbft().type()), msg.GetSize());
 
-		if (broadcast_.IsQueued(protocol::OVERLAY_MSGTYPE_PBFT, message.data())) {
-			LOG_TRACE("Duplicate consensus transaction in the broadcast queue.Received from connection id(" FMT_I64 ")", conn_id);
-			return true;
-		}
 
-		//Switch to main thread
-		Global::Instance().GetIoService().post([msg, message, hash, this, conn_id]() {
+		//switch to main thread
+		Global::Instance().GetIoService().post([conn_id, msg, message, hash, this]() {
+			if (ReceiveBroadcastMsg(protocol::OVERLAY_MSGTYPE_PBFT, message.data(), conn_id)) {
 				LOG_TRACE("Pbft hash(%s) would be processed", hash.c_str());
-				if (GlueManager::Instance().OnConsensus(msg)) {
-					ReceiveBroadcastMsg(protocol::OVERLAY_MSGTYPE_PBFT, message.data(), conn_id);
-					BroadcastMsg(protocol::OVERLAY_MSGTYPE_PBFT, message.data());
-				}
-				else {
-					LOG_TRACE("Failed to deal with pbft consensus, which hash is(%s)  ", hash.c_str());
-				}
+				BroadcastMsg(protocol::OVERLAY_MSGTYPE_PBFT, message.data());
+				GlueManager::Instance().OnConsensus(msg);
+			}
 		});
-		
 		return true;
 	}
 
 	bool PeerNetwork::OnMethodLedgerUpNotify(protocol::WsMessage &message, int64_t conn_id) {
 		protocol::LedgerUpgradeNotify notify;
 		if (!notify.ParseFromString(message.data())) {
-			LOG_ERROR("Failed to parse notification for ledger upgrade");
+			LOG_ERROR("Parse ledger upgrade notify failed");
 			return false;
 		}
 
-		//Pre filter
+		//pre filter
 		const protocol::Signature &sig = notify.signature();
 		PublicKey pub_key(sig.public_key());
         if (ConsensusManager::Instance().GetConsensus()->GetValidatorIndex(pub_key.GetEncAddress()) < 0) {
-            LOG_TRACE("Failed to find the validator(%s) in the list", pub_key.GetEncAddress().c_str());
+            LOG_TRACE("Cann't find the validator(%s) in list", pub_key.GetEncAddress().c_str());
 			return true;
 		}
 
-		LOG_INFO("Received a ledger up notify message: (%s)", Proto2Json(notify).toFastString().c_str());
+		LOG_INFO("Receive ledger up notify(%s)", Proto2Json(notify).toFastString().c_str());
 		if (ReceiveBroadcastMsg(protocol::OVERLAY_MSGTYPE_LEDGER_UPGRADE_NOTIFY, message.data(), conn_id)) {
 			BroadcastMsg(protocol::OVERLAY_MSGTYPE_LEDGER_UPGRADE_NOTIFY, message.data());
 			GlueManager::Instance().OnRecvLedgerUpMsg(notify);
@@ -369,7 +351,7 @@ namespace phantom {
 			}
 			return true;
 		} else{
-			LOG_ERROR("Failed to open a connection, because it exceeds the threshold(" FMT_SIZE ")", total_connection);
+			LOG_ERROR("Connection open failed, exceed the threshold(" FMT_SIZE ")", total_connection);
 			return false;
 		}
 	}
@@ -395,7 +377,7 @@ namespace phantom {
 
 		protocol::Peers all;
 		if (!all.ParseFromString(peers)) {
-			LOG_ERROR("Failed to parse peers string");
+			LOG_ERROR("Parse peers string failed");
 			return ;
 		}
 		total_peers_count_ = all.peers_size();
@@ -410,10 +392,10 @@ namespace phantom {
 
 		if (all.peers_size() > new_all.peers_size()) {
 			if (!db->Put(General::PEERS_TABLE, new_all.SerializeAsString())) {
-				LOG_ERROR("Failed to write a new peer table, error desc(%s)", db->error_desc().c_str());
+				LOG_ERROR("Write new peer table failed, error desc(%s)", db->error_desc().c_str());
 			}
 			else {
-				LOG_INFO("Cleaned %d inactive peers, left %d peers", all.peers_size() - new_all.peers_size(), new_all.peers_size());
+				LOG_INFO("Clean %d not active peers, left %d peers", all.peers_size() - new_all.peers_size(), new_all.peers_size());
 			}
 		}
 		total_peers_count_ = new_all.peers_size();
@@ -426,7 +408,7 @@ namespace phantom {
 		do {
 			int32_t row_count = QueryTopItem(false, max, utils::Timestamp::Now().timestamp(), records);
 			if (row_count < 0) {
-				LOG_ERROR("Failed to query records from db");
+				LOG_ERROR("Query records from db failed");
 				break;
 			}
 
@@ -441,7 +423,7 @@ namespace phantom {
 				utils::InetAddress address(item.ip(), (uint16_t)item.port());
 				int64_t num_failures = item.num_failures();
 
-				LOG_TRACE("Checking address ip(%s), thread id(" FMT_SIZE ")", address.ToIpPort().c_str(), utils::Thread::current_thread_id());
+				LOG_TRACE("checking address ip(%s), thread id(" FMT_SIZE ")", address.ToIpPort().c_str(), utils::Thread::current_thread_id());
 
 				bool exist = false;
 				for (ConnectionMap::iterator iter = connections_.begin(); iter != connections_.end(); iter++) {
@@ -453,7 +435,7 @@ namespace phantom {
 				}
 
 				if (exist) {
-					LOG_TRACE("Skiped to connect the existed ip(%s), thread id(" FMT_SIZE ")", address.ToIpPort().c_str(), utils::Thread::current_thread_id());
+					LOG_TRACE("skip to connect exist ip(%s), thread id(" FMT_SIZE ")", address.ToIpPort().c_str(), utils::Thread::current_thread_id());
 					continue;
 				}
 				bool is_local_addr = false;
@@ -467,12 +449,12 @@ namespace phantom {
 				}
 
 				if (is_local_addr) {
-					LOG_TRACE("Skiped to connect self ip(%s), thread id(" FMT_SIZE ")", address.ToIpPort().c_str(), utils::Thread::current_thread_id());
+					LOG_TRACE("skip to connect self ip(%s), thread id(" FMT_SIZE ")", address.ToIpPort().c_str(), utils::Thread::current_thread_id());
 					continue;
 				}
 
 
-				LOG_TRACE("Connecting address: %s, thread id:" FMT_SIZE, address.ToIpPort().c_str(), utils::Thread::current_thread_id());
+				LOG_TRACE("connect to %s, " FMT_SIZE, address.ToIpPort().c_str(), utils::Thread::current_thread_id());
 				
 				std::string uri = utils::String::Format("%s://%s", ssl_parameter_.enable_ ? "wss" : "ws",address.ToIpPort().c_str());
 				
@@ -484,7 +466,7 @@ namespace phantom {
 				update_values.set_num_failures(num_failures);
 				update_values.set_active_time(-1);
 				if (!UpdateItem(address, update_values)) {
-					LOG_ERROR("Failed to connect peer, update peers failed");
+					LOG_ERROR("Update peers failed");
 				}
 
 				if (connections_.size() >= p2p_configure.target_peer_connection_) {
@@ -519,7 +501,7 @@ namespace phantom {
 					resolved_ips.push_back(address);
 					break;
 				}
-				//Go to resolve
+				//go to resolve
 				resolver.Query(ip, resolved_ips);
 			} while (false);
 
@@ -539,19 +521,19 @@ namespace phantom {
 
 	bool PeerNetwork::CreatePeerIfNotExist(const utils::InetAddress &address) {
 		if (address.IsAny() || address.GetPort() == 0) {
-			LOG_ERROR("Failed to create peer.Invalid peer address(%s)", address.ToIpPort().c_str());
+			LOG_ERROR("Peer address(%s) not valid", address.ToIpPort().c_str());
 			return false;
 		} 
 
 		protocol::Peers peers;
 		int32_t peer_count = QueryItem(address, peers);
 		if (peer_count < 0) {
-			LOG_ERROR("Failed to create peer. Unable to query the address (%s)", address.ToIpPort().c_str());
+			LOG_ERROR("Query peer if exist failed, address(%s)", address.ToIpPort().c_str());
 			return false;
 		}
 
 		if (peer_count > 0) {
-			LOG_TRACE("Failed to create peer, because (%s) is existed", address.ToIpPort().c_str());
+			LOG_TRACE("Query peer(%s) exist", address.ToIpPort().c_str());
 			return true;
 		}
 
@@ -560,7 +542,7 @@ namespace phantom {
 		values.set_port(address.GetPort());
 
 		if (!UpdateItem(address, values)) {
-			LOG_ERROR("Failed to insert a peer");
+			LOG_ERROR("Insert peer failed");
 			return false;
 		}
 
@@ -586,7 +568,7 @@ namespace phantom {
 			
 			int32_t row_count = QueryTopItem(true, max, -1, peers);
 			if (row_count < 0) {
-				LOG_ERROR("Failed to query records");
+				LOG_ERROR("Query records failed");
 				return false;
 			}
 
@@ -606,7 +588,7 @@ namespace phantom {
 
 		protocol::Peers all;
 		if (!all.ParseFromString(peers)) {
-			LOG_ERROR("Failed to parse peers string");
+			LOG_ERROR("Parse peers string failed");
 			return -1;
 		} 
 		total_peers_count_ = all.peers_size();
@@ -635,7 +617,7 @@ namespace phantom {
 
 		protocol::Peers all;
 		if (!all.ParseFromString(peers)) {
-			LOG_ERROR("Failed to parse peers string");
+			LOG_ERROR("Parse peers string failed");
 			return false;
 		}
 		total_peers_count_ = all.peers_size();
@@ -663,7 +645,7 @@ namespace phantom {
 
 		bool ret = db->Put(General::PEERS_TABLE, all.SerializeAsString());
 		if (!ret) {
-			LOG_ERROR("Failed to write the peer table, error desc(%s)", db->error_desc().c_str());
+			LOG_ERROR("Write peer table failed, error desc(%s)", db->error_desc().c_str());
 		}
 		total_peers_count_ = all.peers_size();
 
@@ -680,7 +662,7 @@ namespace phantom {
 
 		protocol::Peers all;
 		if (!all.ParseFromString(peers)) {
-			LOG_ERROR("Failed to parse peers string");
+			LOG_ERROR("Parse peers string failed");
 			return false;
 		}
 		total_peers_count_ = all.peers_size();
@@ -701,7 +683,7 @@ namespace phantom {
 		}
 		
 		if (peer_count > 0 && !db->Put(General::PEERS_TABLE, all.SerializeAsString())) {
-			LOG_ERROR("Failed to write the peer table, error desc(%s)", db->error_desc().c_str());
+			LOG_ERROR("Write peer table failed, error desc(%s)", db->error_desc().c_str());
 			return false;
 		}
 		total_peers_count_ = all.peers_size();
@@ -718,7 +700,7 @@ namespace phantom {
 
 		protocol::Peers all;
 		if (!all.ParseFromString(peers)) {
-			LOG_ERROR("Failed to parse peers string");
+			LOG_ERROR("Parse peers string failed");
 			return -1;
 		}
 		total_peers_count_ = all.peers_size();
@@ -767,7 +749,7 @@ namespace phantom {
 			con_size = connections_.size();
 		} while (false);
 
-		//Start to connect peers
+		//start to connect peers
 		if (con_size < p2p_configure.target_peer_connection_) {
 			ConnectToPeers(p2p_configure.target_peer_connection_ - con_size);
 		}

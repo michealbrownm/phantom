@@ -9,12 +9,12 @@ set(INNER_TOOLS_LIBS phantom_common phantom_utils phantom_ed25519)
 set(PHANTOM_TOOLS_DEPENDS_LIBS json ssl crypto scrypt)
 
 
-#Generate share library files
+#generate share library file
 add_library(${LIB_PHANTOM_TOOLS} SHARED ${TOOLS_SRC}) 
 
 target_link_libraries(${LIB_PHANTOM_TOOLS} ${INNER_TOOLS_LIBS} ${PHANTOM_TOOLS_DEPENDS_LIBS})
 
-#Specify compiling options for target objects
+#specify compile options for target obj
 target_compile_options(${LIB_PHANTOM_TOOLS}
     PUBLIC -std=c++11 
     PUBLIC -DASIO_STANDALONE

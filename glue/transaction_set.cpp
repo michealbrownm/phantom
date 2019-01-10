@@ -26,7 +26,7 @@ namespace phantom {
 	TransactionSetFrm::~TransactionSetFrm() {}
 	int32_t TransactionSetFrm::Add(const TransactionFrm::pointer &tx) {
 		if (raw_txs_.ByteSize() + tx->GetTransactionEnv().ByteSize() >= General::TXSET_LIMIT_SIZE) {
-			LOG_ERROR("Txset byte size(%d) will exceed the limit(%d), stop adding current tx(size:%d)", 
+			LOG_ERROR("Txset byte size(%d) will be exceed than limit(%d), stop added current tx(size:%d)", 
 				raw_txs_.ByteSize(), 
 				General::TXSET_LIMIT_SIZE,
 				tx->GetTransactionEnv().ByteSize());
@@ -35,14 +35,14 @@ namespace phantom {
 
 		int64_t last_seq = 0;
 		do {
-			//Find this cache
+			//find this cache
 			std::map<std::string, int64_t>::iterator this_iter = topic_seqs_.find(tx->GetSourceAddress());
 			if (this_iter != topic_seqs_.end()) {
 				last_seq = this_iter->second;
 				break;
 			}
 
-			//Find global cache
+			//find global cache
 			AccountFrm::pointer account;
 			if (Environment::AccountFromDB(tx->GetSourceAddress(), account)) {
 				last_seq = account->GetAccountNonce();
@@ -50,12 +50,12 @@ namespace phantom {
 		} while (false);
 
 		if (tx->GetNonce() > last_seq + 1) {
-			LOG_ERROR("The tx seq(" FMT_I64 ") is larger than the last seq(" FMT_I64 ") + 1", tx->GetNonce(), last_seq);
+			LOG_ERROR("The tx seq(" FMT_I64 ") is large than last seq(" FMT_I64 ") + 1", tx->GetNonce(), last_seq);
 			return 0;
 		}
 
 		if (tx->GetNonce() <= last_seq) {
-			LOG_ERROR("The tx seq(" FMT_I64 ") is less or equal to the last seq(" FMT_I64 "), remove it", tx->GetNonce(), last_seq);
+			LOG_ERROR("The tx seq(" FMT_I64 ") is less or equal of last seq(" FMT_I64 "), remove it", tx->GetNonce(), last_seq);
 			return -1;
 		}
 

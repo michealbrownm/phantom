@@ -38,6 +38,7 @@ namespace phantom {
 		void SetApply(ProposeTxsResult &result);
 	};
 
+	class AccountEntry;
 	class LedgerContext;
 	class LedgerFrm {
 	public:
@@ -93,6 +94,7 @@ namespace phantom {
 		bool CheckValidation ();
 
 		static bool CheckConsValueValidation(const protocol::ConsensusValue& request,
+			APPLY_MODE propose_mode,
 			std::set<int32_t> &expire_txs_status,
 			std::set<int32_t> &error_txs_status);
 		static void SetValidationToProto(std::set<int32_t> expire_txs,

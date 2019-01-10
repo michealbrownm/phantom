@@ -429,7 +429,7 @@ bool utils::File::GetFileList(const std::string &strDirectory0, const std::strin
 		return false;
 	}
 
-	// Clean old files
+	// clean old files
 	nFiles.clear();
 
 	do {
@@ -461,7 +461,7 @@ bool utils::File::GetFileList(const std::string &strDirectory0, const std::strin
 		return false;
 	}
 
-	// Clean old files
+	// clean old files
 	nFiles.clear();
 
 	struct dirent *pItem = NULL;
@@ -672,7 +672,7 @@ bool utils::File::DeleteFolder(const std::string &path) {
 std::string utils::File::GetExtension(const std::string &path) {
 	std::string normal_path = RegularPath(path);
 
-	// Check whether url is like "*****?url=*.*.*.*"
+	// check whether url is like "*****?url=*.*.*.*"
 	size_t end_pos = normal_path.find('?');
 	if (end_pos != std::string::npos) {
 		normal_path = normal_path.substr(0, end_pos);

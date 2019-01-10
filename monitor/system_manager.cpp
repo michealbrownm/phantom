@@ -50,7 +50,7 @@ namespace phantom {
 
 		utils::PhysicalMemory physical_memory;
 		if (false == system_.GetPhysicalMemory(physical_memory)) {
-			LOG_ERROR("Failed to get physical memory status");
+			LOG_ERROR("Common::SystemManager , Get physical memory status failed");
 		}
 		else {
 			monitor::SystemResource *memory = system_status->mutable_memory();
@@ -62,7 +62,7 @@ namespace phantom {
 		uint64_t total_bytes = 0;
 		utils::PhysicalPartitionVector partition_vector;
 		if (!system_.GetPhysicalPartition(total_bytes, partition_vector)) {
-			LOG_ERROR("Failed to get physical partitions status");
+			LOG_ERROR("Common::SystemManager , Get physical Partitions status failed");
 		}
 		else {
 			total_bytes = 0;
@@ -118,7 +118,7 @@ namespace phantom {
 				disk->set_total_bytes(total_bytes);
 			}
 			else {
-				LOG_ERROR("Failed to get physical partitions status");
+				LOG_ERROR("Common::SystemManager , Get physical Partitions status failed");
 			}
 		}
 

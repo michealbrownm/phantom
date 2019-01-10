@@ -1,13 +1,13 @@
-#phantom consensus module CmakeLists.txt -- libPHANTOM_consensus.a
+#phantom consensus module CmakeLists.txt -- libphantom_consensus.a
 
-set(LIB_PHANTOM_CONSENSUS PHANTOM_consensus)
-#Automatically get src files from the specified directory
+set(LIB_PHANTOM_CONSENSUS phantom_consensus)
+#automaticall get src file in specifical dir
 aux_source_directory(${PHANTOM_SRC_DIR}/consensus/ CONSENSUS_SRC)
 
-#Generate static library files
+#generate static library file
 add_library(${LIB_PHANTOM_CONSENSUS} ${CONSENSUS_SRC})
 
-#Specify compiling options for target objects
+#specify compile options for target obj
 target_compile_options(${LIB_PHANTOM_CONSENSUS}
     PUBLIC -std=c++11 
     PUBLIC -DASIO_STANDALONE

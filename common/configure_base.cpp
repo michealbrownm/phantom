@@ -97,7 +97,7 @@ namespace phantom {
 		time_capacity_ *= (3600 * 24);
 		size_capacity_ *= utils::BYTES_PER_MEGA;
 
-		//Parse the type string
+		// parse type string
 		utils::StringVector dests, levels;
 		dest_ = utils::LOG_DEST_NONE;
 		dests = utils::String::Strtok(dest_str_, '|');
@@ -111,7 +111,7 @@ namespace phantom {
 			else if (destitem == "FILE")   dest_ |= utils::LOG_DEST_FILE;
 		}
 
-		// Parse the level string
+		// parse level string
 		level_ = utils::LOG_LEVEL_NONE;
 		levels = utils::String::Strtok(level_str_, '|');
 
@@ -200,7 +200,7 @@ namespace phantom {
 			Json::Reader reader;
 			Json::Value values;
 			if (!reader.parse(data, values)) {
-				LOG_STD_ERR("Failed to parse config file, (%s)", reader.getFormatedErrorMessages().c_str());
+				LOG_STD_ERR("Parse config file failed, (%s)", reader.getFormatedErrorMessages().c_str());
 				break;
 			}
 

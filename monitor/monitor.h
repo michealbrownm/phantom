@@ -26,15 +26,15 @@ namespace phantom {
 	class Monitor : public phantom::Connection {
 	private:
 
-		bool state_changed_;              /* state changed */
-		int64_t active_time_;             /* the active time of monitor */
-		std::string session_id_;          /* session id */
-		std::string peer_node_address_;   /* peer node address */
-		
-		std::string phantom_version_;        /* phantom version */
-		int64_t monitor_version_;         /* monitor version */
-		int64_t phantom_ledger_version_;     /* phantom ledger version */
-		std::string phantom_node_address_;   /* phantom node address */
+		bool state_changed_;
+		int64_t active_time_;
+		std::string session_id_;
+		std::string peer_node_address_;
+		//bubi ��Ϣ
+		std::string phantom_version_;
+		int64_t monitor_version_;
+		int64_t bubi_ledger_version_;
+		std::string bubi_node_address_;
 
 	public:
 		Monitor(phantom::server *server_h, phantom::client *client_h, phantom::tls_server *tls_server_h, phantom::tls_client *tls_client_h, 
@@ -49,7 +49,7 @@ namespace phantom {
 		std::string GetPeerNodeAddress() const;
 
 		bool SendHello(int32_t listen_port, const std::string &node_address, std::error_code &ec);
-		void SetPhantomInfo(const protocol::ChainStatus &hello);
+		void SetBubiInfo(const protocol::ChainStatus &hello);
 	};
 }
 

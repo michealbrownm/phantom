@@ -1,0 +1,25 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>WebSocket Chat</title>
+</head>
+<body>
+<h1>WebSocket Chat</h1>
+<section id="content"></section>
+<input id="message" type="text"/>
+<script type="text/javascript" src="jquery.min.js"></script>
+<script src="lib/jquery.websocket-0.0.1.js"></script>
+<script>
+var ws = $.websocket("wss://bubi.cn:9002/", {
+        events: {
+                message: function(e) { $('#content').append(e.data + '<br>') }
+        }
+});
+$('#message').change(function(){
+  ws.send('message', this.value);
+  this.value = '';
+});
+</script>
+</body>
+</html>

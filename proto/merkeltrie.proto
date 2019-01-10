@@ -1,6 +1,6 @@
 syntax = "proto3";
 package protocol;
-option java_package = "io.phantom.sdk.core.extend.protobuf";
+
 
 enum CHILDTYPE{
 	NONE = 0;
