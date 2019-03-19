@@ -16,6 +16,10 @@
 ## Licensed
 	The Phantom is licensed under the GPLv3 open source agreement, and the version rights belong to the shepherd the Phantom team.
 	
+## v0.1.5
+	1. random module
+	2. Phantom Technology Yellow BookPhantom Technology Yellow Book
+	
 ## v0.1.4
 	1. 3rd module
 	2. overlay module
