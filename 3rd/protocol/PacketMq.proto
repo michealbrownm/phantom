@@ -1,0 +1,20 @@
+message PacketMq
+{ 				
+	string      topic					= 1;   
+	string      router        = 2;    
+	string    	msg   		    = 3;    
+	uint32      length        = 4;    
+}
+
+
+
+message RequestMq
+{
+	repeated PacketMq mq = 1;       
+}
+
+
+message ResponseMq
+{
+	repeated PacketMq mq = 1;      
+}
