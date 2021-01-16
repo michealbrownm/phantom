@@ -16,6 +16,9 @@
 ## Licensed
 	The Phantom is licensed under the GPLv3 open source agreement, and the version rights belong to the shepherd the Phantom team.
 	
+## v0.1.7
+	1. add PBFT&RAFT consensus logic algorithm  
+	
 ## v0.1.6
 	1. add libdecnumber module
 	
