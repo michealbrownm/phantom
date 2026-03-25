@@ -1,6 +1,6 @@
 {
     "require": {
-        "google/protobuf": "v3.6.0.1"
+        "google/protobuf": "v4.33.6"
     },
     "autoload": {
     "psr-4": {
